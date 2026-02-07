@@ -130,6 +130,7 @@ All commands are invoked as slash commands (e.g., `/backend`, `/add-schema`).
 | `/implement-task` | Implement a specific PRD task |
 | `/move-prd` | Move PRD between lifecycle stages (inbox → active → completed → archived) |
 | `/check-prd` | Verify PRD completion against success criteria |
+| `/next-prd` | Auto-detect and implement the next PRD in dependency order |
 
 ### Quality & Shipping
 
