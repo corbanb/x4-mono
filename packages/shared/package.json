@@ -2,13 +2,18 @@
   "name": "@x4/shared",
   "version": "0.0.0",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "exports": {
+    "./types": "./types/index.ts",
+    "./utils": "./utils/index.ts"
+  },
   "scripts": {
     "dev": "echo 'no dev server'",
     "build": "echo 'no build step'",
-    "lint": "eslint src/",
+    "lint": "eslint src/ types/ utils/",
     "type-check": "tsc --noEmit",
-    "test": "echo 'no tests yet'"
+    "test": "bun test"
+  },
+  "dependencies": {
+    "zod": "^3.23.0"
   }
 }

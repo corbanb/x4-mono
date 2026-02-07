@@ -18,6 +18,9 @@
     "apps/api": {
       "name": "@x4/api",
       "version": "0.0.0",
+      "dependencies": {
+        "@x4/shared": "workspace:*",
+      },
     },
     "apps/desktop": {
       "name": "@x4/desktop",
@@ -53,6 +56,9 @@
     "packages/shared": {
       "name": "@x4/shared",
       "version": "0.0.0",
+      "dependencies": {
+        "zod": "^3.23.0",
+      },
     },
   },
   "packages": {
@@ -353,6 +359,8 @@
     "wrappy": ["wrappy@1.0.2", "", {}, "sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ=="],
 
     "yocto-queue": ["yocto-queue@0.1.0", "", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
+
+    "zod": ["zod@3.25.76", "", {}, "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="],
 
     "@eslint/eslintrc/ignore": ["ignore@5.3.2", "", {}, "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g=="],
 
