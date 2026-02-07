@@ -25,7 +25,7 @@ PRDs move through four stages:
 |--------|-------|--------|--------------|----------|
 | PRD-001 | [Monorepo Foundation & Tooling](completed/prd-001-monorepo-foundation.md) | Completed | None (root) | completed |
 | PRD-002 | [Shared Types, Validators & Utilities](completed/prd-002-shared-types.md) | Completed | PRD-001 | completed |
-| PRD-003 | [Database & ORM Layer](inbox/prd-003-database-orm.md) | Draft | PRD-001, PRD-002 | inbox |
+| PRD-003 | [Database & ORM Layer](completed/prd-003-database-orm.md) | Completed | PRD-001, PRD-002 | completed |
 | PRD-004 | [Shared UI Components & Hooks](inbox/prd-004-shared-ui-hooks.md) | Draft | PRD-001, PRD-002 | inbox |
 | PRD-005 | [API Server — Hono + tRPC on Bun](inbox/prd-005-api-server.md) | Draft | PRD-001, PRD-002, PRD-003 | inbox |
 | PRD-006 | [Authentication & Authorization — Better Auth](inbox/prd-006-auth.md) | Draft | PRD-003, PRD-005 | inbox |
@@ -96,3 +96,4 @@ Track milestones and completed work here as PRDs are implemented.
 | 2026-02-07 | PRD-001: Monorepo foundation implemented — root configs, 9 workspaces, lint boundaries, TypeScript | — |
 | 2026-02-07 | PRD-001: Moved to completed. PRD-002: Started — shared types, validators & utilities | — |
 | 2026-02-07 | PRD-002: Completed — domain types, error types, Zod validators, formatting utils, helpers, 125 tests | — |
+| 2026-02-07 | PRD-003: Completed — Drizzle schema (users, projects, ai_usage_log), Neon client, migrations, seed, 25 tests | — |
