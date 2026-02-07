@@ -9,11 +9,18 @@
     "build": "echo 'no build step'",
     "lint": "eslint src/",
     "type-check": "tsc --noEmit",
-    "test": "echo 'no tests yet'",
-    "db:generate": "echo 'drizzle-kit generate not configured yet'",
-    "db:push": "echo 'drizzle-kit push not configured yet'",
-    "db:migrate": "echo 'drizzle-kit migrate not configured yet'",
-    "db:seed": "echo 'seed not configured yet'",
-    "db:studio": "echo 'drizzle-kit studio not configured yet'"
+    "test": "bun test src/",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:migrate": "bun run src/migrate.ts",
+    "db:seed": "bun run src/seed.ts",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.0",
+    "drizzle-orm": "^0.38.0"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.30.0"
   }
 }
