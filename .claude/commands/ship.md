@@ -12,11 +12,17 @@ Input format: `short description of the work` (e.g., `PRD-001 monorepo foundatio
    - `chore/` for tooling, config, or infrastructure
    - Example: `feat/prd-001-monorepo-foundation` or `chore/dev-infrastructure-scaffolding`
 3. **Check current state** — run `git status` to see all changed, staged, and untracked files. Confirm there are changes to ship.
-4. **Create branch** — create and switch to the new branch from `main`:
+4. **Run boundary check** — scan for convention violations before committing:
+   - Check for `console.log` in production code (outside test files)
+   - Check for `any` type annotations in changed files
+   - Check for dependency boundary violations (packages importing from apps)
+   - Check for banned package imports (jest, express, prisma, next-auth)
+   - If violations found: report them and ask whether to proceed or fix first
+5. **Create branch** — create and switch to the new branch from `main`:
    ```
    git checkout -b <branch-name>
    ```
-5. **Group changes into atomic commits** — analyze the changed files and group them into logical commits. Each commit should be a self-contained unit of work. Common groupings:
+6. **Group changes into atomic commits** — analyze the changed files and group them into logical commits. Each commit should be a self-contained unit of work. Common groupings:
    - By workspace or directory (e.g., all `wiki/` changes, all `.github/` changes, all `.claude/` changes)
    - By feature or concern (e.g., "add issue templates", "add CI workflow", "add PRD system")
    - Config files that belong together (e.g., `CLAUDE.md` + `.claude/settings.json` + `.claude/commands/`)
@@ -26,16 +32,16 @@ Input format: `short description of the work` (e.g., `PRD-001 monorepo foundatio
      - Types: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `ci`
      - Keep the first line under 72 characters
      - Add a body paragraph if the commit needs more context
-6. **Push branch** — push to remote with upstream tracking:
+7. **Push branch** — push to remote with upstream tracking:
    ```
    git push -u origin <branch-name>
    ```
-7. **Open pull request** — create a PR using `gh pr create`:
+8. **Open pull request** — create a PR using `gh pr create`:
    - Title: concise summary of the work (under 72 chars)
    - Body: use the PR template format from `.github/PULL_REQUEST_TEMPLATE.md`
    - Include: summary bullets, related PRD reference, type of change, what to review
    - Target: `main` branch
-8. **Report** — output the PR URL and a summary of commits created
+9. **Report** — output the PR URL and a summary of commits created
 
 ## Rules
 
@@ -47,3 +53,4 @@ Input format: `short description of the work` (e.g., `PRD-001 monorepo foundatio
 - Each commit should pass linting/type-check independently if possible
 - If there's only one logical group of changes, a single commit is fine — don't split artificially
 - Ask the user before pushing if there are any uncommitted changes that look unintentional
+- Run boundary checks before committing — report violations and let the user decide
