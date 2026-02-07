@@ -23,8 +23,8 @@ PRDs move through four stages:
 
 | PRD ID | Title | Status | Dependencies | Location |
 |--------|-------|--------|--------------|----------|
-| PRD-001 | [Monorepo Foundation & Tooling](active/prd-001-monorepo-foundation.md) | Completed | None (root) | active |
-| PRD-002 | [Shared Types, Validators & Utilities](inbox/prd-002-shared-types.md) | Draft | PRD-001 | inbox |
+| PRD-001 | [Monorepo Foundation & Tooling](completed/prd-001-monorepo-foundation.md) | Completed | None (root) | completed |
+| PRD-002 | [Shared Types, Validators & Utilities](completed/prd-002-shared-types.md) | Completed | PRD-001 | completed |
 | PRD-003 | [Database & ORM Layer](inbox/prd-003-database-orm.md) | Draft | PRD-001, PRD-002 | inbox |
 | PRD-004 | [Shared UI Components & Hooks](inbox/prd-004-shared-ui-hooks.md) | Draft | PRD-001, PRD-002 | inbox |
 | PRD-005 | [API Server — Hono + tRPC on Bun](inbox/prd-005-api-server.md) | Draft | PRD-001, PRD-002, PRD-003 | inbox |
@@ -94,3 +94,5 @@ Track milestones and completed work here as PRDs are implemented.
 |------|------|----|
 | 2026-02-07 | Dev infrastructure scaffolded (wiki, .github, CLAUDE.md, .claude/) | — |
 | 2026-02-07 | PRD-001: Monorepo foundation implemented — root configs, 9 workspaces, lint boundaries, TypeScript | — |
+| 2026-02-07 | PRD-001: Moved to completed. PRD-002: Started — shared types, validators & utilities | — |
+| 2026-02-07 | PRD-002: Completed — domain types, error types, Zod validators, formatting utils, helpers, 125 tests | — |

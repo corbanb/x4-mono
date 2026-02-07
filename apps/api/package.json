@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "main": "./src/index.ts",
+  "dependencies": {
+    "@x4/shared": "workspace:*"
+  },
   "scripts": {
     "dev": "echo 'api dev server not configured yet'",
     "build": "echo 'no build step'",
