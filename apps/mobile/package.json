@@ -1,0 +1,12 @@
+{
+  "name": "@x4/mobile",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'mobile dev server not configured yet'",
+    "build": "echo 'no build step'",
+    "lint": "eslint src/",
+    "type-check": "tsc --noEmit",
+    "test": "echo 'no tests yet'"
+  }
+}

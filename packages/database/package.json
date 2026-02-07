@@ -1,0 +1,19 @@
+{
+  "name": "@x4/database",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "dev": "echo 'no dev server'",
+    "build": "echo 'no build step'",
+    "lint": "eslint src/",
+    "type-check": "tsc --noEmit",
+    "test": "echo 'no tests yet'",
+    "db:generate": "echo 'drizzle-kit generate not configured yet'",
+    "db:push": "echo 'drizzle-kit push not configured yet'",
+    "db:migrate": "echo 'drizzle-kit migrate not configured yet'",
+    "db:seed": "echo 'seed not configured yet'",
+    "db:studio": "echo 'drizzle-kit studio not configured yet'"
+  }
+}
