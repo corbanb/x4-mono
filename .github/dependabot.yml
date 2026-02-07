@@ -1,0 +1,60 @@
+version: 2
+updates:
+  # Root and all workspaces — npm ecosystem
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "corbanb"
+    groups:
+      trpc:
+        patterns:
+          - "@trpc/*"
+          - "trpc*"
+      drizzle:
+        patterns:
+          - "drizzle-*"
+          - "@neondatabase/*"
+      ai-sdk:
+        patterns:
+          - "@ai-sdk/*"
+          - "ai"
+      types:
+        patterns:
+          - "@types/*"
+          - "bun-types"
+      linting:
+        patterns:
+          - "eslint*"
+          - "@eslint/*"
+          - "prettier*"
+      testing:
+        patterns:
+          - "@testing-library/*"
+          - "playwright*"
+      auth:
+        patterns:
+          - "better-auth*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react*"
+          - "next"
+      expo:
+        patterns:
+          - "expo*"
+          - "react-native*"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "corbanb"
