@@ -1,0 +1,13 @@
+{
+  "name": "@x4/api",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "scripts": {
+    "dev": "echo 'api dev server not configured yet'",
+    "build": "echo 'no build step'",
+    "lint": "eslint src/",
+    "type-check": "tsc --noEmit",
+    "test": "echo 'no tests yet'"
+  }
+}
