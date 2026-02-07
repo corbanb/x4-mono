@@ -91,6 +91,72 @@ apps/*                   → can import: any package
 - **Database tables**: snake_case (`user_profiles`, `ai_usage_logs`)
 - **tRPC routers**: camelCase namespace (`projects.create`, `users.me`)
 
+## Available Commands & Agents
+
+All commands are invoked as slash commands (e.g., `/backend`, `/add-schema`).
+
+### Specialist Agents
+
+| Command | Description |
+|---------|-------------|
+| `/backend` | Backend architecture expert — Hono, tRPC v11, API design review |
+| `/frontend` | Frontend architecture expert — Next.js 15, React 19, component design |
+| `/database` | Database & schema expert — Drizzle ORM, Neon Postgres, data modeling |
+| `/testing` | Testing strategy expert — Bun test runner, test pyramid, test patterns |
+| `/security` | Security & auth expert — Better Auth, OWASP top 10, token management |
+| `/devops` | CI/CD & infrastructure expert — GitHub Actions, Turborepo, deployment |
+
+### Scaffolding
+
+| Command | Description |
+|---------|-------------|
+| `/add-schema` | Zod schemas + inferred types for an entity |
+| `/add-router` | tRPC router with CRUD procedures and tests |
+| `/add-table` | Drizzle database table with migration and seed data |
+| `/add-middleware` | Hono middleware with test file |
+| `/add-page` | Next.js App Router page with Server/Client split |
+| `/add-form` | react-hook-form wired to tRPC mutation |
+| `/add-hook` | Shared React hook in packages/shared/hooks/ |
+| `/add-env` | Environment variable 3-way sync (env.ts, .env.example, CLAUDE.md) |
+| `/add-test` | Generate tests for an existing source file |
+| `/add-workflow` | GitHub Actions workflow scaffold |
+
+### PRD Lifecycle
+
+| Command | Description |
+|---------|-------------|
+| `/new-prd` | Create a new PRD from template |
+| `/review-prd` | Review PRD for completeness and quality |
+| `/implement-task` | Implement a specific PRD task |
+| `/move-prd` | Move PRD between lifecycle stages (inbox → active → completed → archived) |
+| `/check-prd` | Verify PRD completion against success criteria |
+
+### Quality & Shipping
+
+| Command | Description |
+|---------|-------------|
+| `/check-boundaries` | Audit for convention violations and dependency boundary issues |
+| `/ship` | Branch, commit, and open a pull request (with boundary check) |
+
+## Middleware Order
+
+Hono middleware is applied in this order. New middleware must be inserted at the correct position:
+
+```
+requestLogger → CORS → rate limiting → auth → route-specific
+```
+
+## Test Patterns
+
+| Source Location | Test Pattern | Key Import |
+|---|---|---|
+| `apps/api/src/routers/*.ts` | tRPC caller | `createCaller`, `createTestContext` from `bun:test` |
+| `apps/api/src/middleware/*.ts` | Hono request | `app.request()` from `bun:test` |
+| `apps/api/src/lib/*.ts` | Unit test | Direct function calls from `bun:test` |
+| `packages/shared/utils/*.ts` | Unit test | Direct function calls from `bun:test` |
+| `packages/shared/types/*.ts` | Schema validation | Zod `.parse()` / `.safeParse()` from `bun:test` |
+| `apps/web/src/components/*.tsx` | Component test | `@testing-library/react` from `bun:test` |
+
 ## PRD System
 
 All work is tracked through PRDs in `wiki/`. See [wiki/status.md](wiki/status.md) for the full PRD inventory, dependency graph, and progress log.
