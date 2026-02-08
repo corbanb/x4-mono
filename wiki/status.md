@@ -31,7 +31,7 @@ PRDs move through four stages:
 | PRD-006 | [Authentication & Authorization — Better Auth](completed/prd-006-auth.md) | Completed | PRD-003, PRD-005 | completed |
 | PRD-007 | [Error Handling & Logging](completed/prd-007-error-handling-logging.md) | Completed | PRD-002, PRD-005 | completed |
 | PRD-008 | [Rate Limiting & Caching](completed/prd-008-rate-limiting-caching.md) | Completed | PRD-005 | completed |
-| PRD-009 | [AI Integration Layer](inbox/prd-009-ai-integration.md) | Draft | PRD-002, PRD-003, PRD-005, PRD-007, PRD-008 | inbox |
+| PRD-009 | [AI Integration Layer](completed/prd-009-ai-integration.md) | Completed | PRD-002, PRD-003, PRD-005, PRD-007, PRD-008 | completed |
 | PRD-010 | [Web Application — Next.js](inbox/prd-010-web-app.md) | Draft | PRD-004, PRD-005, PRD-006 | inbox |
 | PRD-011 | [Mobile Application — Expo + React Native](inbox/prd-011-mobile-app.md) | Draft | PRD-004, PRD-005, PRD-006 | inbox |
 | PRD-012 | [Desktop Application — Electron](inbox/prd-012-desktop-app.md) | Draft | PRD-004, PRD-005, PRD-006 | inbox |
@@ -103,3 +103,4 @@ Track milestones and completed work here as PRDs are implemented.
 | 2026-02-07 | PRD-006: Completed — Better Auth server config, Hono route mounting, tRPC context integration, web/native/desktop clients, auth middleware tests, 40 API tests | — |
 | 2026-02-07 | PRD-007: Completed — AppError class, Errors.* constructors, tRPC code mapping, Pino logger + child loggers, request logging middleware, global error handler, tRPC error formatter, React ErrorBoundary, router refactor, 47 new tests (87 total API) | — |
 | 2026-02-07 | PRD-008: Completed — Upstash Redis rate limiting (3 tiers: general/ai/auth), cache interface (get/set/del/getOrGenerate), Hono middleware wiring, fail-open behavior, 28 new tests (115 total API) | — |
+| 2026-02-07 | PRD-009: Completed — Vercel AI SDK providers (Claude + OpenAI), generateAIResponse/streamAIResponse, provider factory, cost tracking, system prompts, tRPC ai.generate router with DB usage logging, 41 new tests (351 total) | — |
