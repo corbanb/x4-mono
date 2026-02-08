@@ -2,13 +2,18 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { db } from "@x4/database";
 import type { Database } from "@x4/database";
+import { auth } from "@x4/auth";
 import { ZodError } from "zod";
 
 // --- Context ---
 
 export type User = {
   userId: string;
+  name: string;
+  email: string;
   role: string;
+  image?: string | null;
+  emailVerified: boolean;
 };
 
 export type Context = {
@@ -17,30 +22,24 @@ export type Context = {
   req: Request;
 };
 
-/**
- * Placeholder auth: decodes a Base64-encoded JSON token from Authorization header.
- * Token format: base64({ userId: string, role: string })
- * PRD-006 replaces this with Better Auth session validation.
- */
-function decodeAuthToken(header: string | null): User | null {
-  if (!header) return null;
+export async function createContext(
+  opts: FetchCreateContextFnOptions,
+): Promise<Context> {
+  const session = await auth.api.getSession({
+    headers: opts.req.headers,
+  });
 
-  const [scheme, token] = header.split(" ");
-  if (scheme !== "Bearer" || !token) return null;
+  const user: User | null = session?.user
+    ? {
+        userId: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+        role: (session.user as { role?: string }).role ?? "user",
+        image: session.user.image,
+        emailVerified: session.user.emailVerified,
+      }
+    : null;
 
-  try {
-    const decoded = JSON.parse(atob(token));
-    if (typeof decoded.userId === "string" && typeof decoded.role === "string") {
-      return { userId: decoded.userId, role: decoded.role };
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-export function createContext(opts: FetchCreateContextFnOptions): Context {
-  const user = decodeAuthToken(opts.req.headers.get("authorization"));
   return { db, user, req: opts.req };
 }
 

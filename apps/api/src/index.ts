@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { trpcServer } from "@hono/trpc-server";
+import { auth } from "@x4/auth";
 import { appRouter } from "./routers";
 import { createContext } from "./trpc";
 import { env } from "./lib/env";
@@ -9,15 +10,33 @@ const app = new Hono();
 
 // --- Global Middleware ---
 
+const allowedOrigins = [env.WEB_URL, env.MARKETING_URL];
+
 app.use(
   "/trpc/*",
   cors({
-    origin: [env.WEB_URL, env.MARKETING_URL],
+    origin: allowedOrigins,
     allowMethods: ["GET", "POST", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   }),
 );
+
+app.use(
+  "/api/auth/*",
+  cors({
+    origin: allowedOrigins,
+    allowMethods: ["GET", "POST", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  }),
+);
+
+// --- Better Auth Handler ---
+
+app.on(["POST", "GET"], "/api/auth/**", (c) => {
+  return auth.handler(c.req.raw);
+});
 
 // --- Health Check ---
 

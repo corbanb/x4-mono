@@ -4,6 +4,7 @@ import { appRouter } from "../routers";
 import type { Context } from "../trpc";
 import {
   createMockDb,
+  createTestUser,
   TEST_USER_ID,
   TEST_PROJECT_ID,
   OTHER_USER_ID,
@@ -70,7 +71,7 @@ describe("projects.get", () => {
     const caller = createCaller(
       createTestContext({
         db,
-        user: { userId: TEST_USER_ID, role: "user" },
+        user: createTestUser(),
       }),
     );
 
@@ -86,7 +87,7 @@ describe("projects.get", () => {
     const caller = createCaller(
       createTestContext({
         db,
-        user: { userId: TEST_USER_ID, role: "user" },
+        user: createTestUser(),
       }),
     );
 
@@ -117,7 +118,7 @@ describe("projects.create", () => {
     const caller = createCaller(
       createTestContext({
         db,
-        user: { userId: TEST_USER_ID, role: "user" },
+        user: createTestUser(),
       }),
     );
 
@@ -132,7 +133,7 @@ describe("projects.create", () => {
   test("rejects invalid input (empty name)", async () => {
     const caller = createCaller(
       createTestContext({
-        user: { userId: TEST_USER_ID, role: "user" },
+        user: createTestUser(),
       }),
     );
 
@@ -154,7 +155,7 @@ describe("projects.update", () => {
     const caller = createCaller(
       createTestContext({
         db,
-        user: { userId: TEST_USER_ID, role: "user" },
+        user: createTestUser(),
       }),
     );
 
@@ -173,7 +174,7 @@ describe("projects.update", () => {
     const caller = createCaller(
       createTestContext({
         db,
-        user: { userId: TEST_USER_ID, role: "user" },
+        user: createTestUser(),
       }),
     );
 
@@ -189,7 +190,7 @@ describe("projects.update", () => {
     const caller = createCaller(
       createTestContext({
         db,
-        user: { userId: TEST_USER_ID, role: "user" },
+        user: createTestUser(),
       }),
     );
 
@@ -211,7 +212,7 @@ describe("projects.delete", () => {
     const caller = createCaller(
       createTestContext({
         db,
-        user: { userId: TEST_USER_ID, role: "user" },
+        user: createTestUser(),
       }),
     );
 

@@ -2,7 +2,11 @@ import { describe, test, expect } from "bun:test";
 import { createCallerFactory, router, adminProcedure } from "../trpc";
 import { appRouter } from "../routers";
 import type { Context } from "../trpc";
-import { createMockDb, TEST_USER_ID } from "./helpers";
+import {
+  createMockDb,
+  createTestUser,
+  TEST_USER_ID,
+} from "./helpers";
 
 // --- Helpers ---
 
@@ -13,10 +17,6 @@ function createTestContext(overrides: Partial<Context> = {}): Context {
     req: new Request("http://localhost:3002"),
     ...overrides,
   };
-}
-
-function makeAuthToken(userId: string, role: string = "user"): string {
-  return btoa(JSON.stringify({ userId, role }));
 }
 
 const createCaller = createCallerFactory(appRouter);
@@ -32,12 +32,10 @@ describe("Auth middleware", () => {
     });
   });
 
-  test("adminProcedure rejects non-admin users", async () => {
-    // adminProcedure is not directly exposed on a router endpoint yet,
-    // but protectedProcedure should accept authenticated users
+  test("protectedProcedure accepts authenticated users", async () => {
     const caller = createCaller(
       createTestContext({
-        user: { userId: "test-user-id", role: "user" },
+        user: createTestUser(),
       }),
     );
 
@@ -46,57 +44,6 @@ describe("Auth middleware", () => {
     await expect(caller.users.me()).rejects.not.toMatchObject({
       code: "UNAUTHORIZED",
     });
-  });
-});
-
-// --- Auth token decoding tests ---
-
-describe("Auth token decoding via HTTP", () => {
-  test("request without Authorization header has null user in context", async () => {
-    const { createContext } = await import("../trpc");
-    const ctx = createContext({
-      req: new Request("http://localhost:3002"),
-      resHeaders: new Headers(),
-      info: {} as never,
-    });
-    expect(ctx.user).toBeNull();
-  });
-
-  test("request with valid Bearer token decodes user", async () => {
-    const { createContext } = await import("../trpc");
-    const token = makeAuthToken("user-123", "admin");
-    const ctx = createContext({
-      req: new Request("http://localhost:3002", {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
-      resHeaders: new Headers(),
-      info: {} as never,
-    });
-    expect(ctx.user).toEqual({ userId: "user-123", role: "admin" });
-  });
-
-  test("request with invalid token has null user", async () => {
-    const { createContext } = await import("../trpc");
-    const ctx = createContext({
-      req: new Request("http://localhost:3002", {
-        headers: { Authorization: "Bearer not-valid-base64-json" },
-      }),
-      resHeaders: new Headers(),
-      info: {} as never,
-    });
-    expect(ctx.user).toBeNull();
-  });
-
-  test("request with non-Bearer scheme has null user", async () => {
-    const { createContext } = await import("../trpc");
-    const ctx = createContext({
-      req: new Request("http://localhost:3002", {
-        headers: { Authorization: "Basic abc123" },
-      }),
-      resHeaders: new Headers(),
-      info: {} as never,
-    });
-    expect(ctx.user).toBeNull();
   });
 });
 
@@ -109,12 +56,39 @@ describe("adminProcedure", () => {
     });
     const caller = createCallerFactory(testRouter)(
       createTestContext({
-        user: { userId: TEST_USER_ID, role: "user" },
+        user: createTestUser(),
       }),
     );
 
     await expect(caller.adminOnly()).rejects.toMatchObject({
       code: "FORBIDDEN",
+    });
+  });
+
+  test("allows admin user", async () => {
+    const testRouter = router({
+      adminOnly: adminProcedure.query(() => "secret"),
+    });
+    const caller = createCallerFactory(testRouter)(
+      createTestContext({
+        user: createTestUser({ role: "admin" }),
+      }),
+    );
+
+    const result = await caller.adminOnly();
+    expect(result).toBe("secret");
+  });
+
+  test("rejects unauthenticated with UNAUTHORIZED", async () => {
+    const testRouter = router({
+      adminOnly: adminProcedure.query(() => "secret"),
+    });
+    const caller = createCallerFactory(testRouter)(
+      createTestContext({ user: null }),
+    );
+
+    await expect(caller.adminOnly()).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
     });
   });
 });
@@ -125,7 +99,7 @@ describe("Error formatter", () => {
   test("ZodError produces flattened zodError in response", async () => {
     const caller = createCallerFactory(appRouter)(
       createTestContext({
-        user: { userId: TEST_USER_ID, role: "user" },
+        user: createTestUser(),
       }),
     );
 

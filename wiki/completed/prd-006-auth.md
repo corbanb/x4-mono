@@ -3,7 +3,7 @@
 **PRD ID**: PRD-006
 **Title**: Authentication & Authorization — Better Auth
 **Author**: AI-Native TPM
-**Status**: Draft
+**Status**: Completed
 **Version**: 1.0
 **Date**: 2026-02-07
 **Dependencies**: PRD-003 (Database & ORM), PRD-005 (API Server)
