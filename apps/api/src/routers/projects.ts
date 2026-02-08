@@ -1,12 +1,12 @@
-import { TRPCError } from "@trpc/server";
-import { projects, users, eq, and, sql, count } from "@x4/database";
+import { projects, users, eq, count } from "@x4/database";
 import {
   CreateProjectSchema,
   UpdateProjectSchema,
   PaginationSchema,
   IdParamSchema,
 } from "@x4/shared/utils";
-import { router, publicProcedure, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, publicProcedure } from "../trpc";
+import { Errors } from "../lib/errors";
 
 export const projectsRouter = router({
   list: publicProcedure.input(PaginationSchema).query(async ({ ctx, input }) => {
@@ -48,10 +48,7 @@ export const projectsRouter = router({
       .where(eq(projects.id, input.id));
 
     if (!project) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: `Project ${input.id} not found`,
-      });
+      throw Errors.notFound("Project").toTRPCError();
     }
 
     return project;
@@ -81,17 +78,11 @@ export const projectsRouter = router({
         .where(eq(projects.id, input.id));
 
       if (!existing) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: `Project ${input.id} not found`,
-        });
+        throw Errors.notFound("Project").toTRPCError();
       }
 
       if (existing.ownerId !== ctx.user.userId && ctx.user.role !== "admin") {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "You can only update your own projects",
-        });
+        throw Errors.forbidden("You can only update your own projects").toTRPCError();
       }
 
       const { id, ...updates } = input;
@@ -113,17 +104,11 @@ export const projectsRouter = router({
         .where(eq(projects.id, input.id));
 
       if (!existing) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: `Project ${input.id} not found`,
-        });
+        throw Errors.notFound("Project").toTRPCError();
       }
 
       if (existing.ownerId !== ctx.user.userId && ctx.user.role !== "admin") {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "You can only delete your own projects",
-        });
+        throw Errors.forbidden("You can only delete your own projects").toTRPCError();
       }
 
       await ctx.db.delete(projects).where(eq(projects.id, input.id));

@@ -1,6 +1,6 @@
-import { TRPCError } from "@trpc/server";
 import { users, eq } from "@x4/database";
 import { router, protectedProcedure } from "../trpc";
+import { Errors } from "../lib/errors";
 
 export const usersRouter = router({
   me: protectedProcedure.query(async ({ ctx }) => {
@@ -18,10 +18,7 @@ export const usersRouter = router({
       .where(eq(users.id, ctx.user.userId));
 
     if (!user) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "User not found",
-      });
+      throw Errors.notFound("User").toTRPCError();
     }
 
     return user;
