@@ -4,16 +4,26 @@
   "private": true,
   "exports": {
     "./types": "./types/index.ts",
-    "./utils": "./utils/index.ts"
+    "./utils": "./utils/index.ts",
+    "./api-client": "./api-client/index.ts",
+    "./hooks": "./hooks/index.ts",
+    "./ui": "./ui/index.ts"
   },
   "scripts": {
     "dev": "echo 'no dev server'",
     "build": "echo 'no build step'",
-    "lint": "eslint src/ types/ utils/",
+    "lint": "eslint src/ types/ utils/ api-client/ hooks/ ui/",
     "type-check": "tsc --noEmit",
     "test": "bun test"
   },
   "dependencies": {
+    "@trpc/client": "^11.0.0",
+    "@trpc/react-query": "^11.0.0",
+    "@tanstack/react-query": "^5.60.0",
+    "react": "^19.0.0",
     "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0"
   }
 }

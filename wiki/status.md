@@ -26,7 +26,7 @@ PRDs move through four stages:
 | PRD-001 | [Monorepo Foundation & Tooling](completed/prd-001-monorepo-foundation.md) | Completed | None (root) | completed |
 | PRD-002 | [Shared Types, Validators & Utilities](completed/prd-002-shared-types.md) | Completed | PRD-001 | completed |
 | PRD-003 | [Database & ORM Layer](completed/prd-003-database-orm.md) | Completed | PRD-001, PRD-002 | completed |
-| PRD-004 | [Shared UI Components & Hooks](inbox/prd-004-shared-ui-hooks.md) | Draft | PRD-001, PRD-002 | inbox |
+| PRD-004 | [Shared UI Components & Hooks](completed/prd-004-shared-ui-hooks.md) | Completed | PRD-001, PRD-002 | completed |
 | PRD-005 | [API Server — Hono + tRPC on Bun](completed/prd-005-api-server.md) | Completed | PRD-001, PRD-002, PRD-003 | completed |
 | PRD-006 | [Authentication & Authorization — Better Auth](inbox/prd-006-auth.md) | Draft | PRD-003, PRD-005 | inbox |
 | PRD-007 | [Error Handling & Logging](inbox/prd-007-error-handling-logging.md) | Draft | PRD-002, PRD-005 | inbox |
@@ -99,3 +99,4 @@ Track milestones and completed work here as PRDs are implemented.
 | 2026-02-07 | PRD-003: Completed — Drizzle schema (users, projects, ai_usage_log), Neon client, migrations, seed, 25 tests | — |
 | 2026-02-07 | PRD-005: Started — API server (Hono + tRPC on Bun) | — |
 | 2026-02-07 | PRD-005: Completed — Hono app, tRPC v11 init, projects CRUD router, users stub, env validation, placeholder auth, 15 tests | — |
+| 2026-02-07 | PRD-004: Completed — tRPC React client, convenience hooks, auth hooks (placeholder), Button/Input UI scaffolding, 20 new tests (145 total in shared) | — |

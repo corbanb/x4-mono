@@ -2,10 +2,11 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "jsx": "react-jsx",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*.ts", "utils/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*.ts", "utils/**/*.ts", "api-client/**/*.ts", "api-client/**/*.tsx", "hooks/**/*.ts", "hooks/**/*.tsx", "ui/**/*.ts", "ui/**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }
