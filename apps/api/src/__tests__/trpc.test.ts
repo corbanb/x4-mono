@@ -1,13 +1,14 @@
 import { describe, test, expect } from "bun:test";
-import { createCallerFactory } from "../trpc";
+import { createCallerFactory, router, adminProcedure } from "../trpc";
 import { appRouter } from "../routers";
 import type { Context } from "../trpc";
+import { createMockDb, TEST_USER_ID } from "./helpers";
 
 // --- Helpers ---
 
 function createTestContext(overrides: Partial<Context> = {}): Context {
   return {
-    db: {} as Context["db"],
+    db: createMockDb(),
     user: null,
     req: new Request("http://localhost:3002"),
     ...overrides,
@@ -96,5 +97,44 @@ describe("Auth token decoding via HTTP", () => {
       info: {} as never,
     });
     expect(ctx.user).toBeNull();
+  });
+});
+
+// --- adminProcedure tests ---
+
+describe("adminProcedure", () => {
+  test("rejects non-admin with FORBIDDEN", async () => {
+    const testRouter = router({
+      adminOnly: adminProcedure.query(() => "secret"),
+    });
+    const caller = createCallerFactory(testRouter)(
+      createTestContext({
+        user: { userId: TEST_USER_ID, role: "user" },
+      }),
+    );
+
+    await expect(caller.adminOnly()).rejects.toMatchObject({
+      code: "FORBIDDEN",
+    });
+  });
+});
+
+// --- Error formatter tests ---
+
+describe("Error formatter", () => {
+  test("ZodError produces flattened zodError in response", async () => {
+    const caller = createCallerFactory(appRouter)(
+      createTestContext({
+        user: { userId: TEST_USER_ID, role: "user" },
+      }),
+    );
+
+    try {
+      await caller.projects.create({ name: "" });
+      expect.unreachable("Should have thrown");
+    } catch (error: unknown) {
+      const err = error as { code: string; shape?: { data?: { zodError?: unknown } } };
+      expect(err.code).toBe("BAD_REQUEST");
+    }
   });
 });

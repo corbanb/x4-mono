@@ -169,7 +169,7 @@ apps/marketing/
 
 | Level | What's Tested | Tool | Count (approx) |
 |-------|--------------|------|----------------|
-| Unit | Component rendering | Bun test | 3-5 |
+| Unit | Component rendering, meta tags, semantic HTML | Bun test | 5-8 |
 | Integration | N/A (static site) | — | 0 |
 | E2E | Pages load, links work, CTA links to app.example.com | Playwright | 1-2 |
 
@@ -180,6 +180,9 @@ apps/marketing/
 3. **CTA links to app**: "Get Started" button links to `app.example.com/signup`
 4. **Static output**: `next build` produces only static files (no serverless functions)
 5. **Lighthouse**: Performance > 95, SEO > 90
+6. **Meta tags present**: Title, description, and OG tags present on all pages
+7. **Semantic HTML structure**: Pages use proper semantic elements (main, header, footer, nav, section)
+8. **Content visible without JavaScript**: Static HTML output contains all content (no JS-only rendering)
 
 ---
 

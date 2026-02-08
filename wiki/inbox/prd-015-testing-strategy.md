@@ -213,6 +213,45 @@ export const testProject = {
 };
 ```
 
+**React Testing Library Pattern**:
+```typescript
+// apps/web/test/helpers.tsx — renderWithProviders helper
+import { render } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+export function renderWithProviders(ui: React.ReactElement) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+  );
+}
+```
+
+**Playwright Auth Bypass**:
+```typescript
+// apps/web/e2e/fixtures/auth.ts — fixture that injects auth token, skips login UI
+import { test as base } from "@playwright/test";
+
+export const test = base.extend({
+  authenticatedPage: async ({ page }, use) => {
+    // Set auth cookie/token before navigating — bypasses login UI for non-auth tests
+    await page.context().addCookies([{
+      name: "session_token",
+      value: "test-session-token",
+      domain: "localhost",
+      path: "/",
+    }]);
+    await use(page);
+  },
+});
+```
+
+**Mobile/Desktop Mock Cross-References**:
+- **Mobile (Expo) mocks**: See PRD-011 Section 7 "Mock Patterns" for `expo-secure-store` in-memory mock
+- **Desktop (Electron) mocks**: See PRD-012 Section 7 "Mock Patterns" for `safeStorage` and `ipcMain` mocks
+
 **Playwright Config**:
 ```typescript
 // apps/web/playwright.config.ts
