@@ -2,7 +2,12 @@ import { describe, test, expect } from "bun:test";
 import { createCallerFactory } from "../trpc";
 import { appRouter } from "../routers";
 import type { Context } from "../trpc";
-import { createMockDb, TEST_USER_ID, testUser } from "./helpers";
+import {
+  createMockDb,
+  createTestUser,
+  TEST_USER_ID,
+  testUser,
+} from "./helpers";
 
 // --- Helpers ---
 
@@ -25,7 +30,7 @@ describe("users.me", () => {
     const caller = createCaller(
       createTestContext({
         db,
-        user: { userId: TEST_USER_ID, role: "user" },
+        user: createTestUser(),
       }),
     );
 
@@ -41,7 +46,7 @@ describe("users.me", () => {
     const caller = createCaller(
       createTestContext({
         db,
-        user: { userId: TEST_USER_ID, role: "user" },
+        user: createTestUser(),
       }),
     );
 

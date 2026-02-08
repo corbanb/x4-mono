@@ -1,7 +1,21 @@
+import type { User } from "../../trpc";
+
 export const TEST_USER_ID = "11111111-1111-1111-1111-111111111111";
 export const TEST_ADMIN_ID = "22222222-2222-2222-2222-222222222222";
 export const TEST_PROJECT_ID = "33333333-3333-3333-3333-333333333333";
 export const OTHER_USER_ID = "44444444-4444-4444-4444-444444444444";
+
+/** Create a test user object matching the tRPC User type */
+export function createTestUser(overrides: Partial<User> = {}): User {
+  return {
+    userId: TEST_USER_ID,
+    name: "Test User",
+    email: "user@test.com",
+    role: "user",
+    emailVerified: false,
+    ...overrides,
+  };
+}
 
 const now = new Date("2025-01-01T00:00:00Z");
 
