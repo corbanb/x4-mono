@@ -7,12 +7,13 @@
     "./utils": "./utils/index.ts",
     "./api-client": "./api-client/index.ts",
     "./hooks": "./hooks/index.ts",
-    "./ui": "./ui/index.ts"
+    "./ui": "./ui/index.ts",
+    "./ai": "./ai-types/index.ts"
   },
   "scripts": {
     "dev": "echo 'no dev server'",
     "build": "echo 'no build step'",
-    "lint": "eslint src/ types/ utils/ api-client/ hooks/ ui/",
+    "lint": "eslint src/ types/ utils/ api-client/ hooks/ ui/ ai-types/",
     "type-check": "tsc --noEmit",
     "test": "bun test"
   },

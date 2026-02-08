@@ -9,6 +9,12 @@
     "build": "echo 'no build step'",
     "lint": "eslint src/",
     "type-check": "tsc --noEmit",
-    "test": "echo 'no tests yet'"
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@x4/shared": "workspace:*",
+    "ai": "6.0.77",
+    "@ai-sdk/anthropic": "^3.0.0",
+    "@ai-sdk/openai": "^3.0.0"
   }
 }
