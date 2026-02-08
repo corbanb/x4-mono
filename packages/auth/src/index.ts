@@ -1,2 +1,1 @@
-// @x4/auth — Better Auth config, session management
-export {};
+export { auth, type Auth } from "./server";
