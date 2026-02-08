@@ -200,7 +200,7 @@ apps/mobile/
 
 | Level | What's Tested | Tool | Count (approx) |
 |-------|--------------|------|----------------|
-| Unit | Token storage/retrieval, component rendering | Bun test + RN Testing Library | 5-8 |
+| Unit | Token storage/retrieval, component rendering | Bun test + RN Testing Library | 8-12 |
 | Integration | Auth flow against running API | Manual on device/simulator | 2-3 |
 | E2E | Full login → CRUD flow | Detox (optional, per-project) | 0 (boilerplate) |
 
@@ -211,6 +211,26 @@ apps/mobile/
 3. **tRPC queries work**: Project list loads via tRPC
 4. **Auth gate**: Navigate to dashboard without auth → redirect to login
 5. **Form validation**: Invalid project name → Zod error displayed
+6. **SecureStore mock**: `expo-secure-store` mocked with in-memory Map for unit tests
+7. **TRPCProvider renders**: TRPCProvider renders without crash in React Native context
+8. **Auth header injection**: SecureStore token is injected into tRPC client auth headers
+9. **Offline handling**: Network error → error state displayed (not crash)
+10. **Navigation guard**: Unauthenticated user navigating to protected route → redirect to /login
+
+### Mock Patterns
+
+```typescript
+// Mock expo-secure-store with in-memory Map for unit tests
+import { mock } from "bun:test";
+
+const store = new Map<string, string>();
+
+mock.module("expo-secure-store", () => ({
+  getItemAsync: async (key: string) => store.get(key) ?? null,
+  setItemAsync: async (key: string, value: string) => { store.set(key, value); },
+  deleteItemAsync: async (key: string) => { store.delete(key); },
+}));
+```
 
 ---
 

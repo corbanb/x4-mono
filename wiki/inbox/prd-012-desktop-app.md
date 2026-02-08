@@ -197,7 +197,7 @@ apps/desktop/
 
 | Level | What's Tested | Tool | Count (approx) |
 |-------|--------------|------|----------------|
-| Unit | safeStorage wrapper, IPC handler logic | Bun test (mock Electron APIs) | 5-8 |
+| Unit | safeStorage wrapper, IPC handler logic | Bun test (mock Electron APIs) | 8-12 |
 | Integration | Full auth flow in running Electron app | Manual | 2-3 |
 | E2E | Spectron or Playwright Electron (optional) | Per-project | 0 (boilerplate) |
 
@@ -208,6 +208,40 @@ apps/desktop/
 3. **safeStorage unavailable**: `isEncryptionAvailable()` false → graceful fallback/warning
 4. **IPC security**: Renderer can only access `electronAuth` methods, not arbitrary main process APIs
 5. **tRPC works**: Project list loads in renderer via tRPC through auth IPC
+6. **safeStorage encrypt/decrypt round-trip**: `encryptString` → `decryptString` returns original value
+7. **IPC handler responds to `auth:get-token`**: Main process receives invoke, returns decrypted token
+8. **IPC handler responds to `auth:set-token`**: Main process receives invoke, encrypts and stores token
+9. **Preload exposes exact API surface**: `contextBridge` exposes exactly `getToken`, `setToken`, `clearToken` — no extra methods
+10. **BrowserWindow security defaults**: `nodeIntegration: false`, `contextIsolation: true` verified in window config
+
+### Mock Patterns
+
+```typescript
+// Mock Electron APIs for unit tests
+import { mock } from "bun:test";
+
+const encrypted = new Map<string, Buffer>();
+
+mock.module("electron", () => ({
+  safeStorage: {
+    isEncryptionAvailable: () => true,
+    encryptString: (text: string) => {
+      const buf = Buffer.from(`encrypted:${text}`);
+      return buf;
+    },
+    decryptString: (buf: Buffer) => {
+      return buf.toString().replace("encrypted:", "");
+    },
+  },
+  ipcMain: {
+    handle: mock(() => {}),
+  },
+  BrowserWindow: class {
+    constructor(public opts: Record<string, unknown>) {}
+    loadURL() {}
+  },
+}));
+```
 
 ---
 
