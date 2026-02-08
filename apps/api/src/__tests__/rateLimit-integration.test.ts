@@ -1,31 +1,13 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
+import { describe, test, expect } from "bun:test";
 import { Hono } from "hono";
 import { requestLogger } from "../middleware/logger";
+import { rateLimit } from "../middleware/rateLimit";
 
-// These tests use a fresh rateLimit import without Redis configured
-// to verify fail-open behavior without hitting network timeouts
+// These tests verify fail-open behavior when Redis is not available.
+// In test env (NODE_ENV=test), the rate limiter skips Redis entirely.
 
 describe("Rate limit integration (no Redis — fail open)", () => {
-  let savedUrl: string | undefined;
-  let savedToken: string | undefined;
-
-  beforeAll(() => {
-    // Remove Upstash env vars so rate limiter has no Redis
-    savedUrl = process.env.UPSTASH_REDIS_REST_URL;
-    savedToken = process.env.UPSTASH_REDIS_REST_TOKEN;
-    delete process.env.UPSTASH_REDIS_REST_URL;
-    delete process.env.UPSTASH_REDIS_REST_TOKEN;
-  });
-
-  afterAll(() => {
-    // Restore env vars
-    if (savedUrl) process.env.UPSTASH_REDIS_REST_URL = savedUrl;
-    if (savedToken) process.env.UPSTASH_REDIS_REST_TOKEN = savedToken;
-  });
-
   function createApp() {
-    // Dynamic import to avoid cached Redis client from other tests
-    const { rateLimit } = require("../middleware/rateLimit");
     const app = new Hono();
     app.use("*", requestLogger);
     app.use("/api/auth/*", rateLimit("auth"));
