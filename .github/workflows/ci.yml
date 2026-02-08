@@ -24,7 +24,7 @@ jobs:
       auth: ${{ steps.filter.outputs.auth }}
       api: ${{ steps.filter.outputs.api }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -74,7 +74,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.quality == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -102,7 +102,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.shared == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -127,7 +127,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.database == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -152,7 +152,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.auth == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -177,7 +177,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.api == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
