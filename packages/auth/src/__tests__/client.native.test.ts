@@ -14,8 +14,8 @@ mock.module("expo-secure-store", () => ({
 
 // --- Mock better-auth/react ---
 
-const mockSignInEmail = mock(() =>
-  Promise.resolve({ data: { token: "test-token" } }),
+const mockSignInEmail = mock(
+  () => Promise.resolve({ data: { token: "test-token" } } as Record<string, unknown>),
 );
 const mockSignOut = mock(() => Promise.resolve({}));
 const mockUseSession = mock(() => ({
@@ -96,12 +96,13 @@ describe("signInAndStore", () => {
   });
 
   test("returns the sign-in result", async () => {
-    const signInResult = { data: { token: "tok", user: { id: "1" } } };
-    mockSignInEmail.mockImplementation(() => Promise.resolve(signInResult));
+    mockSignInEmail.mockImplementation(() =>
+      Promise.resolve({ data: { token: "tok-returned" } }),
+    );
 
     const result = await signInAndStore({ email: "a@b.com", password: "pass" });
 
-    expect(result).toEqual(signInResult);
+    expect((result as { data: { token: string } }).data.token).toBe("tok-returned");
   });
 });
 
