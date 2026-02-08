@@ -29,7 +29,7 @@ PRDs move through four stages:
 | PRD-004 | [Shared UI Components & Hooks](completed/prd-004-shared-ui-hooks.md) | Completed | PRD-001, PRD-002 | completed |
 | PRD-005 | [API Server — Hono + tRPC on Bun](completed/prd-005-api-server.md) | Completed | PRD-001, PRD-002, PRD-003 | completed |
 | PRD-006 | [Authentication & Authorization — Better Auth](completed/prd-006-auth.md) | Completed | PRD-003, PRD-005 | completed |
-| PRD-007 | [Error Handling & Logging](inbox/prd-007-error-handling-logging.md) | Draft | PRD-002, PRD-005 | inbox |
+| PRD-007 | [Error Handling & Logging](completed/prd-007-error-handling-logging.md) | Completed | PRD-002, PRD-005 | completed |
 | PRD-008 | [Rate Limiting & Caching](inbox/prd-008-rate-limiting-caching.md) | Draft | PRD-005 | inbox |
 | PRD-009 | [AI Integration Layer](inbox/prd-009-ai-integration.md) | Draft | PRD-002, PRD-003, PRD-005, PRD-007, PRD-008 | inbox |
 | PRD-010 | [Web Application — Next.js](inbox/prd-010-web-app.md) | Draft | PRD-004, PRD-005, PRD-006 | inbox |
@@ -101,3 +101,4 @@ Track milestones and completed work here as PRDs are implemented.
 | 2026-02-07 | PRD-005: Completed — Hono app, tRPC v11 init, projects CRUD router, users stub, env validation, placeholder auth, 15 tests | — |
 | 2026-02-07 | PRD-004: Completed — tRPC React client, convenience hooks, auth hooks (placeholder), Button/Input UI scaffolding, 20 new tests (145 total in shared) | — |
 | 2026-02-07 | PRD-006: Completed — Better Auth server config, Hono route mounting, tRPC context integration, web/native/desktop clients, auth middleware tests, 40 API tests | — |
+| 2026-02-07 | PRD-007: Completed — AppError class, Errors.* constructors, tRPC code mapping, Pino logger + child loggers, request logging middleware, global error handler, tRPC error formatter, React ErrorBoundary, router refactor, 47 new tests (87 total API) | — |
