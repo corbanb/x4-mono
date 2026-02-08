@@ -8,6 +8,7 @@ import { env } from "./lib/env";
 import { AppError } from "./lib/errors";
 import { logger } from "./lib/logger";
 import { requestLogger } from "./middleware/logger";
+import { rateLimit } from "./middleware/rateLimit";
 
 const app = new Hono();
 
@@ -38,6 +39,11 @@ app.use(
     credentials: true,
   }),
 );
+
+// --- Rate Limiting ---
+
+app.use("/api/auth/*", rateLimit("auth"));
+app.use("/trpc/*", rateLimit("general"));
 
 // --- Global Error Handler ---
 
