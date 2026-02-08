@@ -8,6 +8,7 @@
     "./router": "./src/routers/index.ts"
   },
   "dependencies": {
+    "@x4/auth": "workspace:*",
     "@x4/database": "workspace:*",
     "@x4/shared": "workspace:*",
     "hono": "^4.7.0",
