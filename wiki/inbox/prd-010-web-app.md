@@ -247,7 +247,7 @@ apps/web/
 
 | Level | What's Tested | Tool | Count (approx) |
 |-------|--------------|------|----------------|
-| Unit | Component rendering, form validation | Bun test + Testing Library | 8-12 |
+| Unit | Component rendering, form validation | Bun test + Testing Library | 10-15 |
 | Integration | TRPCProvider setup, auth redirect | Bun test | 3-5 |
 | E2E | Signup → login → dashboard → create project | Playwright | 2-3 |
 
@@ -261,6 +261,38 @@ apps/web/
 6. **Navigation**: Auth state reflected in nav (Login button vs. user name + Logout)
 7. **Loading states**: ProjectList shows loading indicator while fetching
 8. **Error state**: API returns error → user sees error message (not crash)
+9. **TRPCProvider initializes**: TRPCProvider renders without error and provides context to children
+10. **Middleware auth gate**: Unauthenticated request to `/dashboard/*` → redirect to `/login`
+11. **Accessibility**: Key components pass axe accessibility checks (no critical violations)
+12. **Cache invalidation**: Mutation success (e.g. create project) → list query refetched automatically
+
+### Mock Patterns
+
+```typescript
+// Next.js middleware test pattern
+import { NextRequest } from "next/server";
+import { middleware } from "../src/middleware";
+
+test("redirects unauthenticated users from /dashboard", async () => {
+  const req = new NextRequest(new URL("http://localhost:3000/dashboard"));
+  const res = await middleware(req);
+  expect(res?.status).toBe(307);
+  expect(res?.headers.get("location")).toContain("/login");
+});
+
+// renderWithProviders helper for component tests
+import { render } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+export function renderWithProviders(ui: React.ReactElement) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+  );
+}
+```
 
 ---
 
