@@ -1,9 +1,10 @@
-import { initTRPC, TRPCError } from "@trpc/server";
+import { initTRPC } from "@trpc/server";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { db } from "@x4/database";
 import type { Database } from "@x4/database";
 import { auth } from "@x4/auth";
 import { ZodError } from "zod";
+import { AppError, Errors } from "./lib/errors";
 
 // --- Context ---
 
@@ -47,12 +48,16 @@ export async function createContext(
 
 const t = initTRPC.context<Context>().create({
   errorFormatter({ shape, error }) {
+    const cause = error.cause;
     return {
       ...shape,
       data: {
         ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
+        zodError: cause instanceof ZodError ? cause.flatten() : null,
+        appError:
+          cause instanceof AppError
+            ? { code: cause.code, details: cause.details }
+            : null,
       },
     };
   },
@@ -66,26 +71,17 @@ export const createCallerFactory = t.createCallerFactory;
 
 const isAuthed = t.middleware(({ ctx, next }) => {
   if (!ctx.user) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "You must be logged in to access this resource",
-    });
+    throw Errors.unauthorized("You must be logged in to access this resource").toTRPCError();
   }
   return next({ ctx: { ...ctx, user: ctx.user } });
 });
 
 const isAdmin = t.middleware(({ ctx, next }) => {
   if (!ctx.user) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "You must be logged in to access this resource",
-    });
+    throw Errors.unauthorized("You must be logged in to access this resource").toTRPCError();
   }
   if (ctx.user.role !== "admin") {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Admin access required",
-    });
+    throw Errors.forbidden("Admin access required").toTRPCError();
   }
   return next({ ctx: { ...ctx, user: ctx.user } });
 });
