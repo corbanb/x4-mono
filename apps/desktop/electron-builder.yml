@@ -1,0 +1,22 @@
+appId: com.x4.desktop
+productName: x4
+directories:
+  buildResources: build
+  output: out
+files:
+  - dist/**/*
+  - package.json
+mac:
+  category: public.app-category.developer-tools
+  target:
+    - dmg
+    - zip
+win:
+  target:
+    - nsis
+    - portable
+linux:
+  category: Development
+  target:
+    - AppImage
+    - deb
