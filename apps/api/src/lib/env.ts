@@ -1,0 +1,28 @@
+import { z } from "zod";
+
+const envSchema = z.object({
+  PORT: z.coerce.number().default(3002),
+  DATABASE_URL: z.string().url("DATABASE_URL must be a valid URL"),
+  JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),
+  ANTHROPIC_API_KEY: z.string().startsWith("sk-", "ANTHROPIC_API_KEY must start with 'sk-'"),
+  WEB_URL: z.string().url().default("http://localhost:3000"),
+  MARKETING_URL: z.string().url().default("http://localhost:3001"),
+  APP_VERSION: z.string().optional(),
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+});
+
+export type Env = z.infer<typeof envSchema>;
+
+function validateEnv(): Env {
+  const result = envSchema.safeParse(process.env);
+
+  if (!result.success) {
+    console.error("Invalid environment variables:");
+    console.error(result.error.flatten().fieldErrors);
+    process.exit(1);
+  }
+
+  return result.data;
+}
+
+export const env = validateEnv();
