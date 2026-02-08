@@ -5,8 +5,15 @@ import { auth } from "@x4/auth";
 import { appRouter } from "./routers";
 import { createContext } from "./trpc";
 import { env } from "./lib/env";
+import { AppError } from "./lib/errors";
+import { logger } from "./lib/logger";
+import { requestLogger } from "./middleware/logger";
 
 const app = new Hono();
+
+// --- Request Logger (first middleware — generates requestId) ---
+
+app.use("*", requestLogger);
 
 // --- Global Middleware ---
 
@@ -32,6 +39,35 @@ app.use(
   }),
 );
 
+// --- Global Error Handler ---
+
+app.onError((err, c) => {
+  const requestId = c.get("requestId") ?? crypto.randomUUID();
+
+  if (err instanceof AppError) {
+    logger.warn({ err: { code: err.code, message: err.message }, requestId }, `AppError: ${err.code}`);
+    return c.json(
+      {
+        code: err.code,
+        message: err.message,
+        details: err.details,
+        requestId,
+      },
+      err.httpStatus as never,
+    );
+  }
+
+  logger.error({ err, requestId }, "Unhandled error");
+  return c.json(
+    {
+      code: "INTERNAL_ERROR",
+      message: "An unexpected error occurred",
+      requestId,
+    },
+    500,
+  );
+});
+
 // --- Better Auth Handler ---
 
 app.on(["POST", "GET"], "/api/auth/**", (c) => {
@@ -56,7 +92,7 @@ app.use(
     router: appRouter,
     createContext,
     onError({ error }) {
-      console.error("tRPC error:", error.message);
+      logger.error({ code: error.code, message: error.message }, "tRPC error");
     },
   }),
 );
