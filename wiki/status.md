@@ -34,7 +34,7 @@ PRDs move through four stages:
 | PRD-009 | [AI Integration Layer](completed/prd-009-ai-integration.md) | Completed | PRD-002, PRD-003, PRD-005, PRD-007, PRD-008 | completed |
 | PRD-010 | [Web Application — Next.js](completed/prd-010-web-app.md) | Completed | PRD-004, PRD-005, PRD-006 | completed |
 | PRD-011 | [Mobile Application — Expo + React Native](completed/prd-011-mobile-app.md) | Completed | PRD-004, PRD-005, PRD-006 | completed |
-| PRD-012 | [Desktop Application — Electron](inbox/prd-012-desktop-app.md) | Draft | PRD-004, PRD-005, PRD-006 | inbox |
+| PRD-012 | [Desktop Application — Electron](completed/prd-012-desktop-app.md) | Completed | PRD-004, PRD-005, PRD-006 | completed |
 | PRD-013 | [Marketing Site — Next.js Static](inbox/prd-013-marketing-site.md) | Draft | PRD-001, PRD-010 | inbox |
 | PRD-014 | [CI/CD, Deployment & DevOps](inbox/prd-014-cicd-devops.md) | Draft | All previous PRDs | inbox |
 | PRD-015 | [Testing Strategy & Infrastructure](inbox/prd-015-testing-strategy.md) | Draft | PRD-001, PRD-003 | inbox |
@@ -106,3 +106,4 @@ Track milestones and completed work here as PRDs are implemented.
 | 2026-02-07 | PRD-009: Completed — Vercel AI SDK providers (Claude + OpenAI), generateAIResponse/streamAIResponse, provider factory, cost tracking, system prompts, tRPC ai.generate router with DB usage logging, 41 new tests (351 total) | — |
 | 2026-02-07 | PRD-010: Completed — Next.js 15 web app with TRPCProvider, auth pages (login/signup), dashboard with project CRUD, middleware auth redirects, react-hook-form + Zod, Tailwind v4, Vercel deployment config | — |
 | 2026-02-07 | PRD-011: Completed — Expo + React Native mobile app with Expo Router, tRPC client with SecureStore token, auth-gated dashboard, ProjectList + CreateProjectForm, EAS build config | — |
+| 2026-02-07 | PRD-012: Completed — Electron desktop app with three-process architecture (main/preload/renderer), safeStorage token encryption, IPC bridge for auth, React renderer with tRPC, electron-builder config | — |
