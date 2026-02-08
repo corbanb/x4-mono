@@ -21,6 +21,7 @@ jobs:
       quality: ${{ steps.filter.outputs.quality }}
       shared: ${{ steps.filter.outputs.shared }}
       database: ${{ steps.filter.outputs.database }}
+      auth: ${{ steps.filter.outputs.auth }}
       api: ${{ steps.filter.outputs.api }}
     steps:
       - uses: actions/checkout@v4
@@ -48,10 +49,19 @@ jobs:
               - 'turbo.json'
               - 'package.json'
               - 'bun.lock'
+            auth:
+              - 'packages/auth/**'
+              - 'packages/database/**'
+              - 'packages/shared/**'
+              - 'tsconfig.base.json'
+              - 'turbo.json'
+              - 'package.json'
+              - 'bun.lock'
             api:
               - 'apps/api/**'
               - 'packages/shared/**'
               - 'packages/database/**'
+              - 'packages/auth/**'
               - 'tsconfig.base.json'
               - 'turbo.json'
               - 'package.json'
@@ -135,7 +145,32 @@ jobs:
       - name: Run database tests
         run: bun test --cwd packages/database
 
-  # ─── Test: apps/api (35 tests) ──────────────────────────────────────
+  # ─── Test: packages/auth (25 tests) ─────────────────────────────────
+  test-auth:
+    name: "Test: auth"
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.auth == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.8"
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run auth tests
+        run: bun test --cwd packages/auth
+
+  # ─── Test: apps/api (87 tests) ─────────────────────────────────────
   test-api:
     name: "Test: api"
     runs-on: ubuntu-latest
@@ -165,13 +200,14 @@ jobs:
     name: CI Passed
     runs-on: ubuntu-latest
     if: always()
-    needs: [quality, test-shared, test-database, test-api]
+    needs: [quality, test-shared, test-database, test-auth, test-api]
     steps:
       - name: Check results
         run: |
           if [[ "${{ needs.quality.result }}" == "failure" || \
                 "${{ needs.test-shared.result }}" == "failure" || \
                 "${{ needs.test-database.result }}" == "failure" || \
+                "${{ needs.test-auth.result }}" == "failure" || \
                 "${{ needs.test-api.result }}" == "failure" ]]; then
             echo "One or more CI jobs failed"
             exit 1
