@@ -15,11 +15,25 @@ jobs:
     permissions:
       pull-requests: write
     steps:
+      - name: Check API key
+        id: check-key
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [[ -n "$ANTHROPIC_API_KEY" ]]; then
+            echo "available=true" >> $GITHUB_OUTPUT
+          else
+            echo "available=false" >> $GITHUB_OUTPUT
+            echo "ANTHROPIC_API_KEY not configured — skipping AI review"
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.check-key.outputs.available == 'true'
         with:
           fetch-depth: 0
 
       - name: Get PR diff
+        if: steps.check-key.outputs.available == 'true'
         id: diff
         run: |
           git fetch origin ${{ github.base_ref }}
@@ -31,6 +45,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Review with Claude
+        if: steps.check-key.outputs.available == 'true'
         uses: actions/github-script@v7
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
