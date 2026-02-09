@@ -67,7 +67,7 @@ jobs:
               - 'package.json'
               - 'bun.lock'
 
-  # ─── Type Check & Lint ───────────────────────────────────────────────
+  # ─── Type Check, Lint & Audit ──────────────────────────────────────
   quality:
     name: Type Check & Lint
     runs-on: ubuntu-latest
@@ -95,7 +95,62 @@ jobs:
       - name: Lint
         run: bun turbo lint
 
-  # ─── Test: packages/shared (125 tests) ──────────────────────────────
+      - name: Dependency audit
+        run: bun pm audit
+        continue-on-error: true
+
+  # ─── Neon Database Branch (PR only) ────────────────────────────────
+  neon-branch:
+    name: Create Neon Branch
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    outputs:
+      db-url: ${{ steps.create-branch.outputs.db_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Neon Branch
+        id: create-branch
+        uses: neondatabase/create-branch-action@v5
+        with:
+          project_id: ${{ secrets.NEON_PROJECT_ID }}
+          api_key: ${{ secrets.NEON_API_KEY }}
+          branch_name: pr-${{ github.event.pull_request.number }}
+          parent: main
+
+  # ─── Migration Safety Check (PR only) ─────────────────────────────
+  migration-check:
+    name: Migration Safety Check
+    runs-on: ubuntu-latest
+    needs: neon-branch
+    if: github.event_name == 'pull_request'
+    env:
+      DATABASE_URL: ${{ needs.neon-branch.outputs.db-url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.8"
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Check schema/migration sync
+        run: bunx drizzle-kit generate --check
+        working-directory: packages/database
+
+      - name: Run migrations on branch
+        run: bunx drizzle-kit migrate
+        working-directory: packages/database
+
+  # ─── Test: packages/shared ─────────────────────────────────────────
   test-shared:
     name: "Test: shared"
     runs-on: ubuntu-latest
@@ -120,12 +175,16 @@ jobs:
       - name: Run shared tests
         run: bun test --cwd packages/shared
 
-  # ─── Test: packages/database (25 tests) ─────────────────────────────
+  # ─── Test: packages/database ───────────────────────────────────────
   test-database:
     name: "Test: database"
     runs-on: ubuntu-latest
-    needs: changes
-    if: needs.changes.outputs.database == 'true'
+    needs: [changes, neon-branch]
+    if: |
+      always() &&
+      needs.changes.outputs.database == 'true'
+    env:
+      DATABASE_URL: ${{ needs.neon-branch.outputs.db-url || '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -145,12 +204,16 @@ jobs:
       - name: Run database tests
         run: bun test --cwd packages/database
 
-  # ─── Test: packages/auth (25 tests) ─────────────────────────────────
+  # ─── Test: packages/auth ───────────────────────────────────────────
   test-auth:
     name: "Test: auth"
     runs-on: ubuntu-latest
-    needs: changes
-    if: needs.changes.outputs.auth == 'true'
+    needs: [changes, neon-branch]
+    if: |
+      always() &&
+      needs.changes.outputs.auth == 'true'
+    env:
+      DATABASE_URL: ${{ needs.neon-branch.outputs.db-url || '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -170,12 +233,16 @@ jobs:
       - name: Run auth tests
         run: bun test --cwd packages/auth
 
-  # ─── Test: apps/api (87 tests) ─────────────────────────────────────
+  # ─── Test: apps/api ────────────────────────────────────────────────
   test-api:
     name: "Test: api"
     runs-on: ubuntu-latest
-    needs: changes
-    if: needs.changes.outputs.api == 'true'
+    needs: [changes, neon-branch]
+    if: |
+      always() &&
+      needs.changes.outputs.api == 'true'
+    env:
+      DATABASE_URL: ${{ needs.neon-branch.outputs.db-url || '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -195,16 +262,17 @@ jobs:
       - name: Run API tests
         run: bun test --cwd apps/api
 
-  # ─── Summary Gate ───────────────────────────────────────────────────
+  # ─── Summary Gate ──────────────────────────────────────────────────
   ci-passed:
     name: CI Passed
     runs-on: ubuntu-latest
     if: always()
-    needs: [quality, test-shared, test-database, test-auth, test-api]
+    needs: [quality, migration-check, test-shared, test-database, test-auth, test-api]
     steps:
       - name: Check results
         run: |
           if [[ "${{ needs.quality.result }}" == "failure" || \
+                "${{ needs.migration-check.result }}" == "failure" || \
                 "${{ needs.test-shared.result }}" == "failure" || \
                 "${{ needs.test-database.result }}" == "failure" || \
                 "${{ needs.test-auth.result }}" == "failure" || \
