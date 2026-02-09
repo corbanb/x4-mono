@@ -13,7 +13,7 @@
     "@x4/database": "workspace:*",
     "@x4/shared": "workspace:*",
     "hono": "^4.7.0",
-    "@hono/trpc-server": "^0.3.0",
+    "@hono/trpc-server": "^0.4.2",
     "@trpc/server": "^11.0.0",
     "zod": "^3.23.0"
   },
