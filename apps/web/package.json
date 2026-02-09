@@ -13,7 +13,7 @@
   "dependencies": {
     "@x4/shared": "workspace:*",
     "@x4/auth": "workspace:*",
-    "@hookform/resolvers": "^3.9.0",
+    "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-query": "^5.60.0",
     "@trpc/client": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
