@@ -24,7 +24,7 @@ jobs:
       auth: ${{ steps.filter.outputs.auth }}
       api: ${{ steps.filter.outputs.api }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -74,7 +74,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.quality == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -120,7 +120,7 @@ jobs:
             echo "Neon secrets not configured — skipping branch creation"
           fi
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         if: steps.check-secrets.outputs.available == 'true'
 
       - name: Create Neon Branch
@@ -142,7 +142,7 @@ jobs:
     env:
       DATABASE_URL: ${{ needs.neon-branch.outputs.db-url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -172,7 +172,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.shared == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -201,7 +201,7 @@ jobs:
     env:
       DATABASE_URL: ${{ needs.neon-branch.outputs.db-url || '' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -230,7 +230,7 @@ jobs:
     env:
       DATABASE_URL: ${{ needs.neon-branch.outputs.db-url || '' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -259,7 +259,7 @@ jobs:
     env:
       DATABASE_URL: ${{ needs.neon-branch.outputs.db-url || '' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
