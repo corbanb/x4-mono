@@ -8,7 +8,9 @@
     "WEB_URL",
     "MARKETING_URL",
     "ANTHROPIC_API_KEY",
-    "DOCS_URL"
+    "DOCS_URL",
+    "VERCEL_URL",
+    "NEXT_PUBLIC_API_URL"
   ],
   "tasks": {
     "build": {

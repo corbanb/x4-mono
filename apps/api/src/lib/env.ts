@@ -10,6 +10,7 @@ const envSchema = z.object({
   WEB_URL: z.string().url().default("http://localhost:3000"),
   MARKETING_URL: z.string().url().default("http://localhost:3001"),
   DOCS_URL: z.string().url().default("http://localhost:3003"),
+  VERCEL_URL: z.string().optional(),
   GITHUB_CLIENT_ID: z.string().optional(),
   GITHUB_CLIENT_SECRET: z.string().optional(),
   GOOGLE_CLIENT_ID: z.string().optional(),
@@ -24,6 +25,12 @@ const envSchema = z.object({
 export type Env = z.infer<typeof envSchema>;
 
 function validateEnv(): Env {
+  // On Vercel preview deploys, VERCEL_URL is auto-set (without protocol).
+  // Use it as fallback for BETTER_AUTH_URL when not explicitly configured.
+  if (process.env.VERCEL_URL && !process.env.BETTER_AUTH_URL) {
+    process.env.BETTER_AUTH_URL = `https://${process.env.VERCEL_URL}`;
+  }
+
   const result = envSchema.safeParse(process.env);
 
   if (!result.success) {
