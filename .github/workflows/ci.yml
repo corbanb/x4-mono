@@ -126,7 +126,7 @@ jobs:
       - name: Create Neon Branch
         if: steps.check-secrets.outputs.available == 'true'
         id: create-branch
-        uses: neondatabase/create-branch-action@v5
+        uses: neondatabase/create-branch-action@v6
         with:
           project_id: ${{ secrets.NEON_PROJECT_ID }}
           api_key: ${{ secrets.NEON_API_KEY }}
