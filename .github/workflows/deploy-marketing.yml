@@ -1,28 +1,26 @@
-name: Deploy Docs
+name: Deploy Marketing
 
 on:
   push:
     branches: [main]
     paths:
-      - 'apps/docs/**'
-      - 'apps/api/openapi.json'
+      - 'apps/marketing/**'
       - 'packages/**'
       - 'turbo.json'
       - 'package.json'
       - 'bun.lock'
   pull_request:
     paths:
-      - 'apps/docs/**'
-      - 'apps/api/openapi.json'
+      - 'apps/marketing/**'
       - 'packages/**'
 
 concurrency:
-  group: deploy-docs-${{ github.ref }}
+  group: deploy-marketing-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   deploy:
-    name: Deploy Docs to Vercel
+    name: Deploy Marketing to Vercel
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -42,18 +40,14 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Generate OpenAPI spec
-        run: bun run openapi:generate
-        working-directory: apps/api
-
       - name: Deploy to Vercel (Production)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_DOCS }}
-          working-directory: ./apps/docs
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_MARKETING }}
+          working-directory: ./apps/marketing
           vercel-args: '--prod'
 
       - name: Deploy to Vercel (Preview)
@@ -63,21 +57,21 @@ jobs:
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_DOCS }}
-          working-directory: ./apps/docs
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_MARKETING }}
+          working-directory: ./apps/marketing
 
       - name: Comment preview URL on PR
         if: github.event_name == 'pull_request' && steps.preview.outputs.preview-url
         uses: actions/github-script@v7
         with:
           script: |
-            const body = `**Docs Preview:** ${process.env.PREVIEW_URL}`;
+            const body = `**Marketing Preview:** ${process.env.PREVIEW_URL}`;
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
             });
-            const existing = comments.find(c => c.body.startsWith('**Docs Preview:**'));
+            const existing = comments.find(c => c.body.startsWith('**Marketing Preview:**'));
             if (existing) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,

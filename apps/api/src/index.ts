@@ -20,7 +20,9 @@ app.use("*", requestLogger);
 
 // --- Global Middleware ---
 
-const allowedOrigins = [env.WEB_URL, env.MARKETING_URL, env.DOCS_URL];
+const allowedOrigins = [env.WEB_URL, env.MARKETING_URL, env.DOCS_URL].concat(
+  env.VERCEL_URL ? [`https://${env.VERCEL_URL}`] : [],
+);
 
 app.use(
   "/trpc/*",
