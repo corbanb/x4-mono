@@ -41,8 +41,10 @@ export type AIGenerateInput = z.infer<typeof AIGenerateInputSchema>;
 
 // --- AI Generate Output ---
 
-export interface AIGenerateOutput {
-  text: string;
-  tokensUsed: number;
-  estimatedCost: number;
-}
+export const AIGenerateOutputSchema = z.object({
+  text: z.string(),
+  tokensUsed: z.number().int(),
+  estimatedCost: z.number(),
+});
+
+export type AIGenerateOutput = z.infer<typeof AIGenerateOutputSchema>;

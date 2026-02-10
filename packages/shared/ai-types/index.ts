@@ -1,6 +1,7 @@
 export {
   AIOptionsSchema,
   AIGenerateInputSchema,
+  AIGenerateOutputSchema,
   type AIOptions,
   type AIResponse,
   type AIMessage,

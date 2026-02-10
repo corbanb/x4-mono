@@ -23,6 +23,7 @@ jobs:
       database: ${{ steps.filter.outputs.database }}
       auth: ${{ steps.filter.outputs.auth }}
       api: ${{ steps.filter.outputs.api }}
+      docs: ${{ steps.filter.outputs.docs }}
     steps:
       - uses: actions/checkout@v6
       - uses: dorny/paths-filter@v3
@@ -62,6 +63,14 @@ jobs:
               - 'packages/shared/**'
               - 'packages/database/**'
               - 'packages/auth/**'
+              - 'tsconfig.base.json'
+              - 'turbo.json'
+              - 'package.json'
+              - 'bun.lock'
+            docs:
+              - 'apps/docs/**'
+              - 'apps/api/openapi.json'
+              - 'packages/shared/**'
               - 'tsconfig.base.json'
               - 'turbo.json'
               - 'package.json'

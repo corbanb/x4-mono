@@ -1,0 +1,12 @@
+{
+  "title": "Docs",
+  "pages": [
+    "index",
+    "authentication",
+    "errors",
+    "rate-limiting",
+    "ai-integration",
+    "---API Reference---",
+    "...api-reference"
+  ]
+}
