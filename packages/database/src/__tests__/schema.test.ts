@@ -1,6 +1,10 @@
 import { describe, test, expect } from "bun:test";
 import {
   users,
+  user,
+  session,
+  account,
+  verification,
   projects,
   aiUsageLog,
   userRoleEnum,
@@ -14,8 +18,15 @@ import { getTableName, getTableColumns } from "drizzle-orm";
 describe("Schema exports", () => {
   test("all tables are exported", () => {
     expect(users).toBeDefined();
+    expect(session).toBeDefined();
+    expect(account).toBeDefined();
+    expect(verification).toBeDefined();
     expect(projects).toBeDefined();
     expect(aiUsageLog).toBeDefined();
+  });
+
+  test("user is an alias for users table", () => {
+    expect(user).toBe(users);
   });
 
   test("userRoleEnum is exported with correct values", () => {
@@ -181,5 +192,168 @@ describe("AI Usage Log table", () => {
   test("model is not null", () => {
     const columns = getTableColumns(aiUsageLog);
     expect(columns.model.notNull).toBe(true);
+  });
+});
+
+// --- Session table (Better Auth) ---
+describe("Session table", () => {
+  test("has correct SQL table name", () => {
+    expect(getTableName(session)).toBe("session");
+  });
+
+  test("has all expected columns", () => {
+    const columns = getTableColumns(session);
+    const columnNames = Object.keys(columns);
+
+    expect(columnNames).toContain("id");
+    expect(columnNames).toContain("expiresAt");
+    expect(columnNames).toContain("token");
+    expect(columnNames).toContain("createdAt");
+    expect(columnNames).toContain("updatedAt");
+    expect(columnNames).toContain("ipAddress");
+    expect(columnNames).toContain("userAgent");
+    expect(columnNames).toContain("userId");
+    expect(columnNames).toHaveLength(8);
+  });
+
+  test("id is varchar with default", () => {
+    const columns = getTableColumns(session);
+    expect(columns.id.dataType).toBe("string");
+    expect(columns.id.notNull).toBe(true);
+    expect(columns.id.hasDefault).toBe(true);
+  });
+
+  test("token is unique and not null", () => {
+    const columns = getTableColumns(session);
+    expect(columns.token.isUnique).toBe(true);
+    expect(columns.token.notNull).toBe(true);
+  });
+
+  test("expiresAt is not null", () => {
+    const columns = getTableColumns(session);
+    expect(columns.expiresAt.notNull).toBe(true);
+  });
+
+  test("userId is not null", () => {
+    const columns = getTableColumns(session);
+    expect(columns.userId.notNull).toBe(true);
+  });
+
+  test("ipAddress and userAgent are optional", () => {
+    const columns = getTableColumns(session);
+    expect(columns.ipAddress.notNull).toBe(false);
+    expect(columns.userAgent.notNull).toBe(false);
+  });
+
+  test("createdAt and updatedAt are not null with defaults", () => {
+    const columns = getTableColumns(session);
+    expect(columns.createdAt.notNull).toBe(true);
+    expect(columns.createdAt.hasDefault).toBe(true);
+    expect(columns.updatedAt.notNull).toBe(true);
+    expect(columns.updatedAt.hasDefault).toBe(true);
+  });
+});
+
+// --- Account table (Better Auth) ---
+describe("Account table", () => {
+  test("has correct SQL table name", () => {
+    expect(getTableName(account)).toBe("account");
+  });
+
+  test("has all expected columns", () => {
+    const columns = getTableColumns(account);
+    const columnNames = Object.keys(columns);
+
+    expect(columnNames).toContain("id");
+    expect(columnNames).toContain("accountId");
+    expect(columnNames).toContain("providerId");
+    expect(columnNames).toContain("userId");
+    expect(columnNames).toContain("accessToken");
+    expect(columnNames).toContain("refreshToken");
+    expect(columnNames).toContain("idToken");
+    expect(columnNames).toContain("accessTokenExpiresAt");
+    expect(columnNames).toContain("refreshTokenExpiresAt");
+    expect(columnNames).toContain("scope");
+    expect(columnNames).toContain("password");
+    expect(columnNames).toContain("createdAt");
+    expect(columnNames).toContain("updatedAt");
+    expect(columnNames).toHaveLength(13);
+  });
+
+  test("id is varchar with default", () => {
+    const columns = getTableColumns(account);
+    expect(columns.id.dataType).toBe("string");
+    expect(columns.id.notNull).toBe(true);
+    expect(columns.id.hasDefault).toBe(true);
+  });
+
+  test("accountId and providerId are not null", () => {
+    const columns = getTableColumns(account);
+    expect(columns.accountId.notNull).toBe(true);
+    expect(columns.providerId.notNull).toBe(true);
+  });
+
+  test("userId is not null", () => {
+    const columns = getTableColumns(account);
+    expect(columns.userId.notNull).toBe(true);
+  });
+
+  test("token fields are optional", () => {
+    const columns = getTableColumns(account);
+    expect(columns.accessToken.notNull).toBe(false);
+    expect(columns.refreshToken.notNull).toBe(false);
+    expect(columns.idToken.notNull).toBe(false);
+  });
+
+  test("createdAt and updatedAt are not null with defaults", () => {
+    const columns = getTableColumns(account);
+    expect(columns.createdAt.notNull).toBe(true);
+    expect(columns.createdAt.hasDefault).toBe(true);
+    expect(columns.updatedAt.notNull).toBe(true);
+    expect(columns.updatedAt.hasDefault).toBe(true);
+  });
+});
+
+// --- Verification table (Better Auth) ---
+describe("Verification table", () => {
+  test("has correct SQL table name", () => {
+    expect(getTableName(verification)).toBe("verification");
+  });
+
+  test("has all expected columns", () => {
+    const columns = getTableColumns(verification);
+    const columnNames = Object.keys(columns);
+
+    expect(columnNames).toContain("id");
+    expect(columnNames).toContain("identifier");
+    expect(columnNames).toContain("value");
+    expect(columnNames).toContain("expiresAt");
+    expect(columnNames).toContain("createdAt");
+    expect(columnNames).toContain("updatedAt");
+    expect(columnNames).toHaveLength(6);
+  });
+
+  test("id is varchar with default", () => {
+    const columns = getTableColumns(verification);
+    expect(columns.id.dataType).toBe("string");
+    expect(columns.id.notNull).toBe(true);
+    expect(columns.id.hasDefault).toBe(true);
+  });
+
+  test("identifier and value are not null", () => {
+    const columns = getTableColumns(verification);
+    expect(columns.identifier.notNull).toBe(true);
+    expect(columns.value.notNull).toBe(true);
+  });
+
+  test("expiresAt is not null", () => {
+    const columns = getTableColumns(verification);
+    expect(columns.expiresAt.notNull).toBe(true);
+  });
+
+  test("createdAt and updatedAt have defaults", () => {
+    const columns = getTableColumns(verification);
+    expect(columns.createdAt.hasDefault).toBe(true);
+    expect(columns.updatedAt.hasDefault).toBe(true);
   });
 });
