@@ -63,6 +63,7 @@ Before implementing each task, determine which specialist agent(s) to consult by
 | `apps/marketing/**` — Marketing site | `/frontend` | — |
 | `.github/workflows/**` — CI/CD pipelines | `/devops` | — |
 | `turbo.json`, `vercel.json`, `eas.json` — infra config | `/devops` | — |
+| `apps/docs/**`, `docs/**`, `*.md`, `*.mdx`, `CONTRIBUTING.md` — documentation | `/docs` | — |
 | `**/*.test.ts`, `**/*.test.tsx` — test files | `/testing` | (domain agent) |
 
 ### Keyword-based routing (secondary signal)
@@ -77,6 +78,7 @@ Use these when path patterns aren't sufficient or the task spans multiple domain
 | component, page, layout, form, hook, UI, Tailwind, React | `/frontend` |
 | test, mock, fixture, coverage, assertion | `/testing` |
 | workflow, CI, deploy, cache, pipeline, action | `/devops` |
+| documentation, README, MDX, JSDoc, guide, API reference, docs site, Fumadocs | `/docs` |
 
 ### Multi-agent tasks
 
@@ -93,7 +95,7 @@ Skip agent routing for simple tasks that don't need specialist guidance:
 - Pure config file changes (tsconfig, package.json, turbo.json tweaks)
 - Simple Zod schema definitions in `packages/shared/types/`
 - File moves or renames
-- Documentation-only changes
+- Documentation-only changes that are trivial (typo fixes, formatting). For substantial documentation changes, route to `/docs`
 - Tasks where the annotation block has complete, unambiguous instructions
 
 ### How to invoke agents
