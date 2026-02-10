@@ -8,14 +8,17 @@
     "./router": "./src/routers/index.ts"
   },
   "dependencies": {
+    "@hono/trpc-server": "^0.4.2",
+    "@scalar/hono-api-reference": "0.9.40",
+    "@trpc/server": "^11.0.0",
     "@x4/ai-integrations": "workspace:*",
     "@x4/auth": "workspace:*",
     "@x4/database": "workspace:*",
     "@x4/shared": "workspace:*",
     "hono": "^4.7.0",
-    "@hono/trpc-server": "^0.4.2",
-    "@trpc/server": "^11.0.0",
-    "zod": "^3.23.0"
+    "trpc-to-openapi": "2.4.0",
+    "zod": "^3.23.0",
+    "zod-openapi": "4.2.4"
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -25,6 +28,7 @@
     "build": "bun build src/index.ts --outdir dist --target bun",
     "lint": "eslint src/",
     "type-check": "tsc --noEmit",
-    "test": "bun test"
+    "test": "bun test",
+    "openapi:generate": "bun run src/scripts/generate-openapi.ts"
   }
 }

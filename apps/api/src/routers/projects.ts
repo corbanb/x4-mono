@@ -4,58 +4,78 @@ import {
   UpdateProjectSchema,
   PaginationSchema,
   IdParamSchema,
+  ProjectListResponseSchema,
+  ProjectWithOwnerSchema,
+  ProjectResponseSchema,
+  SuccessResponseSchema,
 } from "@x4/shared/utils";
 import { router, protectedProcedure, publicProcedure } from "../trpc";
 import { Errors } from "../lib/errors";
 
 export const projectsRouter = router({
-  list: publicProcedure.input(PaginationSchema).query(async ({ ctx, input }) => {
-    const { limit, offset } = input;
+  list: publicProcedure
+    .meta({
+      openapi: { method: "GET", path: "/projects", tags: ["Projects"] },
+    })
+    .input(PaginationSchema)
+    .output(ProjectListResponseSchema)
+    .query(async ({ ctx, input }) => {
+      const { limit, offset } = input;
 
-    const [items, [total]] = await Promise.all([
-      ctx.db
-        .select()
+      const [items, [total]] = await Promise.all([
+        ctx.db
+          .select()
+          .from(projects)
+          .limit(limit)
+          .offset(offset)
+          .orderBy(projects.createdAt),
+        ctx.db.select({ count: count() }).from(projects),
+      ]);
+
+      return {
+        items,
+        total: total.count,
+        limit,
+        offset,
+      };
+    }),
+
+  get: protectedProcedure
+    .meta({
+      openapi: { method: "GET", path: "/projects/{id}", tags: ["Projects"], protect: true },
+    })
+    .input(IdParamSchema)
+    .output(ProjectWithOwnerSchema)
+    .query(async ({ ctx, input }) => {
+      const [project] = await ctx.db
+        .select({
+          id: projects.id,
+          ownerId: projects.ownerId,
+          name: projects.name,
+          description: projects.description,
+          status: projects.status,
+          createdAt: projects.createdAt,
+          updatedAt: projects.updatedAt,
+          ownerName: users.name,
+          ownerEmail: users.email,
+        })
         .from(projects)
-        .limit(limit)
-        .offset(offset)
-        .orderBy(projects.createdAt),
-      ctx.db.select({ count: count() }).from(projects),
-    ]);
+        .innerJoin(users, eq(projects.ownerId, users.id))
+        .where(eq(projects.id, input.id));
 
-    return {
-      items,
-      total: total.count,
-      limit,
-      offset,
-    };
-  }),
+      if (!project) {
+        throw Errors.notFound("Project").toTRPCError();
+      }
 
-  get: protectedProcedure.input(IdParamSchema).query(async ({ ctx, input }) => {
-    const [project] = await ctx.db
-      .select({
-        id: projects.id,
-        ownerId: projects.ownerId,
-        name: projects.name,
-        description: projects.description,
-        status: projects.status,
-        createdAt: projects.createdAt,
-        updatedAt: projects.updatedAt,
-        ownerName: users.name,
-        ownerEmail: users.email,
-      })
-      .from(projects)
-      .innerJoin(users, eq(projects.ownerId, users.id))
-      .where(eq(projects.id, input.id));
-
-    if (!project) {
-      throw Errors.notFound("Project").toTRPCError();
-    }
-
-    return project;
-  }),
+      return project;
+    }),
 
   create: protectedProcedure
+    .meta({
+      openapi: { method: "POST", path: "/projects", tags: ["Projects"], protect: true },
+    })
     .input(CreateProjectSchema)
+    .output(ProjectResponseSchema)
     .mutation(async ({ ctx, input }) => {
       const [project] = await ctx.db
         .insert(projects)
@@ -70,7 +90,11 @@ export const projectsRouter = router({
     }),
 
   update: protectedProcedure
+    .meta({
+      openapi: { method: "PATCH", path: "/projects/{id}", tags: ["Projects"], protect: true },
+    })
     .input(UpdateProjectSchema)
+    .output(ProjectResponseSchema)
     .mutation(async ({ ctx, input }) => {
       const [existing] = await ctx.db
         .select({ ownerId: projects.ownerId })
@@ -96,7 +120,11 @@ export const projectsRouter = router({
     }),
 
   delete: protectedProcedure
+    .meta({
+      openapi: { method: "DELETE", path: "/projects/{id}", tags: ["Projects"], protect: true },
+    })
     .input(IdParamSchema)
+    .output(SuccessResponseSchema)
     .mutation(async ({ ctx, input }) => {
       const [existing] = await ctx.db
         .select({ ownerId: projects.ownerId })

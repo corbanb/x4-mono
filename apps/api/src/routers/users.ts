@@ -1,9 +1,17 @@
+import { z } from "zod";
 import { users, eq } from "@x4/database";
+import { UserResponseSchema } from "@x4/shared/utils";
 import { router, protectedProcedure } from "../trpc";
 import { Errors } from "../lib/errors";
 
 export const usersRouter = router({
-  me: protectedProcedure.query(async ({ ctx }) => {
+  me: protectedProcedure
+    .meta({
+      openapi: { method: "GET", path: "/users/me", tags: ["Users"], protect: true },
+    })
+    .input(z.void())
+    .output(UserResponseSchema)
+    .query(async ({ ctx }) => {
     const [user] = await ctx.db
       .select({
         id: users.id,

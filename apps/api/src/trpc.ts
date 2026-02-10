@@ -1,5 +1,6 @@
 import { initTRPC } from "@trpc/server";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
+import type { OpenApiMeta } from "trpc-to-openapi";
 import { db } from "@x4/database";
 import type { Database } from "@x4/database";
 import { auth } from "@x4/auth";
@@ -46,7 +47,7 @@ export async function createContext(
 
 // --- tRPC Init ---
 
-const t = initTRPC.context<Context>().create({
+const t = initTRPC.context<Context>().meta<OpenApiMeta>().create({
   errorFormatter({ shape, error }) {
     const cause = error.cause;
     return {

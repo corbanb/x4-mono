@@ -9,6 +9,7 @@ const envSchema = z.object({
   ANTHROPIC_API_KEY: z.string().startsWith("sk-", "ANTHROPIC_API_KEY must start with 'sk-'"),
   WEB_URL: z.string().url().default("http://localhost:3000"),
   MARKETING_URL: z.string().url().default("http://localhost:3001"),
+  DOCS_URL: z.string().url().default("http://localhost:3003"),
   GITHUB_CLIENT_ID: z.string().optional(),
   GITHUB_CLIENT_SECRET: z.string().optional(),
   GOOGLE_CLIENT_ID: z.string().optional(),

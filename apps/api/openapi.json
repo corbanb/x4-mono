@@ -1,0 +1,1087 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "x4 API",
+    "description": "x4-mono platform API — built with Hono + tRPC v11",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3002/api"
+    }
+  ],
+  "paths": {
+    "/users/me": {
+      "get": {
+        "operationId": "users-me",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "user",
+                        "admin"
+                      ]
+                    },
+                    "emailVerified": {
+                      "type": "boolean"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "email",
+                    "name",
+                    "role",
+                    "emailVerified",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.UNAUTHORIZED"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.FORBIDDEN"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects": {
+      "get": {
+        "operationId": "projects-list",
+        "tags": [
+          "Projects"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "ownerId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "ownerId",
+                          "name",
+                          "description",
+                          "status",
+                          "createdAt",
+                          "updatedAt"
+                        ]
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "offset": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "total",
+                    "limit",
+                    "offset"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.BAD_REQUEST"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.UNAUTHORIZED"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.FORBIDDEN"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.NOT_FOUND"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "projects-create",
+        "tags": [
+          "Projects"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "ownerId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "ownerId",
+                    "name",
+                    "description",
+                    "status",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.BAD_REQUEST"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.UNAUTHORIZED"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.FORBIDDEN"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{id}": {
+      "get": {
+        "operationId": "projects-get",
+        "tags": [
+          "Projects"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "ownerId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "ownerName": {
+                      "type": "string"
+                    },
+                    "ownerEmail": {
+                      "type": "string",
+                      "format": "email"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "ownerId",
+                    "name",
+                    "description",
+                    "status",
+                    "createdAt",
+                    "updatedAt",
+                    "ownerName",
+                    "ownerEmail"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.BAD_REQUEST"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.UNAUTHORIZED"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.FORBIDDEN"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.NOT_FOUND"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "projects-update",
+        "tags": [
+          "Projects"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "active",
+                      "archived"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "ownerId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "ownerId",
+                    "name",
+                    "description",
+                    "status",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.BAD_REQUEST"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.UNAUTHORIZED"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.FORBIDDEN"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.NOT_FOUND"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "projects-delete",
+        "tags": [
+          "Projects"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.BAD_REQUEST"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.UNAUTHORIZED"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.FORBIDDEN"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.NOT_FOUND"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/generate": {
+      "post": {
+        "operationId": "ai-generate",
+        "tags": [
+          "AI"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  },
+                  "systemPrompt": {
+                    "type": "string"
+                  },
+                  "maxTokens": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 4000,
+                    "default": 1000
+                  }
+                },
+                "required": [
+                  "prompt"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string"
+                    },
+                    "tokensUsed": {
+                      "type": "integer"
+                    },
+                    "estimatedCost": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "text",
+                    "tokensUsed",
+                    "estimatedCost"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.BAD_REQUEST"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.UNAUTHORIZED"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.FORBIDDEN"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "error.UNAUTHORIZED": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The error message",
+            "example": "Authorization not provided"
+          },
+          "code": {
+            "type": "string",
+            "description": "The error code",
+            "example": "UNAUTHORIZED"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "message"
+              ]
+            },
+            "description": "An array of issues that were responsible for the error",
+            "example": []
+          }
+        },
+        "required": [
+          "message",
+          "code"
+        ],
+        "title": "Authorization not provided error (401)",
+        "description": "The error information",
+        "example": {
+          "code": "UNAUTHORIZED",
+          "message": "Authorization not provided",
+          "issues": []
+        }
+      },
+      "error.FORBIDDEN": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The error message",
+            "example": "Insufficient access"
+          },
+          "code": {
+            "type": "string",
+            "description": "The error code",
+            "example": "FORBIDDEN"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "message"
+              ]
+            },
+            "description": "An array of issues that were responsible for the error",
+            "example": []
+          }
+        },
+        "required": [
+          "message",
+          "code"
+        ],
+        "title": "Insufficient access error (403)",
+        "description": "The error information",
+        "example": {
+          "code": "FORBIDDEN",
+          "message": "Insufficient access",
+          "issues": []
+        }
+      },
+      "error.INTERNAL_SERVER_ERROR": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The error message",
+            "example": "Internal server error"
+          },
+          "code": {
+            "type": "string",
+            "description": "The error code",
+            "example": "INTERNAL_SERVER_ERROR"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "message"
+              ]
+            },
+            "description": "An array of issues that were responsible for the error",
+            "example": []
+          }
+        },
+        "required": [
+          "message",
+          "code"
+        ],
+        "title": "Internal server error error (500)",
+        "description": "The error information",
+        "example": {
+          "code": "INTERNAL_SERVER_ERROR",
+          "message": "Internal server error",
+          "issues": []
+        }
+      },
+      "error.BAD_REQUEST": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The error message",
+            "example": "Invalid input data"
+          },
+          "code": {
+            "type": "string",
+            "description": "The error code",
+            "example": "BAD_REQUEST"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "message"
+              ]
+            },
+            "description": "An array of issues that were responsible for the error",
+            "example": []
+          }
+        },
+        "required": [
+          "message",
+          "code"
+        ],
+        "title": "Invalid input data error (400)",
+        "description": "The error information",
+        "example": {
+          "code": "BAD_REQUEST",
+          "message": "Invalid input data",
+          "issues": []
+        }
+      },
+      "error.NOT_FOUND": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The error message",
+            "example": "Not found"
+          },
+          "code": {
+            "type": "string",
+            "description": "The error code",
+            "example": "NOT_FOUND"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "message"
+              ]
+            },
+            "description": "An array of issues that were responsible for the error",
+            "example": []
+          }
+        },
+        "required": [
+          "message",
+          "code"
+        ],
+        "title": "Not found error (404)",
+        "description": "The error information",
+        "example": {
+          "code": "NOT_FOUND",
+          "message": "Not found",
+          "issues": []
+        }
+      }
+    }
+  }
+}

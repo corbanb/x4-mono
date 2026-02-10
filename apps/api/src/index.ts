@@ -1,11 +1,13 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { trpcServer } from "@hono/trpc-server";
+import { apiReference } from "@scalar/hono-api-reference";
 import { auth } from "@x4/auth";
 import { appRouter } from "./routers";
 import { createContext } from "./trpc";
 import { env } from "./lib/env";
 import { AppError } from "./lib/errors";
+import { generateOpenAPISpec } from "./lib/openapi";
 import { logger } from "./lib/logger";
 import { requestLogger } from "./middleware/logger";
 import { rateLimit } from "./middleware/rateLimit";
@@ -18,7 +20,7 @@ app.use("*", requestLogger);
 
 // --- Global Middleware ---
 
-const allowedOrigins = [env.WEB_URL, env.MARKETING_URL];
+const allowedOrigins = [env.WEB_URL, env.MARKETING_URL, env.DOCS_URL];
 
 app.use(
   "/trpc/*",
@@ -89,6 +91,22 @@ app.get("/health", (c) => {
     version: env.APP_VERSION ?? "0.0.0",
   });
 });
+
+// --- OpenAPI Spec & Docs ---
+
+const openApiSpec = generateOpenAPISpec();
+
+app.get("/openapi.json", (c) => {
+  return c.json(openApiSpec);
+});
+
+app.get(
+  "/docs",
+  apiReference({
+    sources: [{ url: "/openapi.json" }],
+    pageTitle: "x4 API Reference",
+  }),
+);
 
 // --- tRPC Adapter ---
 

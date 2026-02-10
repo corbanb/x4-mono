@@ -9,4 +9,4 @@ process.env.BETTER_AUTH_URL = "http://localhost:3002";
 process.env.ANTHROPIC_API_KEY = "sk-ant-test-key-for-testing";
 process.env.UPSTASH_REDIS_REST_URL = "https://fake-redis.upstash.io";
 process.env.UPSTASH_REDIS_REST_TOKEN = "fake-token-for-testing";
-process.env.NODE_ENV = "test";
+(process.env as Record<string, string>).NODE_ENV = "test";

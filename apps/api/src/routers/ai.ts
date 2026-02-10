@@ -1,5 +1,5 @@
 import { aiUsageLog } from "@x4/database";
-import { AIGenerateInputSchema } from "@x4/shared/ai";
+import { AIGenerateInputSchema, AIGenerateOutputSchema } from "@x4/shared/ai";
 import { generateAIResponse, calculatePreciseCost } from "@x4/ai-integrations";
 import { router, protectedProcedure } from "../trpc";
 import { Errors } from "../lib/errors";
@@ -7,7 +7,11 @@ import { aiLogger } from "../lib/logger";
 
 export const aiRouter = router({
   generate: protectedProcedure
+    .meta({
+      openapi: { method: "POST", path: "/ai/generate", tags: ["AI"], protect: true },
+    })
     .input(AIGenerateInputSchema)
+    .output(AIGenerateOutputSchema)
     .mutation(async ({ ctx, input }) => {
       const start = performance.now();
 
