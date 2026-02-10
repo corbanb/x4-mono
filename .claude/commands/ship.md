@@ -1,4 +1,4 @@
-Ship the current work — branch, commit, and open a pull request.
+Ship the current work — branch, commit, open a pull request, then watch CI and fix failures.
 
 Input format: `short description of the work` (e.g., `PRD-001 monorepo foundation scaffolding`)
 
@@ -43,6 +43,36 @@ Input format: `short description of the work` (e.g., `PRD-001 monorepo foundatio
    - Target: `main` branch
 9. **Report** — output the PR URL and a summary of commits created
 
+10. **Watch CI** — monitor the PR's CI checks until they all complete:
+    - Run `gh pr checks <pr-number> --watch` to stream check status in real time
+    - If `--watch` is unavailable or times out, poll with `gh pr checks <pr-number>` every 30 seconds
+    - Wait until every check reaches a terminal state (pass, fail, or cancelled)
+    - Report the final status of all checks to the user
+
+11. **Fix CI failures** — if any checks failed, enter a fix loop (max 3 iterations):
+    - **Diagnose**: For each failed check, fetch the logs:
+      ```
+      gh run view <run-id> --log-failed
+      ```
+      If `--log-failed` output is too large or unclear, try `gh run view <run-id> --log` and search for the error.
+    - **Analyze**: Read the failure logs and identify the root cause. Common failures:
+      - Type errors → fix the type issue in the relevant file
+      - Lint errors → fix the lint violation
+      - Test failures → read the failing test, understand the assertion, fix the code or test
+      - Build errors → fix imports, missing deps, config issues
+      - Timeout/infra flakes → note as non-actionable, do not retry
+    - **Fix**: Make the necessary code changes to resolve the failure
+    - **Commit & push**: Stage only the fix files, commit with message format:
+      ```
+      fix(scope): resolve CI failure — <brief description>
+      ```
+      Then push to the same branch (never force push):
+      ```
+      git push
+      ```
+    - **Re-watch**: After pushing the fix, go back to step 10 to watch the new CI run
+    - **Bail out**: If after 3 fix iterations CI still fails, or if the failure is not actionable (infra flake, secret not configured, external service down), report the situation to the user and stop. Do NOT keep looping.
+
 ## Rules
 
 - Never force push
@@ -54,3 +84,6 @@ Input format: `short description of the work` (e.g., `PRD-001 monorepo foundatio
 - If there's only one logical group of changes, a single commit is fine — don't split artificially
 - Ask the user before pushing if there are any uncommitted changes that look unintentional
 - Run boundary checks before committing — report violations and let the user decide
+- During CI fix loop: only fix what the CI logs clearly indicate — do not make unrelated changes
+- If a CI failure requires a secret or external service that isn't configured, report it and stop — don't try to work around it
+- Cap the fix loop at 3 attempts to avoid infinite cycles
