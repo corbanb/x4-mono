@@ -103,6 +103,7 @@ All commands are invoked as slash commands (e.g., `/backend`, `/add-schema`).
 | `/testing` | Testing strategy expert — Bun test runner, test pyramid, test patterns |
 | `/security` | Security & auth expert — Better Auth, OWASP top 10, token management |
 | `/devops` | CI/CD & infrastructure expert — GitHub Actions, Turborepo, deployment |
+| `/docs` | Documentation & DX expert — Fumadocs, READMEs, API reference, JSDoc |
 
 ### Scaffolding
 
