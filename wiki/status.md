@@ -37,7 +37,7 @@ PRDs move through four stages:
 | PRD-012 | [Desktop Application — Electron](completed/prd-012-desktop-app.md) | Completed | PRD-004, PRD-005, PRD-006 | completed |
 | PRD-013 | [Marketing Site — Next.js Static](completed/prd-013-marketing-site.md) | Completed | PRD-001, PRD-010 | completed |
 | PRD-014 | [CI/CD, Deployment & DevOps](completed/prd-014-cicd-devops.md) | Completed | All previous PRDs | completed |
-| PRD-015 | [Testing Strategy & Infrastructure](inbox/prd-015-testing-strategy.md) | Draft | PRD-001, PRD-003 | inbox |
+| PRD-015 | [Testing Strategy & Infrastructure](completed/prd-015-testing-strategy.md) | Completed | PRD-001, PRD-003 | completed |
 | PRD-016 | [Getting Started Guide & Developer Experience](inbox/prd-016-getting-started-dx.md) | Draft | All previous PRDs | inbox |
 
 ---
@@ -109,3 +109,4 @@ Track milestones and completed work here as PRDs are implemented.
 | 2026-02-07 | PRD-012: Completed — Electron desktop app with three-process architecture (main/preload/renderer), safeStorage token encryption, IPC bridge for auth, React renderer with tRPC, electron-builder config | — |
 | 2026-02-07 | PRD-013: Completed — Next.js static marketing site with Hero, CTA, Header, Footer components, landing/pricing/about pages, Tailwind v4, Vercel deployment config, all pages statically generated | — |
 | 2026-02-07 | PRD-014: Completed — CI/CD pipeline with Neon branching per PR, migration safety checks, Claude AI code review, path-filtered deploy workflows (API/web/mobile/desktop), Neon cleanup, Hono Vercel adapter | — |
+| 2026-02-09 | PRD-015: Completed — Coverage config (bunfig.toml + turbo.json), centralized test helpers (createTestContext, createCaller), mock factories (AI + Redis), Playwright E2E setup with auth + project CRUD specs, testing conventions docs | — |
