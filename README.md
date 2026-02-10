@@ -1,96 +1,115 @@
 # x4-mono
 
-Full-stack TypeScript monorepo boilerplate for building multi-platform applications with a shared backend.
+Full-stack TypeScript monorepo boilerplate for building multi-platform applications (web, mobile, desktop) with a shared backend. Production-ready foundation with type-safe APIs, authentication, database ORM, AI integration, and CI/CD.
+
+## Architecture
+
+```
+apps/
+  api/          Hono + tRPC v11 on Bun         :3002
+  web/          Next.js 15 App Router           :3000
+  mobile/       Expo + React Native
+  desktop/      Electron
+  marketing/    Next.js static site             :3001
+
+packages/
+  shared/       Zod types, validators, utils, UI components, hooks
+  database/     Drizzle ORM + Neon Postgres
+  auth/         Better Auth (server + clients)
+  ai-integrations/  Vercel AI SDK (Claude + OpenAI)
+```
 
 ## Tech Stack
 
-- **Runtime**: Bun + Node.js (for Expo/Electron compatibility)
-- **Monorepo**: Bun workspaces + Turborepo
-- **API**: Hono + tRPC v11
-- **Web**: Next.js 15 App Router
-- **Mobile**: Expo + React Native
-- **Desktop**: Electron
-- **Database**: Neon (Postgres) + Drizzle ORM
-- **Auth**: Better Auth
-- **AI**: Vercel AI SDK + Claude
-- **Validation**: Zod
-- **Styling**: Tailwind CSS
+| Layer | Technology |
+|-------|-----------|
+| Runtime | Bun >= 1.1 |
+| Monorepo | Bun workspaces + Turborepo |
+| API | Hono + tRPC v11 |
+| Web | Next.js 15, React 19, Tailwind v4 |
+| Mobile | Expo 52, React Native |
+| Desktop | Electron 33, electron-vite |
+| Database | Neon Postgres + Drizzle ORM |
+| Auth | Better Auth with bearer tokens |
+| AI | Vercel AI SDK + Claude |
+| Validation | Zod (source of truth for all types) |
+| Testing | Bun test runner + Playwright E2E |
+| CI/CD | GitHub Actions + Vercel |
 
 ## Quick Start
 
+### Prerequisites
+
+- [Bun](https://bun.sh) >= 1.1
+- [Neon](https://neon.tech) Postgres database
+- [Anthropic API key](https://console.anthropic.com) for AI features
+
+### Setup
+
 ```bash
-# Install dependencies
+# Clone and install
+git clone <repo-url> my-project
+cd my-project
 bun install
 
-# Start all workspaces in dev mode
-bun turbo dev
+# Configure environment
+cp .env.example .env.local
+# Edit .env.local with your credentials (see docs/environment.md)
 
-# Type-check all workspaces
-bun turbo type-check
+# Set up database
+bun db:push        # Push schema to dev database
+bun db:seed        # Seed with test data
 
-# Lint all workspaces
-bun turbo lint
+# Start development
+bun dev            # Starts all workspaces
 ```
 
-## Workspace Structure
+The API runs on `http://localhost:3002`, web on `http://localhost:3000`, and marketing on `http://localhost:3001`.
 
-```
-packages/
-  shared/               # Types, validators, utils, UI components, hooks, API client
-  database/             # Drizzle schema, migrations, seed, db client
-  auth/                 # Better Auth config, session management
-  ai-integrations/      # Vercel AI SDK provider configs, streaming helpers
-
-apps/
-  api/                  # Hono + tRPC server (port 3002)
-  web/                  # Next.js 15 App Router (port 3000)
-  mobile/               # Expo + React Native
-  desktop/              # Electron wrapper
-  marketing/            # Next.js static marketing site (port 3001)
-```
-
-## Available Commands
+## Key Commands
 
 | Command | Description |
 |---------|-------------|
-| `bun install` | Install all workspace dependencies |
-| `bun turbo dev` | Start all workspaces in dev mode |
-| `bun turbo build` | Build all workspaces |
-| `bun turbo type-check` | TypeScript type checking across all workspaces |
-| `bun turbo lint` | ESLint across all workspaces |
-| `bun turbo test` | Run tests across all workspaces |
-| `bun db:generate` | Generate Drizzle migration from schema changes |
+| `bun dev` | Start all workspaces in dev mode |
+| `bun build` | Build all workspaces |
+| `bun test` | Run tests across all workspaces |
+| `bun type-check` | TypeScript type checking |
+| `bun lint` | ESLint across all workspaces |
+| `bun db:generate` | Generate Drizzle migration |
 | `bun db:push` | Push schema to dev database |
-| `bun db:migrate` | Run migrations against production database |
-| `bun db:studio` | Open Drizzle Studio |
+| `bun db:migrate` | Run migrations (production) |
 | `bun db:seed` | Seed database with test data |
-| `bun clean` | Remove all build artifacts and node_modules |
+| `bun db:studio` | Open Drizzle Studio GUI |
+| `bun clean` | Remove build artifacts and node_modules |
 
-## Environment Setup
+See [docs/commands.md](docs/commands.md) for the full reference.
 
-Copy `.env.example` to `.env.local` and fill in your values:
+## Documentation
 
-```bash
-cp .env.example .env.local
-```
-
-See `.env.example` for all required and optional environment variables.
+| Document | Description |
+|----------|-------------|
+| [Getting Started](docs/getting-started.md) | Step-by-step setup checklist |
+| [Commands Reference](docs/commands.md) | All available commands |
+| [Environment Variables](docs/environment.md) | Every env var documented |
+| [Testing Conventions](docs/testing-conventions.md) | Test patterns, helpers, mocks |
+| [Troubleshooting](docs/troubleshooting.md) | Common issues and solutions |
+| [Contributing](CONTRIBUTING.md) | Development workflow and conventions |
+| [ADR Template](docs/adr-template.md) | Architecture Decision Record format |
 
 ## Dependency Boundaries
 
-Cross-package imports are enforced by `eslint-plugin-boundaries`:
+Enforced by `eslint-plugin-boundaries`. Violations fail the lint step.
 
 ```
-packages/shared/types    -> imports NOTHING (leaf node)
-packages/shared/utils    -> can import: shared/types
-packages/database        -> can import: shared/types
-packages/auth            -> can import: database, shared/types
-packages/ai-integrations -> can import: shared/types
-apps/*                   -> can import: any package
+packages/shared          (leaf node - imports nothing)
+packages/database        -> shared
+packages/auth            -> database, shared
+packages/ai-integrations -> shared
+apps/*                   -> any package
 ```
 
-**Never import from `apps/*` in `packages/*`.**
+Packages **never** import from apps. This is the most important boundary.
 
-## Contributing
+## License
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and conventions.
+Private - All rights reserved.

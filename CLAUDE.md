@@ -1,7 +1,5 @@
 # CLAUDE.md — x4-mono
 
-> This project is in scaffolding phase. Commands become available as PRDs are implemented starting with PRD-001.
-
 ## Project Overview
 
 x4-mono is a full-stack TypeScript monorepo boilerplate for building multi-platform applications (web, mobile, desktop) with a shared backend. It provides a production-ready foundation with type-safe APIs, authentication, database ORM, AI integration, and CI/CD — all wired together with consistent conventions.

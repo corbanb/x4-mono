@@ -1,4 +1,18 @@
-# Contributing to x4-mono
+# Contributing
+
+Development workflow, conventions, and style guide for x4-mono.
+
+## Development Setup
+
+```bash
+bun install                 # Install all dependencies
+cp .env.example .env.local  # Configure environment
+bun db:push                 # Push schema to dev DB
+bun db:seed                 # Seed test data
+bun dev                     # Start all workspaces
+```
+
+See [docs/getting-started.md](docs/getting-started.md) for the detailed setup checklist.
 
 ## Prerequisites
 
@@ -6,38 +20,58 @@
 - [Node.js](https://nodejs.org) >= 20 (for Expo/Electron compatibility)
 - Git
 
-## Development Setup
+## Branch Strategy
 
-```bash
-# Clone the repository
-git clone <repo-url>
-cd x4-mono
+- `main` — production-ready, always deployable
+- `feat/<name>` — new features or PRD implementations
+- `fix/<name>` — bug fixes
+- `chore/<name>` — tooling, config, dependencies
+- `docs/<name>` — documentation-only changes
 
-# Install dependencies
-bun install
+## Commit Messages
 
-# Copy environment variables
-cp .env.example .env.local
+Use conventional commits:
 
-# Start development
-bun turbo dev
+```
+type(scope): description
+
+[optional body]
 ```
 
-## Conventions
+**Types**: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `ci`
 
-### File Naming
+**Scopes**: workspace name (`api`, `web`, `shared`, `database`, `auth`) or feature area (`testing`, `e2e`, `deps`)
 
-- **Files**: kebab-case (`user-profile.ts`, `create-project.tsx`)
-- **Components**: PascalCase (`UserProfile`, `CreateProjectForm`)
-- **Functions/variables**: camelCase (`getUserById`, `isAuthenticated`)
-- **Constants**: SCREAMING_SNAKE_CASE (`MAX_RETRY_COUNT`, `API_BASE_URL`)
-- **Database tables**: snake_case (`user_profiles`, `ai_usage_logs`)
-- **tRPC routers**: camelCase namespace (`projects.create`, `users.me`)
+**Examples**:
+- `feat(api): add user preferences router`
+- `fix(auth): handle expired session redirect`
+- `chore(deps): bump @trpc/server to 11.1`
+
+## Pull Requests
+
+- One feature or fix per PR
+- Keep PRs under 400 lines when possible
+- Include a summary, related PRD reference, and test plan
+- All CI checks must pass before merge
+- Squash merge to keep `main` history clean
+
+## Code Conventions
+
+### Naming
+
+| Thing | Convention | Example |
+|-------|-----------|---------|
+| Files | kebab-case | `user-profile.ts` |
+| Components | PascalCase | `UserProfile` |
+| Functions/variables | camelCase | `getUserById` |
+| Constants | SCREAMING_SNAKE_CASE | `MAX_RETRY_COUNT` |
+| Database tables | snake_case | `user_profiles` |
+| tRPC routers | camelCase | `projects.create` |
 
 ### Types
 
 - Zod schemas are the source of truth for all types
-- Define schemas in `packages/shared/` and infer types with `z.infer<typeof Schema>`
+- Define schemas in `packages/shared/` and infer with `z.infer<typeof Schema>`
 - Never duplicate types manually
 
 ### Imports
@@ -46,14 +80,31 @@ bun turbo dev
 - `@/*` for intra-workspace imports
 - Always use path aliases, never relative paths across package boundaries
 
+### Errors
+
+- Use `Errors.*` constructors from `apps/api/src/lib/errors.ts`
+- Include `cause` for error chaining
+- Map to tRPC error codes: `NOT_FOUND`, `UNAUTHORIZED`, `FORBIDDEN`, `BAD_REQUEST`
+
 ### Logging
 
-- Use Pino structured loggers (`apiLogger`, `dbLogger`, `authLogger`, `aiLogger`)
+- Use Pino child loggers: `apiLogger`, `dbLogger`, `authLogger`, `aiLogger`
 - Never use `console.log` in production code
 
-## Pull Request Process
+## Testing
 
-1. Create a feature branch from `main`
-2. Make your changes following the conventions above
-3. Ensure all checks pass: `bun turbo type-check && bun turbo lint && bun turbo test`
-4. Submit a PR with a clear description of changes
+- Run `bun test` before submitting a PR
+- See [docs/testing-conventions.md](docs/testing-conventions.md) for patterns
+- Unit tests for pure functions, integration tests for routers, E2E for critical flows
+
+## PR Checklist
+
+Before submitting, verify:
+
+- [ ] `bun type-check` passes
+- [ ] `bun lint` passes
+- [ ] `bun test` passes
+- [ ] No `console.log` in production code
+- [ ] No `any` types
+- [ ] No dependency boundary violations
+- [ ] Documentation updated if needed
