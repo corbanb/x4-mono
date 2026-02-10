@@ -31,6 +31,70 @@ export const users = pgTable("users", {
     .$onUpdate(() => new Date()),
 });
 
+// Better Auth expects a `user` model by default. Reuse the existing `users` table.
+export const user = users;
+
+export const session = pgTable(
+  "session",
+  {
+    id: varchar("id", { length: 255 }).primaryKey().default(sql`gen_random_uuid()::text`),
+    expiresAt: timestamp("expires_at").notNull(),
+    token: varchar("token", { length: 255 }).notNull().unique(),
+    createdAt: timestamp("created_at").default(sql`now()`).notNull(),
+    updatedAt: timestamp("updated_at")
+      .default(sql`now()`)
+      .notNull()
+      .$onUpdate(() => new Date()),
+    ipAddress: varchar("ip_address", { length: 255 }),
+    userAgent: text("user_agent"),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  (table) => [index("idx_session_user_id").on(table.userId)],
+);
+
+export const account = pgTable(
+  "account",
+  {
+    id: varchar("id", { length: 255 }).primaryKey().default(sql`gen_random_uuid()::text`),
+    accountId: varchar("account_id", { length: 255 }).notNull(),
+    providerId: varchar("provider_id", { length: 255 }).notNull(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
+    idToken: text("id_token"),
+    accessTokenExpiresAt: timestamp("access_token_expires_at"),
+    refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+    scope: text("scope"),
+    password: text("password"),
+    createdAt: timestamp("created_at").default(sql`now()`).notNull(),
+    updatedAt: timestamp("updated_at")
+      .default(sql`now()`)
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    index("idx_account_user_id").on(table.userId),
+    index("idx_account_provider").on(table.providerId, table.accountId),
+  ],
+);
+
+export const verification = pgTable(
+  "verification",
+  {
+    id: varchar("id", { length: 255 }).primaryKey().default(sql`gen_random_uuid()::text`),
+    identifier: varchar("identifier", { length: 255 }).notNull(),
+    value: varchar("value", { length: 255 }).notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at").default(sql`now()`),
+    updatedAt: timestamp("updated_at").default(sql`now()`),
+  },
+  (table) => [index("idx_verification_identifier").on(table.identifier)],
+);
+
 export const projects = pgTable(
   "projects",
   {
