@@ -1,15 +1,32 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { bearer } from "better-auth/plugins";
-import { db } from "@x4/database";
+import { account, db, session, user, verification } from "@x4/database";
+
+const trustedOrigins = [
+  process.env.WEB_URL ?? "http://localhost:3000",
+  process.env.MARKETING_URL ?? "http://localhost:3001",
+].filter(Boolean);
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
+    schema: {
+      user,
+      session,
+      account,
+      verification,
+    },
   }),
 
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL,
+  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3002",
+  trustedOrigins,
+  advanced: {
+    database: {
+      generateId: "uuid",
+    },
+  },
 
   emailAndPassword: {
     enabled: true,

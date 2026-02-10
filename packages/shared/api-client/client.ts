@@ -21,6 +21,9 @@ export function createTRPCClient(config: TRPCClientConfig) {
     links: [
       httpBatchLink({
         url: `${config.baseUrl}/trpc`,
+        fetch(url, options) {
+          return fetch(url, { ...options, credentials: "include" });
+        },
         async headers() {
           const token = await config.getToken?.();
           return token ? { authorization: `Bearer ${token}` } : {};
@@ -36,6 +39,9 @@ export function createServerClient(config: TRPCClientConfig) {
     links: [
       httpBatchLink({
         url: `${config.baseUrl}/trpc`,
+        fetch(url, options) {
+          return fetch(url, { ...options, credentials: "include" });
+        },
         async headers() {
           const token = await config.getToken?.();
           return token ? { authorization: `Bearer ${token}` } : {};

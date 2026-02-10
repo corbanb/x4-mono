@@ -59,3 +59,39 @@ describe("auth server config", () => {
     expect(role.input).toBe(false);
   });
 });
+
+describe("auth Drizzle adapter config", () => {
+  const options = (auth as unknown as { options: Record<string, unknown> }).options;
+
+  test("database adapter is configured", () => {
+    expect(options.database).toBeDefined();
+    expect(typeof options.database).toBe("function");
+  });
+
+  test("baseURL defaults to localhost:3002", () => {
+    const baseURL = options.baseURL as string;
+    expect(baseURL).toBe(process.env.BETTER_AUTH_URL ?? "http://localhost:3002");
+  });
+
+  test("trustedOrigins includes web and marketing URLs", () => {
+    const trustedOrigins = options.trustedOrigins as string[];
+    expect(trustedOrigins).toBeArray();
+    expect(trustedOrigins).toContain(
+      process.env.WEB_URL ?? "http://localhost:3000",
+    );
+    expect(trustedOrigins).toContain(
+      process.env.MARKETING_URL ?? "http://localhost:3001",
+    );
+  });
+
+  test("advanced.database.generateId is set to uuid", () => {
+    const advanced = options.advanced as {
+      database: { generateId: string };
+    };
+    expect(advanced.database.generateId).toBe("uuid");
+  });
+
+  test("secret is set from BETTER_AUTH_SECRET env var", () => {
+    expect(options.secret).toBe(process.env.BETTER_AUTH_SECRET);
+  });
+});
