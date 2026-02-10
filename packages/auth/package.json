@@ -13,7 +13,7 @@
     "better-auth": "^1.2.0"
   },
   "devDependencies": {
-    "expo-secure-store": "~14.0.0"
+    "expo-secure-store": "~14.2.4"
   },
   "peerDependencies": {
     "expo-secure-store": ">=13.0.0"
