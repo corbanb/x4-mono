@@ -1,0 +1,91 @@
+---
+title: Authentication
+description: How to authenticate with the x4 API using Better Auth
+---
+
+The x4 API uses [Better Auth](https://www.better-auth.com/) for authentication. All protected endpoints require either a session cookie or a Bearer token.
+
+## Sign Up
+
+Create a new account:
+
+```bash
+curl -X POST http://localhost:3002/api/auth/sign-up/email \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "securepassword123",
+    "name": "Test User"
+  }'
+```
+
+Response:
+
+```json
+{
+  "user": {
+    "id": "uuid",
+    "email": "user@example.com",
+    "name": "Test User",
+    "role": "user"
+  },
+  "session": {
+    "id": "session-id",
+    "token": "session-token"
+  }
+}
+```
+
+## Sign In
+
+Authenticate with email and password:
+
+```bash
+curl -X POST http://localhost:3002/api/auth/sign-in/email \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "securepassword123"
+  }'
+```
+
+The response includes a session token you can use for subsequent requests.
+
+## Using Bearer Tokens
+
+Include the session token in the `Authorization` header:
+
+```bash
+curl -H "Authorization: Bearer <session-token>" \
+  http://localhost:3002/api/users/me
+```
+
+## Using Session Cookies
+
+When calling from a browser, Better Auth automatically sets HTTP-only cookies. The web client handles this automatically with `credentials: "include"`.
+
+## Protected vs Public Endpoints
+
+| Access Level | Description | Example |
+|-------------|-------------|---------|
+| `public` | No auth required | `GET /projects` |
+| `protected` | Requires valid session | `POST /projects` |
+| `admin` | Requires admin role | Admin-only operations |
+
+## Session Management
+
+Sessions are stored in the database and tied to the user. To sign out:
+
+```bash
+curl -X POST http://localhost:3002/api/auth/sign-out \
+  -H "Authorization: Bearer <session-token>"
+```
+
+## OAuth Providers
+
+The API supports optional OAuth sign-in with GitHub and Google when configured:
+
+- `GET /api/auth/sign-in/github` — Redirect to GitHub OAuth
+- `GET /api/auth/sign-in/google` — Redirect to Google OAuth
+
+Configure `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` environment variables to enable.

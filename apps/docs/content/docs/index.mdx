@@ -1,0 +1,80 @@
+---
+title: Getting Started
+description: Quick start guide for the x4 platform API
+---
+
+## Base URL
+
+All API endpoints are served from:
+
+```
+http://localhost:3002/api
+```
+
+The tRPC endpoints are available at `/trpc/*` and the REST-like OpenAPI endpoints at `/api/*`.
+
+## Authentication
+
+Most endpoints require authentication. Include a Bearer token in the `Authorization` header:
+
+```bash
+curl -H "Authorization: Bearer <your-token>" \
+  http://localhost:3002/api/users/me
+```
+
+See the [Authentication](/docs/authentication) guide for details on obtaining tokens.
+
+## tRPC Client Setup
+
+The x4 API uses tRPC v11. To set up a client in your TypeScript app:
+
+```typescript
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import type { AppRouter } from "@x4/api/router";
+
+const trpc = createTRPCClient<AppRouter>({
+  links: [
+    httpBatchLink({
+      url: "http://localhost:3002/trpc",
+      headers() {
+        return {
+          Authorization: `Bearer ${token}`,
+        };
+      },
+    }),
+  ],
+});
+```
+
+## First Request
+
+List all projects (no auth required):
+
+```bash
+curl http://localhost:3002/api/projects?limit=10&offset=0
+```
+
+Response:
+
+```json
+{
+  "items": [],
+  "total": 0,
+  "limit": 10,
+  "offset": 0
+}
+```
+
+## Available Endpoints
+
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/users/me` | GET | Yes | Get current user profile |
+| `/projects` | GET | No | List projects (paginated) |
+| `/projects/{id}` | GET | Yes | Get project by ID |
+| `/projects` | POST | Yes | Create a project |
+| `/projects/{id}` | PATCH | Yes | Update a project |
+| `/projects/{id}` | DELETE | Yes | Delete a project |
+| `/ai/generate` | POST | Yes | Generate AI text |
+
+See the [API Reference](/docs/api-reference) for full details on each endpoint.

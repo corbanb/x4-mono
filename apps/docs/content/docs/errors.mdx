@@ -1,0 +1,85 @@
+---
+title: Error Handling
+description: Error codes, response formats, and how to handle API errors
+---
+
+The x4 API uses structured error responses with consistent error codes mapped to HTTP status codes.
+
+## Error Response Format
+
+All errors follow this shape:
+
+```json
+{
+  "code": "NOT_FOUND",
+  "message": "Project not found",
+  "details": {},
+  "requestId": "uuid"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `code` | string | Machine-readable error code |
+| `message` | string | Human-readable description |
+| `details` | object | Additional context (optional) |
+| `requestId` | string | Unique request ID for debugging |
+
+## Error Codes
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `BAD_REQUEST` | 400 | Invalid input — check the `issues` array for validation details |
+| `UNAUTHORIZED` | 401 | Missing or invalid authentication |
+| `FORBIDDEN` | 403 | Authenticated but insufficient permissions |
+| `NOT_FOUND` | 404 | Resource does not exist |
+| `INTERNAL_SERVER_ERROR` | 500 | Unexpected server error |
+
+## Validation Errors
+
+When input validation fails, the error includes Zod validation details:
+
+```json
+{
+  "code": "BAD_REQUEST",
+  "message": "Invalid input data",
+  "data": {
+    "zodError": {
+      "fieldErrors": {
+        "name": ["String must contain at least 1 character(s)"]
+      },
+      "formErrors": []
+    }
+  }
+}
+```
+
+## tRPC Error Format
+
+When using the tRPC client, errors are wrapped in `TRPCClientError`:
+
+```typescript
+try {
+  await trpc.projects.create.mutate({ name: "" });
+} catch (error) {
+  if (error instanceof TRPCClientError) {
+    console.log(error.data.code);      // "BAD_REQUEST"
+    console.log(error.data.zodError);   // validation details
+    console.log(error.data.appError);   // { code, details }
+  }
+}
+```
+
+## Request IDs
+
+Every response includes a `requestId` in headers and error bodies. Include this when reporting issues for faster debugging.
+
+## Handling Errors
+
+Best practices:
+
+1. Always check for error responses before accessing data
+2. Use the `code` field for programmatic error handling
+3. Display the `message` field to users
+4. Log the `requestId` for support requests
+5. Handle `UNAUTHORIZED` by redirecting to sign-in

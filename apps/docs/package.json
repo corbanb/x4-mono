@@ -1,0 +1,33 @@
+{
+  "name": "@x4/docs",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3003",
+    "build": "bun run generate-api-docs && next build",
+    "start": "next start --port 3003",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "test": "echo 'no tests yet'",
+    "generate-api-docs": "bun run scripts/generate-api-pages.ts"
+  },
+  "dependencies": {
+    "fumadocs-core": "^15.0.0",
+    "fumadocs-mdx": "14.2.7",
+    "fumadocs-openapi": "^6.0.0",
+    "fumadocs-ui": "^15.0.0",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "shiki": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/node": "^22.0.0",
+    "@types/mdx": "^2.0.0",
+    "typescript": "~5.6.0",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0"
+  }
+}

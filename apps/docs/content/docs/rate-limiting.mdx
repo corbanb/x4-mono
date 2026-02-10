@@ -1,0 +1,64 @@
+---
+title: Rate Limiting
+description: Rate limit tiers, headers, and best practices
+---
+
+The x4 API uses sliding-window rate limiting powered by Upstash Redis. Rate limits are applied per IP address.
+
+## Rate Limit Tiers
+
+| Tier | Limit | Window | Applied To |
+|------|-------|--------|------------|
+| **General** | 100 requests | 60 seconds | All `/trpc/*` endpoints |
+| **AI** | 10 requests | 60 seconds | `ai.generate` |
+| **Auth** | 5 requests | 60 seconds | `/api/auth/*` endpoints |
+
+## Response Headers
+
+Rate limit information is included in response headers:
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Maximum requests allowed in the window |
+| `X-RateLimit-Remaining` | Requests remaining in the current window |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |
+| `Retry-After` | Seconds to wait before retrying (only on 429) |
+
+## Rate Limit Exceeded
+
+When you exceed the rate limit, the API returns HTTP 429:
+
+```json
+{
+  "code": "TOO_MANY_REQUESTS",
+  "message": "Rate limit exceeded. Try again in 45 seconds.",
+  "retryAfter": 45
+}
+```
+
+## Best Practices
+
+1. **Respect `Retry-After`** — Wait the indicated number of seconds before retrying
+2. **Implement exponential backoff** — Don't hammer the API on failures
+3. **Cache responses** — Reduce unnecessary requests for data that doesn't change frequently
+4. **Batch requests** — Use tRPC's automatic batching to combine multiple queries into a single HTTP request
+5. **Monitor usage** — Check the rate limit headers to stay within bounds
+
+## Development Mode
+
+When `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are not configured, rate limiting is disabled. This is typical for local development.
+
+## Example: Handling Rate Limits
+
+```typescript
+async function fetchWithRetry(fn: () => Promise<Response>, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    const response = await fn();
+    if (response.status !== 429) return response;
+
+    const retryAfter = parseInt(response.headers.get("Retry-After") ?? "5");
+    await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
+  }
+  throw new Error("Rate limit exceeded after retries");
+}
+```
