@@ -27,7 +27,7 @@ describe("fetch credentials configuration", () => {
       );
     });
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = mockFetch as typeof fetch;
+    globalThis.fetch = mockFetch as unknown as typeof fetch;
 
     try {
       const client = createTRPCClient({
@@ -60,7 +60,7 @@ describe("fetch credentials configuration", () => {
       );
     });
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = mockFetch as typeof fetch;
+    globalThis.fetch = mockFetch as unknown as typeof fetch;
 
     try {
       const client = createServerClient({
