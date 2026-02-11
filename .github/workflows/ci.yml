@@ -24,6 +24,7 @@ jobs:
       auth: ${{ steps.filter.outputs.auth }}
       api: ${{ steps.filter.outputs.api }}
       docs: ${{ steps.filter.outputs.docs }}
+      create-x4: ${{ steps.filter.outputs.create-x4 }}
     steps:
       - uses: actions/checkout@v6
       - uses: dorny/paths-filter@v3
@@ -75,6 +76,8 @@ jobs:
               - 'turbo.json'
               - 'package.json'
               - 'bun.lock'
+            create-x4:
+              - 'create-x4/**'
 
   # ─── Type Check, Lint & Audit ──────────────────────────────────────
   quality:
@@ -286,12 +289,43 @@ jobs:
       - name: Run API tests
         run: bun test --cwd apps/api
 
+  # ─── Test: create-x4 CLI ──────────────────────────────────────────
+  test-create-x4:
+    name: "Test: create-x4"
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.create-x4 == 'true'
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.8"
+
+      - uses: actions/cache@v5
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('create-x4/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: bun install
+        working-directory: create-x4
+
+      - name: Run create-x4 tests
+        run: bun test
+        working-directory: create-x4
+
+      - name: Build
+        run: bun run build
+        working-directory: create-x4
+
   # ─── Summary Gate ──────────────────────────────────────────────────
   ci-passed:
     name: CI Passed
     runs-on: ubuntu-latest
     if: always()
-    needs: [quality, migration-check, test-shared, test-database, test-auth, test-api]
+    needs: [quality, migration-check, test-shared, test-database, test-auth, test-api, test-create-x4]
     steps:
       - name: Check results
         run: |
@@ -300,7 +334,8 @@ jobs:
                 "${{ needs.test-shared.result }}" == "failure" || \
                 "${{ needs.test-database.result }}" == "failure" || \
                 "${{ needs.test-auth.result }}" == "failure" || \
-                "${{ needs.test-api.result }}" == "failure" ]]; then
+                "${{ needs.test-api.result }}" == "failure" || \
+                "${{ needs.test-create-x4.result }}" == "failure" ]]; then
             echo "One or more CI jobs failed"
             exit 1
           fi
