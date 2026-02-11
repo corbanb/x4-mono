@@ -1,0 +1,50 @@
+{
+  "name": "create-x4",
+  "version": "0.1.0",
+  "description": "Scaffold a full-stack TypeScript monorepo with x4",
+  "type": "module",
+  "bin": {
+    "create-x4": "./dist/index.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun build src/index.ts --outfile dist/index.mjs --target node --packages external",
+    "dev": "bun run src/index.ts",
+    "test": "bun test",
+    "prepublishOnly": "bun run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "create",
+    "scaffold",
+    "boilerplate",
+    "monorepo",
+    "typescript",
+    "fullstack",
+    "hono",
+    "trpc",
+    "nextjs",
+    "expo",
+    "electron"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/corbanb/x4-mono.git",
+    "directory": "create-x4"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "citty": "^0.1.6",
+    "fast-glob": "^3.3.3",
+    "giget": "^1.2.3",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "~5.6.0"
+  }
+}
