@@ -22,6 +22,7 @@
     "radix-ui": "1.4.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "sugar-high": "0.9.5",
     "tailwind-merge": "3.4.0",
     "three": "0.182.0"
   },

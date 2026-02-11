@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useInView } from "motion/react";
 import { Sparkles, Brain, Cpu, DollarSign } from "lucide-react";
 import { GlowCard } from "@/components/effects/GlowCard";
+import { CodeBlock } from "@/components/ui/code-block";
 
 const SKILLS = [
   {
@@ -154,11 +155,10 @@ export function SkillsSection() {
             </div>
 
             {/* Code */}
-            <pre className="overflow-x-auto p-5">
-              <code className="text-[13px] leading-relaxed text-white/80">
-                {CODE_SNIPPET}
-              </code>
-            </pre>
+            <CodeBlock
+              code={CODE_SNIPPET}
+              className="overflow-x-auto p-5 text-[13px] leading-relaxed"
+            />
           </motion.div>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
+import { CodeBlock } from "@/components/ui/code-block";
 import { Monitor, Smartphone, MonitorDot } from "lucide-react";
 
 const PLATFORMS = [
@@ -143,16 +144,18 @@ export function CodeShowcase() {
               </span>
             </div>
             <AnimatePresence mode="wait">
-              <motion.pre
+              <motion.div
                 key={active}
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.2 }}
-                className="overflow-x-auto p-6 font-mono text-sm leading-relaxed text-muted-foreground"
               >
-                <code>{activePlatform.code}</code>
-              </motion.pre>
+                <CodeBlock
+                  code={activePlatform.code}
+                  className="overflow-x-auto p-6 font-mono text-sm leading-relaxed"
+                />
+              </motion.div>
             </AnimatePresence>
           </div>
         </motion.div>

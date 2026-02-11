@@ -155,6 +155,19 @@
   background-size: 24px 24px;
 }
 
+/* Syntax highlighting theme (sugar-high) */
+:root {
+  --sh-class: #e5c07b;
+  --sh-identifier: #abb2bf;
+  --sh-sign: #56b6c2;
+  --sh-property: #61afef;
+  --sh-entity: #d19a66;
+  --sh-jsxliterals: #56b6c2;
+  --sh-string: #98c379;
+  --sh-keyword: #c678dd;
+  --sh-comment: #5c6370;
+}
+
 /* Marquee scroll animation */
 @keyframes scroll {
   from { transform: translateX(0); }

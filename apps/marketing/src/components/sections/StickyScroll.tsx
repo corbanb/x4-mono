@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { cn } from "@/lib/utils";
+import { CodeBlock } from "@/components/ui/code-block";
 
 interface StickyScrollItem {
   title: string;
@@ -86,9 +87,10 @@ function StickyScrollSection({
               <span className="h-3 w-3 rounded-full bg-yellow-500/60" />
               <span className="h-3 w-3 rounded-full bg-green-500/60" />
             </div>
-            <pre className="overflow-x-auto p-6 font-mono text-sm leading-relaxed text-muted-foreground">
-              <code>{item.code}</code>
-            </pre>
+            <CodeBlock
+              code={item.code}
+              className="overflow-x-auto p-6 font-mono text-sm leading-relaxed"
+            />
           </div>
         </motion.div>
       </div>
