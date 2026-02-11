@@ -90,24 +90,28 @@ export function HeroContent() {
               <span className="text-cyan-glow">$</span>{" "}
               <span className="text-foreground">bunx create-x4 my-app</span>
             </div>
-            <div className="mt-1 text-emerald-400">
-              Creating x4 project...
+            <div className="mt-1 text-muted-foreground">
+              <span className="text-blue-400">&gt;</span> Downloading template...
+            </div>
+            <div className="text-muted-foreground">
+              <span className="text-emerald-400">&#10003;</span> Template downloaded.
+            </div>
+            <div className="text-muted-foreground">
+              <span className="text-emerald-400">&#10003;</span> Template cleaned.
+            </div>
+            <div className="text-muted-foreground">
+              <span className="text-emerald-400">&#10003;</span> Project parameterized.
+            </div>
+            <div className="mt-1 text-emerald-400 font-semibold">
+              Your project is ready!
             </div>
             <div className="mt-1 text-muted-foreground">
-              <span className="text-violet-glow">&#10003;</span> Web (Next.js
-              15) &middot; Mobile (Expo) &middot; Desktop (Electron)
+              <span className="text-foreground">API</span>{"       "}
+              <span className="text-cyan-glow">http://localhost:3002</span>
             </div>
             <div className="text-muted-foreground">
-              <span className="text-violet-glow">&#10003;</span> API (Hono +
-              tRPC) &middot; Database (Drizzle) &middot; Auth (Better Auth)
-            </div>
-            <div className="text-muted-foreground">
-              <span className="text-violet-glow">&#10003;</span> AI (Vercel AI
-              SDK) &middot; CI/CD &middot; Tests
-            </div>
-            <div className="mt-1 text-emerald-400">
-              Done in 4.2s. Run{" "}
-              <span className="text-foreground">cd my-app && bun dev</span>
+              <span className="text-foreground">Web</span>{"       "}
+              <span className="text-cyan-glow">http://localhost:3000</span>
             </div>
           </div>
         </div>
