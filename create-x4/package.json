@@ -1,0 +1,53 @@
+{
+  "name": "create-x4",
+  "version": "1.0.0",
+  "description": "Scaffold a full-stack TypeScript monorepo with x4",
+  "type": "module",
+  "bin": {
+    "create-x4": "./dist/index.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "bun test test/constants.test.ts test/presets.test.ts test/detect.test.ts test/validate.test.ts test/validate-extra.test.ts test/strip.test.ts test/filter.test.ts test/transform.test.ts test/neon.test.ts test/e2e/ && bun test test/download.test.ts && bun test test/ui.test.ts && bun test test/scaffold-unit.test.ts && bun test test/env-wizard.test.ts && bun test test/wizard.test.ts",
+    "prepublishOnly": "bun run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "create",
+    "scaffold",
+    "boilerplate",
+    "monorepo",
+    "typescript",
+    "fullstack",
+    "hono",
+    "trpc",
+    "nextjs",
+    "expo",
+    "electron",
+    "x4"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/corbanb/x4-mono.git",
+    "directory": "create-x4"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^0.9.1",
+    "citty": "^0.1.6",
+    "fast-glob": "^3.3.3",
+    "giget": "^1.2.5",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.4.0",
+    "typescript": "~5.6.0"
+  }
+}

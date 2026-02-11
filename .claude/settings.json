@@ -18,5 +18,8 @@
       "Bash(git push -f*)",
       "Bash(bun pm publish*)"
     ]
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true
   }
 }

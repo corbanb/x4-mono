@@ -38,13 +38,25 @@ packages/
 
 ## Quick Start
 
+```bash
+bunx create-x4 my-app
+cd my-app
+bun dev
+```
+
+Or with a preset:
+
+```bash
+bunx create-x4 my-app --preset saas --yes
+```
+
 ### Prerequisites
 
 - [Bun](https://bun.sh) >= 1.1
 - [Neon](https://neon.tech) Postgres database
 - [Anthropic API key](https://console.anthropic.com) for AI features
 
-### Setup
+### Manual Setup
 
 ```bash
 # Clone and install

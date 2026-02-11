@@ -3,6 +3,7 @@ node_modules/
 
 # Build outputs
 dist/
+create-x4/dist/
 .next/
 .expo/
 out/
@@ -28,6 +29,9 @@ coverage/
 # OS
 .DS_Store
 Thumbs.db
+
+# Claude Code
+.claude-old/
 
 # Debug
 *.log
