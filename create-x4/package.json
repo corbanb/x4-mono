@@ -4,7 +4,7 @@
   "description": "Scaffold a full-stack TypeScript monorepo with x4",
   "type": "module",
   "bin": {
-    "create-x4": "./dist/index.mjs"
+    "create-x4": "dist/index.mjs"
   },
   "files": [
     "dist"
@@ -34,7 +34,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/corbanb/x4-mono.git",
+    "url": "git+https://github.com/corbanb/x4-mono.git",
     "directory": "create-x4"
   },
   "license": "MIT",
