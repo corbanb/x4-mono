@@ -313,7 +313,7 @@ jobs:
         working-directory: create-x4
 
       - name: Run create-x4 tests
-        run: bun test
+        run: bun run test
         working-directory: create-x4
 
       - name: Build
