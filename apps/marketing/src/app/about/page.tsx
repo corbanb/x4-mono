@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { CTA } from "@/components/CTA";
+import { Timeline } from "@/components/sections/Timeline";
+import { PhilosophyCards } from "@/components/sections/PhilosophyCards";
+import { CTASection } from "@/components/sections/CTASection";
 
 export const metadata: Metadata = {
   title: "About",
@@ -10,58 +12,48 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
-      <section className="py-20">
+      {/* Hero */}
+      <section className="pb-12 pt-32">
+        <div className="mx-auto max-w-4xl px-6 text-center">
+          <h1 className="text-4xl font-bold sm:text-5xl">
+            Built for developers who{" "}
+            <span className="gradient-text">ship</span>
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+            x4 was born from the frustration of setting up the same
+            infrastructure over and over. We built the boilerplate we wished
+            existed.
+          </p>
+        </div>
+      </section>
+
+      {/* Mission */}
+      <section className="py-24">
         <div className="mx-auto max-w-3xl px-6">
-          <h1 className="text-4xl font-bold text-gray-900">About x4</h1>
-
-          <div className="mt-8 space-y-6 text-gray-600">
+          <div className="space-y-8 text-lg leading-relaxed text-muted-foreground">
             <p>
-              x4 is a full-stack TypeScript monorepo boilerplate designed for
-              teams building multi-platform applications. It provides a
-              production-ready foundation with type-safe APIs, authentication,
-              database ORM, AI integration, and CI/CD — all wired together with
-              consistent conventions.
+              Every new project starts the same way: choose a framework, wire up
+              auth, connect a database, add validation, configure CI/CD, write
+              tests. By the time infrastructure is ready, you&apos;ve lost weeks
+              and the excitement has faded.
             </p>
-
             <p>
-              Instead of stitching together dozens of libraries and spending
-              weeks on infrastructure, x4 gives you a working starting point:
-              web (Next.js), mobile (Expo), and desktop (Electron) clients
-              sharing a single backend (Hono + tRPC) with a Postgres database
-              (Drizzle ORM) and built-in auth (Better Auth).
+              x4 eliminates that cold start. It&apos;s a production-ready
+              monorepo with web (Next.js), mobile (Expo), and desktop (Electron)
+              clients sharing a single backend (Hono + tRPC) — all type-safe,
+              all tested, all deployed.
             </p>
-
-            <h2 className="pt-4 text-2xl font-bold text-gray-900">
-              Why a monorepo?
-            </h2>
-            <p>
-              When you have a web app, a mobile app, a desktop app, and a shared
-              API, keeping types and validation in sync across repositories is a
-              full-time job. A monorepo with shared packages eliminates this
-              problem entirely — change a Zod schema once, and every consumer
-              gets the update instantly.
+            <p className="text-foreground">
+              The goal is simple: go from idea to deployed product in minutes,
+              not weeks. Everything else is just infrastructure.
             </p>
-
-            <h2 className="pt-4 text-2xl font-bold text-gray-900">
-              Built with
-            </h2>
-            <ul className="list-inside list-disc space-y-1">
-              <li>Bun runtime + Turborepo</li>
-              <li>TypeScript across every package</li>
-              <li>Next.js 15 (web)</li>
-              <li>Expo + React Native (mobile)</li>
-              <li>Electron (desktop)</li>
-              <li>Hono + tRPC v11 (API)</li>
-              <li>Drizzle ORM + Neon Postgres</li>
-              <li>Better Auth</li>
-              <li>Vercel AI SDK + Claude</li>
-              <li>Tailwind CSS</li>
-            </ul>
           </div>
         </div>
       </section>
 
-      <CTA />
+      <PhilosophyCards />
+      <Timeline />
+      <CTASection />
     </>
   );
 }
