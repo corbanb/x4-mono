@@ -91,26 +91,26 @@ export function HeroContent() {
               <span className="text-foreground">bunx create-x4 my-app</span>
             </div>
             <div className="mt-1 text-muted-foreground">
-              <span className="text-blue-400">&gt;</span> Downloading template...
+              <span className="text-purple-400">&#9671;</span> Downloaded template.
             </div>
             <div className="text-muted-foreground">
-              <span className="text-emerald-400">&#10003;</span> Template downloaded.
+              <span className="text-purple-400">&#9671;</span> Cleaned template files.
             </div>
             <div className="text-muted-foreground">
-              <span className="text-emerald-400">&#10003;</span> Template cleaned.
+              <span className="text-purple-400">&#9671;</span> Applied naming.
             </div>
             <div className="text-muted-foreground">
-              <span className="text-emerald-400">&#10003;</span> Project parameterized.
+              <span className="text-purple-400">&#9671;</span> Initialized git repository.
             </div>
             <div className="mt-1 text-emerald-400 font-semibold">
-              Your project is ready!
+              <span className="text-emerald-400">&#9670;</span> Your project is ready!
             </div>
             <div className="mt-1 text-muted-foreground">
-              <span className="text-foreground">API</span>{"       "}
+              {"  "}<span className="text-foreground font-semibold">API</span>{"       "}
               <span className="text-cyan-glow">http://localhost:3002</span>
             </div>
             <div className="text-muted-foreground">
-              <span className="text-foreground">Web</span>{"       "}
+              {"  "}<span className="text-foreground font-semibold">Web</span>{"       "}
               <span className="text-cyan-glow">http://localhost:3000</span>
             </div>
           </div>

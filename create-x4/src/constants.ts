@@ -3,6 +3,7 @@ export const STRIP_PATHS = [
   "create-x4",
   "wiki",
   ".claude",
+  ".claude-old",
   "CLAUDE.md",
   ".vercel",
   ".env.local",

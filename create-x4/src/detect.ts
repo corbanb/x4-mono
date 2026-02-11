@@ -39,7 +39,7 @@ export function getRunCommand(pm: PackageManager): string {
   return pm === "npm" ? "npx" : pm;
 }
 
-/** Validate that a package manager is installed */
-export function validatePackageManager(pm: PackageManager): boolean {
-  return isInstalled(pm);
+/** Validate that a string is a known package manager and is installed */
+export function validatePackageManager(pm: string): pm is PackageManager {
+  return (["bun", "npm", "yarn", "pnpm"] as string[]).includes(pm) && isInstalled(pm);
 }

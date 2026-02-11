@@ -6,10 +6,7 @@ const KEBAB_CASE_RE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 const SCOPE_RE = /^@[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 const BUNDLE_ID_RE = /^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$/;
 
-export interface ValidationResult {
-  valid: boolean;
-  error?: string;
-}
+type ValidationResult = { valid: true } | { valid: false; error: string };
 
 export function validateProjectName(name: string): ValidationResult {
   if (!name) {
