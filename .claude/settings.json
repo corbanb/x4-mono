@@ -1,4 +1,24 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(bun install*)",
+      "Bash(bun turbo *)",
+      "Bash(bun test*)",
+      "Bash(bun db:*)",
+      "Bash(bun run *)",
+      "Bash(bun --watch*)",
+      "Bash(bun build*)",
+      "Bash(bun clean*)",
+      "Bash(git *)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(bun pm publish*)"
+    ]
+  },
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true
   }
