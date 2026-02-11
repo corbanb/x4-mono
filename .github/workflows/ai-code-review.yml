@@ -49,6 +49,7 @@ jobs:
         uses: actions/github-script@v8
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DIFF_CONTENT: ${{ steps.diff.outputs.diff }}
         with:
           script: |
             const diff = process.env.DIFF_CONTENT;
@@ -94,5 +95,3 @@ jobs:
               issue_number: context.issue.number,
               body: `## Claude Code Review\n\n${review}\n\n---\n*Automated review by Claude Sonnet*`
             });
-        env:
-          DIFF_CONTENT: ${{ steps.diff.outputs.diff }}
