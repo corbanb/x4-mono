@@ -12,7 +12,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "test": "bun test",
+    "test": "bun test test/constants.test.ts test/presets.test.ts test/detect.test.ts test/validate.test.ts test/validate-extra.test.ts test/strip.test.ts test/filter.test.ts test/transform.test.ts test/neon.test.ts test/e2e/ && bun test test/download.test.ts && bun test test/ui.test.ts && bun test test/scaffold-unit.test.ts && bun test test/env-wizard.test.ts && bun test test/wizard.test.ts",
     "prepublishOnly": "bun run build"
   },
   "engines": {
