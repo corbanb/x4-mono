@@ -31,42 +31,19 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: "1.3.8"
-
-      - uses: actions/cache@v5
-        with:
-          path: ~/.bun/install/cache
-          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-          restore-keys: bun-${{ runner.os }}-
-
       - name: Install Vercel CLI
         run: npm i -g vercel@latest
 
-      - name: Pull Vercel environment
-        run: vercel pull --yes --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: ./apps/marketing
-
-      - name: Build with Vercel
-        run: |
-          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
-            vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-          else
-            vercel build --token=${{ secrets.VERCEL_TOKEN }}
-          fi
-        working-directory: ./apps/marketing
-
       - name: Deploy to Vercel (Production)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
         working-directory: ./apps/marketing
 
       - name: Deploy to Vercel (Preview)
         if: github.event_name == 'pull_request'
         id: preview
         run: |
-          URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          URL=$(vercel deploy --token=${{ secrets.VERCEL_TOKEN }})
           echo "preview-url=$URL" >> $GITHUB_OUTPUT
         working-directory: ./apps/marketing
 
