@@ -66,6 +66,7 @@ function baseConfig(overrides?: Record<string, unknown>) {
     projectName: "test-proj",
     scope: "@test",
     bundleId: "com.test",
+    mobileName: "main",
     excludePlatforms: [] as string[],
     pm: "bun" as const,
     git: false,
@@ -153,16 +154,16 @@ describe("scaffold", () => {
     // Add mobile dir to the giget mock
     mockGigetDownload.mockImplementation(async (_source: string, opts: { dir: string }) => {
       const dir = opts.dir;
-      mkdirSync(join(dir, "apps/mobile"), { recursive: true });
+      mkdirSync(join(dir, "apps/mobile-main"), { recursive: true });
       mkdirSync(join(dir, "apps/api/src"), { recursive: true });
       writeFileSync(join(dir, "package.json"), JSON.stringify({ name: "x4-mono" }));
       writeFileSync(join(dir, "apps/api/package.json"), JSON.stringify({ name: "@x4/api" }));
-      writeFileSync(join(dir, "apps/mobile/package.json"), JSON.stringify({ name: "@x4/mobile" }));
+      writeFileSync(join(dir, "apps/mobile-main/package.json"), JSON.stringify({ name: "@x4/mobile-main" }));
     });
 
     await scaffold(baseConfig({ excludePlatforms: [] }));
 
     const targetDir = join(tempDir, "test-proj");
-    expect(existsSync(join(targetDir, "apps/mobile"))).toBe(true);
+    expect(existsSync(join(targetDir, "apps/mobile-main"))).toBe(true);
   });
 });
