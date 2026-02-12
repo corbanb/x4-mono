@@ -2,6 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "bun run build:vercel",
   "outputDirectory": ".vercel/output",
-  "installCommand": "bun install",
-  "ignoreCommand": "npx turbo-ignore"
+  "installCommand": "cd ../.. && bun install"
 }
