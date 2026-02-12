@@ -10,6 +10,7 @@ cp .env.example .env.local  # Configure environment
 bun db:push                 # Push schema to dev DB
 bun db:seed                 # Seed test data
 bun dev                     # Start all workspaces
+bun run setup:ai-docs       # Download AI reference docs (optional)
 ```
 
 See [docs/getting-started.md](docs/getting-started.md) for the detailed setup checklist.
