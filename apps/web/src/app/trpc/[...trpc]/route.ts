@@ -1,15 +1,18 @@
+import { NextRequest } from "next/server";
+
 const API_URL =
   process.env.API_URL ??
   process.env.NEXT_PUBLIC_API_URL ??
   "http://localhost:3002";
 
-async function handler(request: Request) {
+async function handler(request: NextRequest) {
   const url = new URL(request.url);
   const targetUrl = `${API_URL}${url.pathname}${url.search}`;
 
   const headers = new Headers(request.headers);
   headers.set("host", new URL(API_URL).host);
   headers.delete("connection");
+  headers.delete("accept-encoding");
 
   const res = await fetch(targetUrl, {
     method: request.method,
@@ -20,14 +23,17 @@ async function handler(request: Request) {
     redirect: "manual",
   });
 
+  const body = await res.arrayBuffer();
+
   const responseHeaders = new Headers();
   res.headers.forEach((value, key) => {
-    if (key.toLowerCase() !== "transfer-encoding") {
+    const lower = key.toLowerCase();
+    if (lower !== "transfer-encoding" && lower !== "content-encoding") {
       responseHeaders.append(key, value);
     }
   });
 
-  return new Response(res.body, {
+  return new Response(body, {
     status: res.status,
     headers: responseHeaders,
   });
