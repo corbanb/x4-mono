@@ -1,31 +1,15 @@
-import { describe, expect, test, mock, beforeEach, afterEach } from "bun:test";
+import { describe, expect, test, beforeEach, afterEach } from "bun:test";
 import { mkdtempSync, writeFileSync, readFileSync, existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-
-// Mock ONLY external deps — do NOT mock internal source modules (neon.js, ui.js)
-const mockSelect = mock(async () => "skip");
-const mockPassword = mock(async () => "");
-const mockText = mock(async () => "");
-const mockSpinnerStart = mock(() => {});
-const mockSpinnerStop = mock(() => {});
-
-mock.module("@clack/prompts", () => ({
-  select: mockSelect,
-  password: mockPassword,
-  text: mockText,
-  confirm: mock(async () => true),
-  spinner: () => ({ start: mockSpinnerStart, stop: mockSpinnerStop }),
-  log: {
-    step: mock(() => {}),
-    info: mock(() => {}),
-    warning: mock(() => {}),
-    success: mock(() => {}),
-    error: mock(() => {}),
-  },
-  isCancel: () => false,
-  cancel: mock(() => {}),
-}));
+import {
+  mockSelect,
+  mockPassword,
+  mockText,
+  mockSpinnerStart,
+  mockSpinnerStop,
+  clearAllClackMocks,
+} from "./helpers/mock-clack.js";
 
 const { runEnvWizard } = await import("../src/env-wizard.js");
 
@@ -35,11 +19,7 @@ let originalFetch: typeof globalThis.fetch;
 beforeEach(() => {
   tempDir = mkdtempSync(join(tmpdir(), "create-x4-envwiz-"));
   originalFetch = globalThis.fetch;
-  mockSelect.mockClear();
-  mockPassword.mockClear();
-  mockText.mockClear();
-  mockSpinnerStart.mockClear();
-  mockSpinnerStop.mockClear();
+  clearAllClackMocks();
 });
 
 afterEach(() => {

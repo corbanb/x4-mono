@@ -11,14 +11,8 @@ mock.module("giget", () => ({
   downloadTemplate: mockGigetDownload,
 }));
 
-mock.module("@clack/prompts", () => ({
-  spinner: () => ({ start: mock(() => {}), stop: mock(() => {}) }),
-  log: {
-    success: mock(() => {}),
-    step: mock(() => {}),
-    message: mock(() => {}),
-  },
-}));
+// Shared @clack/prompts mock — see test/helpers/mock-clack.ts
+import "./helpers/mock-clack.js";
 
 const { scaffold } = await import("../src/scaffold.js");
 
