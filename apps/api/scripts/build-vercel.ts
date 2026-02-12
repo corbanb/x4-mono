@@ -19,7 +19,7 @@ mkdirSync(FUNC_DIR, { recursive: true });
 
 // --- Bundle the Hono app ---
 await build({
-  entryPoints: [join(ROOT, "src/app.ts")],
+  entryPoints: [join(ROOT, "src/vercel.ts")],
   outfile: join(FUNC_DIR, "index.mjs"),
   bundle: true,
   format: "esm",
@@ -36,8 +36,6 @@ await build({
     "net", "tls", "zlib", "querystring", "string_decoder",
     "child_process", "worker_threads", "async_hooks",
     "diagnostics_channel", "perf_hooks", "tty", "assert",
-    "pino-pretty",
-    "thread-stream",
   ],
   define: {
     "process.env.NODE_ENV": '"production"',
