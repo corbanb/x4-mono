@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, renameSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import fg from "fast-glob";
 import {
@@ -13,6 +13,7 @@ export interface TransformOptions {
   projectName: string;
   scope: string;
   bundleId: string;
+  mobileName: string;
   verbose: boolean;
 }
 
@@ -23,6 +24,18 @@ export interface TransformOptions {
  * Pass 2: Global text replacement on all text files.
  */
 export async function transformTemplate(opts: TransformOptions): Promise<void> {
+  // Pass 0: Rename mobile directory if mobileName !== "main"
+  if (opts.mobileName !== "main") {
+    const src = join(opts.targetDir, "apps/mobile-main");
+    const dest = join(opts.targetDir, `apps/mobile-${opts.mobileName}`);
+    if (existsSync(src)) {
+      renameSync(src, dest);
+      if (opts.verbose) {
+        console.log(`  Renamed apps/mobile-main → apps/mobile-${opts.mobileName}`);
+      }
+    }
+  }
+
   // Pass 1: Structured JSON edits
   await transformPackageJsonFiles(opts);
   transformAppJson(opts);
@@ -88,9 +101,10 @@ async function transformPackageJsonFiles(opts: TransformOptions): Promise<void> 
   }
 }
 
-/** Transform apps/mobile/app.json */
+/** Transform apps/mobile-{name}/app.json */
 function transformAppJson(opts: TransformOptions): void {
-  const file = join(opts.targetDir, "apps/mobile/app.json");
+  const mobileDir = `apps/mobile-${opts.mobileName}`;
+  const file = join(opts.targetDir, mobileDir, "app.json");
   let raw: string;
   try {
     raw = readFileSync(file, "utf-8");
@@ -103,18 +117,18 @@ function transformAppJson(opts: TransformOptions): void {
   if (!expo) return;
 
   expo.name = opts.projectName;
-  expo.slug = `${opts.projectName}-mobile`;
-  expo.scheme = opts.projectName;
+  expo.slug = `${opts.projectName}-mobile-${opts.mobileName}`;
+  expo.scheme = `${opts.projectName}-${opts.mobileName}`;
 
   if (expo.ios) {
-    expo.ios.bundleIdentifier = `${opts.bundleId}.mobile`;
+    expo.ios.bundleIdentifier = `${opts.bundleId}.mobile.${opts.mobileName}`;
   }
   if (expo.android) {
-    expo.android.package = `${opts.bundleId}.mobile`;
+    expo.android.package = `${opts.bundleId}.mobile.${opts.mobileName}`;
   }
 
   if (opts.verbose) {
-    console.log("  Transforming apps/mobile/app.json");
+    console.log(`  Transforming ${mobileDir}/app.json`);
   }
   writeFileSync(file, JSON.stringify(config, null, 2) + "\n");
 }
@@ -165,6 +179,11 @@ async function globalTextReplace(opts: TransformOptions): Promise<void> {
     // Bundle ID prefix
     [new RegExp(escapeRegex(TEMPLATE_BUNDLE_PREFIX + "."), "g"), opts.bundleId + "."],
   ];
+
+  // If mobileName is not "main", replace "mobile-main" references in text files
+  if (opts.mobileName !== "main") {
+    replacements.push([/mobile-main/g, `mobile-${opts.mobileName}`]);
+  }
 
   for (const file of files) {
     let content = readFileSync(file, "utf-8");

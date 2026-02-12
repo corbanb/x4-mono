@@ -14,6 +14,7 @@ export interface ScaffoldConfig {
   projectName: string;
   scope: string;
   bundleId: string;
+  mobileName: string;
   excludePlatforms: Platform[];
   pm: PackageManager;
   git: boolean;
@@ -46,6 +47,7 @@ export async function scaffold(config: ScaffoldConfig): Promise<void> {
       projectName: config.projectName,
       scope: config.scope,
       bundleId: config.bundleId,
+      mobileName: config.mobileName,
       verbose: config.verbose,
     });
     s.stop("Applied naming.");
@@ -57,6 +59,7 @@ export async function scaffold(config: ScaffoldConfig): Promise<void> {
         targetDir,
         excludePlatforms: config.excludePlatforms,
         scope: config.scope,
+        mobileName: config.mobileName,
         verbose: config.verbose,
       });
       s.stop("Removed excluded platforms.");
