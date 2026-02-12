@@ -7,8 +7,6 @@ import {
   createTRPCClient,
 } from "@x4/shared/api-client";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3002";
-
 export function TRPCProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>
@@ -24,7 +22,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
 
   const [trpcClient] = useState(() =>
     createTRPCClient({
-      baseUrl: API_URL,
+      baseUrl: "",
     }),
   );
 
