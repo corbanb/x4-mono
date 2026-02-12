@@ -33,6 +33,31 @@ export function findMonorepoRoot(startDir: string): string | null {
   return null;
 }
 
+/** Detect npm scope by scanning workspace package.json names */
+function detectScopeFromPackages(root: string): string | null {
+  const packagesDir = join(root, "packages");
+  if (!existsSync(packagesDir)) return null;
+
+  const dirs = readdirSync(packagesDir, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name);
+
+  for (const dir of dirs) {
+    const pkgPath = join(packagesDir, dir, "package.json");
+    if (!existsSync(pkgPath)) continue;
+    try {
+      const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
+      const pkgName = pkg.name as string | undefined;
+      if (pkgName?.startsWith("@") && pkgName.includes("/")) {
+        return pkgName.split("/")[0];
+      }
+    } catch {
+      // ignore
+    }
+  }
+  return null;
+}
+
 /** Read config from the monorepo root */
 export function readMonorepoConfig(root: string): MonorepoConfig {
   const rootPkg = JSON.parse(readFileSync(join(root, "package.json"), "utf-8"));
@@ -45,8 +70,9 @@ export function readMonorepoConfig(root: string): MonorepoConfig {
     scope = name.split("/")[0];
     projectName = name.split("/")[1];
   } else {
-    scope = `@${name}`;
     projectName = name;
+    // Try to detect scope from existing workspace packages
+    scope = detectScopeFromPackages(root) ?? `@${name}`;
   }
 
   // Try to find bundleId from an existing mobile app.json
@@ -264,6 +290,8 @@ export async function runAddCommand(rawArgs: string[]): Promise<void> {
       const assetsDir = join(root, "apps", existingMobile, "assets");
       if (existsSync(assetsDir)) {
         cpSync(assetsDir, join(targetDir, "assets"), { recursive: true });
+      } else {
+        mkdirSync(join(targetDir, "assets"), { recursive: true });
       }
     } else {
       mkdirSync(join(targetDir, "assets"), { recursive: true });
