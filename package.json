@@ -13,7 +13,8 @@
     "db:push": "turbo db:push",
     "db:migrate": "turbo db:migrate",
     "db:seed": "turbo db:seed",
-    "db:studio": "turbo db:studio"
+    "db:studio": "turbo db:studio",
+    "setup:ai-docs": "bun scripts/download-ai-docs.ts"
   },
   "devDependencies": {
     "@playwright/test": "1.58.2",

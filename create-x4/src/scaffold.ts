@@ -112,6 +112,7 @@ export async function scaffold(config: ScaffoldConfig): Promise<void> {
   p.log.message(`  1. ${pc.dim("cp .env.example .env.local")}    # Configure environment`);
   p.log.message(`  2. ${pc.dim(`${run} db:push`)}               # Push schema to database`);
   p.log.message(`  3. ${pc.dim(`${run} dev`)}                    # Start development`);
+  p.log.message(`  4. ${pc.dim(`${run} setup:ai-docs`)}          # Download AI reference docs (optional)`);
 
   const urls: [string, string][] = [
     ["API", "http://localhost:3002"],

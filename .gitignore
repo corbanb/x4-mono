@@ -32,6 +32,7 @@ Thumbs.db
 
 # Claude Code
 .claude-old/
+.claude/docs/
 
 # Plans
 docs/plans/

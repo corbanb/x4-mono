@@ -8,7 +8,7 @@ Full-stack TypeScript monorepo boilerplate for building multi-platform applicati
 apps/
   api/          Hono + tRPC v11 on Bun         :3002
   web/          Next.js 15 App Router           :3000
-  mobile/       Expo + React Native
+  mobile-main/  Expo + React Native
   desktop/      Electron
   marketing/    Next.js static site             :3001
 
@@ -95,6 +95,34 @@ The API runs on `http://localhost:3002`, web on `http://localhost:3000`, and mar
 | `bun clean` | Remove build artifacts and node_modules |
 
 See [docs/commands.md](docs/commands.md) for the full reference.
+
+## AI-Assisted Development
+
+This project includes tooling for AI-assisted development with Claude Code.
+
+### LLM Reference Docs
+
+Download the latest documentation for all major dependencies:
+
+```bash
+bun run setup:ai-docs
+```
+
+This fetches `llms.txt` files from Hono, Drizzle, tRPC, Better Auth, Bun, Turborepo, Zod, Next.js, Expo, React, Neon, and Vercel into `.claude/docs/`. Claude Code reads these on demand for accurate, up-to-date API guidance.
+
+### Superpowers Skills
+
+Install the [Superpowers](https://github.com/coltontedder/superpowers) skill pack for enhanced Claude Code workflows:
+
+```bash
+claude install-skill coltontedder/superpowers
+```
+
+This adds skills for test-driven development, systematic debugging, parallel agents, code review, and more.
+
+### Claude Commands
+
+The project includes 24 custom Claude commands in `.claude/commands/` for scaffolding, specialist agents, and PRD lifecycle management. Type `/` in Claude Code to see them.
 
 ## Documentation
 
