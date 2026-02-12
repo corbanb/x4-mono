@@ -13,7 +13,7 @@ packages/ai-integrations/ @corbanb
 # Apps
 apps/api/               @corbanb
 apps/web/               @corbanb
-apps/mobile/            @corbanb
+apps/mobile-main/       @corbanb
 apps/desktop/           @corbanb
 apps/marketing/         @corbanb
 
