@@ -1,61 +1,43 @@
 /**
- * Pre-bundles the API into a single .mjs file for Vercel deployment
- * using the Build Output API v3.
+ * Bundles the Hono app for Vercel deployment using Build Output API v3.
  *
- * The .mjs extension signals ESM to Node.js without needing "type": "module"
- * in package.json, which causes Vercel's Node.js runtime to hang.
+ * Resolves all workspace dependencies and tsconfig path aliases at build time,
+ * producing a single self-contained .mjs file that Vercel serves as a
+ * serverless function.
+ *
+ * Usage: bun run build:vercel (from apps/api/)
  */
 import { build } from "esbuild";
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
-const FUNC_DIR = join(
-  import.meta.dir,
-  "../.vercel/output/functions/api/index.func",
-);
-const OUTPUT_DIR = join(import.meta.dir, "../.vercel/output");
+const ROOT = join(import.meta.dir, "..");
+const FUNC_DIR = join(ROOT, ".vercel/output/functions/api/index.func");
+const OUTPUT_DIR = join(ROOT, ".vercel/output");
 
-// Ensure directories exist
 mkdirSync(FUNC_DIR, { recursive: true });
 
-// --- esbuild ---
+// --- Bundle the Hono app ---
 await build({
-  entryPoints: [join(import.meta.dir, "../vercel-entry.ts")],
+  entryPoints: [join(ROOT, "src/app.ts")],
   outfile: join(FUNC_DIR, "index.mjs"),
   bundle: true,
   format: "esm",
   platform: "node",
   target: "node22",
-  minify: false, // Keep readable for debugging cold-start issues
-  sourcemap: false,
+  minify: true,
+  sourcemap: true,
+  treeShaking: true,
   // Externalize Node.js built-ins and dev-only transports
   external: [
     "node:*",
-    "crypto",
-    "fs",
-    "path",
-    "os",
-    "url",
-    "util",
-    "stream",
-    "events",
-    "buffer",
-    "http",
-    "https",
-    "net",
-    "tls",
-    "zlib",
-    "querystring",
-    "string_decoder",
-    "child_process",
-    "worker_threads",
-    "async_hooks",
-    "diagnostics_channel",
-    "perf_hooks",
-    "tty",
-    "assert",
-    "pino-pretty", // Dev-only transport, not needed in production
-    "thread-stream", // Pino worker thread transport
+    "crypto", "fs", "path", "os", "url", "util",
+    "stream", "events", "buffer", "http", "https",
+    "net", "tls", "zlib", "querystring", "string_decoder",
+    "child_process", "worker_threads", "async_hooks",
+    "diagnostics_channel", "perf_hooks", "tty", "assert",
+    "pino-pretty",
+    "thread-stream",
   ],
   define: {
     "process.env.NODE_ENV": '"production"',
@@ -71,14 +53,10 @@ await build({
       "const require = __createRequire(import.meta.url);",
     ].join("\n"),
   },
-  // Resolve workspace package imports and TS path aliases
-  alias: {
-    "@/*": "./src/*",
-  },
-  tsconfig: join(import.meta.dir, "../tsconfig.json"),
+  tsconfig: join(ROOT, "tsconfig.json"),
 });
 
-// --- .vc-config.json (function config) ---
+// --- Vercel function config ---
 writeFileSync(
   join(FUNC_DIR, ".vc-config.json"),
   JSON.stringify(
@@ -87,31 +65,31 @@ writeFileSync(
       handler: "index.mjs",
       launcherType: "Nodejs",
       maxDuration: 60,
+      supportsResponseStreaming: true,
     },
     null,
     2,
   ),
 );
 
-// --- config.json (Build Output API v3 root config) ---
+// --- Build Output API v3 root config ---
 writeFileSync(
   join(OUTPUT_DIR, "config.json"),
   JSON.stringify(
     {
       version: 3,
-      routes: [
-        {
-          src: "/(.*)",
-          dest: "/api/index",
-        },
-      ],
+      routes: [{ src: "/(.*)", dest: "/api/index" }],
     },
     null,
     2,
   ),
 );
 
-console.log("Build complete:");
-console.log(`  Bundle: ${join(FUNC_DIR, "index.mjs")}`);
-console.log(`  Config: ${join(OUTPUT_DIR, "config.json")}`);
-console.log(`  Function config: ${join(FUNC_DIR, ".vc-config.json")}`);
+const bundleSize = Bun.file(join(FUNC_DIR, "index.mjs")).size;
+const sizeMB = (bundleSize / 1024 / 1024).toFixed(1);
+
+console.log(`Build complete (${sizeMB} MB):`);
+console.log(`  Bundle:    ${join(FUNC_DIR, "index.mjs")}`);
+console.log(`  Sourcemap: ${join(FUNC_DIR, "index.mjs.map")}`);
+console.log(`  Config:    ${join(OUTPUT_DIR, "config.json")}`);
+console.log(`  Function:  ${join(FUNC_DIR, ".vc-config.json")}`);
