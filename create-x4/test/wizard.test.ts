@@ -1,30 +1,14 @@
-import { describe, expect, test, mock, beforeEach, afterEach } from "bun:test";
+import { describe, expect, test, beforeEach, afterEach } from "bun:test";
 import { mkdtempSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-
-// Mock ONLY external deps — do NOT mock internal source modules (detect.js, ui.js)
-const mockText = mock(async () => "test-app");
-const mockSelect = mock(async () => "full-stack");
-const mockMultiselect = mock(async () => []);
-const mockConfirm = mock(async () => true);
-
-mock.module("@clack/prompts", () => ({
-  text: mockText,
-  select: mockSelect,
-  multiselect: mockMultiselect,
-  confirm: mockConfirm,
-  log: {
-    error: mock(() => {}),
-    step: mock(() => {}),
-    info: mock(() => {}),
-    success: mock(() => {}),
-    message: mock(() => {}),
-    warning: mock(() => {}),
-  },
-  isCancel: () => false,
-  cancel: mock(() => {}),
-}));
+import {
+  mockText,
+  mockSelect,
+  mockMultiselect,
+  mockConfirm,
+  clearAllClackMocks,
+} from "./helpers/mock-clack.js";
 
 const { runWizard } = await import("../src/wizard.js");
 
@@ -39,10 +23,7 @@ beforeEach(() => {
   // Force detectPackageManager to return "bun" via user agent
   process.env.npm_config_user_agent = "bun/1.1.0";
   process.chdir(tempDir);
-  mockText.mockClear();
-  mockSelect.mockClear();
-  mockMultiselect.mockClear();
-  mockConfirm.mockClear();
+  clearAllClackMocks();
 });
 
 afterEach(() => {

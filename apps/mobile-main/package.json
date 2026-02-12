@@ -1,5 +1,5 @@
 {
-  "name": "@x4/mobile",
+  "name": "@x4/mobile-main",
   "version": "0.0.0",
   "private": true,
   "main": "expo-router/entry",

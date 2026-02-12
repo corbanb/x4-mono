@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "x4",
-    "slug": "x4-mobile",
+    "slug": "x4-mobile-main",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "x4",
+    "scheme": "x4-main",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -15,14 +15,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.x4.mobile"
+      "bundleIdentifier": "com.x4.mobile.main"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.x4.mobile"
+      "package": "com.x4.mobile.main"
     },
     "plugins": [
       "expo-router",

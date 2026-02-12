@@ -42,6 +42,7 @@ Arguments:
 Options:
   -s, --scope <scope>   npm scope for packages (default: @{project-name})
   --bundle-id <id>      Reverse-domain prefix (default: com.{project-name})
+  --mobile-name <name>  Mobile app name (default: main)
   --no-mobile           Exclude Expo mobile app
   --no-desktop          Exclude Electron desktop app
   --no-marketing        Exclude marketing site
@@ -74,6 +75,41 @@ Skip dependency installation:
 
 ```bash
 bunx create-x4 my-app --no-install
+```
+
+Custom mobile app name:
+
+```bash
+bunx create-x4 my-app --mobile-name consumer
+```
+
+## Adding Apps to an Existing Monorepo
+
+Use `create-x4 add` to scaffold additional mobile or web apps into an existing x4 monorepo.
+
+```bash
+# Add a new mobile app
+bunx create-x4 add mobile-app --name admin
+
+# Add a new web app
+bunx create-x4 add web-app --name portal
+```
+
+Run from anywhere inside the monorepo. The command auto-detects the root, scope, and bundle ID.
+
+### Options
+
+```
+Usage: create-x4 add <template> [options]
+
+Templates:
+  mobile-app            Expo + React Native app
+  web-app               Next.js 15 app
+
+Options:
+  --name <name>         App name (kebab-case)
+  --bundle-id <id>      Override bundle ID prefix (mobile only)
+  --no-install          Skip dependency installation
 ```
 
 ## License

@@ -10,7 +10,7 @@ x4-mono is a full-stack TypeScript monorepo boilerplate for building multi-platf
 - **Monorepo**: Bun workspaces + Turborepo for orchestration
 - **API**: Hono + tRPC v11 on Bun (`apps/api`, port 3002)
 - **Web**: Next.js 15 App Router (`apps/web`, port 3000)
-- **Mobile**: Expo + React Native (`apps/mobile`)
+- **Mobile**: Expo + React Native (`apps/mobile-main`)
 - **Desktop**: Electron (`apps/desktop`)
 - **Marketing**: Next.js static (`apps/marketing`, port 3001)
 - **Database**: Neon (Postgres) + Drizzle ORM (`packages/database`)
@@ -33,7 +33,7 @@ packages/
 apps/
   api/                  # Hono + tRPC server (standalone backend)
   web/                  # Next.js 15 App Router (primary web client)
-  mobile/               # Expo + React Native
+  mobile-main/          # Expo + React Native (primary mobile app)
   desktop/              # Electron wrapper
   marketing/            # Next.js static marketing site
 ```
@@ -199,7 +199,7 @@ Each PRD Section 6 contains a task table with columns: Task #, Description, Esti
 ### Add a UI component
 - **Cross-platform**: `packages/shared/ui/{ComponentName}.tsx`
 - **Web-only**: `apps/web/src/components/{ComponentName}.tsx`
-- **Mobile-only**: `apps/mobile/src/components/{ComponentName}.tsx`
+- **Mobile-only**: `apps/mobile-main/src/components/{ComponentName}.tsx`
 
 ### Implement a PRD task
 1. Read the PRD in `wiki/` (check inbox, active, or completed)

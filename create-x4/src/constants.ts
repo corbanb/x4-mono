@@ -48,8 +48,8 @@ export const TEMPLATE_REPO = "corbanb/x4-mono";
 /** Platform definitions for --no-* flags */
 export const PLATFORMS = {
   mobile: {
-    dirs: ["apps/mobile"],
-    workflows: ["deploy-mobile.yml"],
+    dirs: ["apps/mobile-main"],
+    workflows: ["deploy-mobile-main.yml"],
     authExports: ["./client/native"],
     authFiles: ["src/client.native.ts"],
   },

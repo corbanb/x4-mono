@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeEach, afterEach } from "bun:test";
-import { mkdtempSync, writeFileSync, readFileSync, mkdirSync } from "node:fs";
+import { mkdtempSync, writeFileSync, readFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { rmSync } from "node:fs";
@@ -27,6 +27,7 @@ describe("transformTemplate", () => {
       projectName: "my-app",
       scope: "@my-app",
       bundleId: "com.myapp",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -56,6 +57,7 @@ describe("transformTemplate", () => {
       projectName: "my-app",
       scope: "@acme",
       bundleId: "com.acme",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -79,6 +81,7 @@ describe("transformTemplate", () => {
       projectName: "cool-project",
       scope: "@cool-project",
       bundleId: "com.coolproject",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -90,16 +93,16 @@ describe("transformTemplate", () => {
   });
 
   test("transforms app.json for mobile", async () => {
-    mkdirSync(join(tempDir, "apps/mobile"), { recursive: true });
+    mkdirSync(join(tempDir, "apps/mobile-main"), { recursive: true });
     writeFileSync(
-      join(tempDir, "apps/mobile/app.json"),
+      join(tempDir, "apps/mobile-main/app.json"),
       JSON.stringify({
         expo: {
           name: "x4",
-          slug: "x4-mobile",
-          scheme: "x4",
-          ios: { bundleIdentifier: "com.x4.mobile" },
-          android: { package: "com.x4.mobile" },
+          slug: "x4-mobile-main",
+          scheme: "x4-main",
+          ios: { bundleIdentifier: "com.x4.mobile.main" },
+          android: { package: "com.x4.mobile.main" },
         },
       }),
     );
@@ -109,17 +112,18 @@ describe("transformTemplate", () => {
       projectName: "my-app",
       scope: "@my-app",
       bundleId: "com.myapp",
+      mobileName: "main",
       verbose: false,
     });
 
     const config = JSON.parse(
-      readFileSync(join(tempDir, "apps/mobile/app.json"), "utf-8"),
+      readFileSync(join(tempDir, "apps/mobile-main/app.json"), "utf-8"),
     );
     expect(config.expo.name).toBe("my-app");
-    expect(config.expo.slug).toBe("my-app-mobile");
-    expect(config.expo.scheme).toBe("my-app");
-    expect(config.expo.ios.bundleIdentifier).toBe("com.myapp.mobile");
-    expect(config.expo.android.package).toBe("com.myapp.mobile");
+    expect(config.expo.slug).toBe("my-app-mobile-main");
+    expect(config.expo.scheme).toBe("my-app-main");
+    expect(config.expo.ios.bundleIdentifier).toBe("com.myapp.mobile.main");
+    expect(config.expo.android.package).toBe("com.myapp.mobile.main");
   });
 
   test("transforms electron-builder.yml", async () => {
@@ -134,6 +138,7 @@ describe("transformTemplate", () => {
       projectName: "my-app",
       scope: "@my-app",
       bundleId: "com.myapp",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -158,6 +163,7 @@ describe("transformTemplate", () => {
       projectName: "my-app",
       scope: "@my-app",
       bundleId: "com.myapp",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -178,6 +184,7 @@ describe("transformTemplate", () => {
       projectName: "test",
       scope: "@test",
       bundleId: "com.test",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -201,6 +208,7 @@ describe("transformTemplate", () => {
       projectName: "my-app",
       scope: "@my-app",
       bundleId: "com.myapp",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -232,6 +240,7 @@ describe("transformTemplate", () => {
       projectName: "proj",
       scope: "@proj",
       bundleId: "com.proj",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -245,5 +254,63 @@ describe("transformTemplate", () => {
     expect(web.name).toBe("@proj/web");
     expect(web.dependencies["@proj/shared"]).toBe("workspace:*");
     expect(shared.name).toBe("@proj/shared");
+  });
+
+  test("renames mobile directory for custom mobileName", async () => {
+    mkdirSync(join(tempDir, "apps/mobile-main"), { recursive: true });
+    writeFileSync(
+      join(tempDir, "apps/mobile-main/app.json"),
+      JSON.stringify({
+        expo: {
+          name: "x4",
+          slug: "x4-mobile-main",
+          scheme: "x4-main",
+          ios: { bundleIdentifier: "com.x4.mobile.main" },
+          android: { package: "com.x4.mobile.main" },
+        },
+      }),
+    );
+
+    await transformTemplate({
+      targetDir: tempDir,
+      projectName: "my-app",
+      scope: "@my-app",
+      bundleId: "com.myapp",
+      mobileName: "consumer",
+      verbose: false,
+    });
+
+    // Directory should be renamed
+    expect(existsSync(join(tempDir, "apps/mobile-main"))).toBe(false);
+    expect(existsSync(join(tempDir, "apps/mobile-consumer"))).toBe(true);
+
+    // app.json should use the new mobileName
+    const config = JSON.parse(
+      readFileSync(join(tempDir, "apps/mobile-consumer/app.json"), "utf-8"),
+    );
+    expect(config.expo.slug).toBe("my-app-mobile-consumer");
+    expect(config.expo.scheme).toBe("my-app-consumer");
+    expect(config.expo.ios.bundleIdentifier).toBe("com.myapp.mobile.consumer");
+  });
+
+  test("global text replace substitutes mobile-main for custom name", async () => {
+    mkdirSync(join(tempDir, "src"), { recursive: true });
+    writeFileSync(
+      join(tempDir, "src/workflow.yml"),
+      `paths:\n  - 'apps/mobile-main/**'\nworking-directory: apps/mobile-main\n`,
+    );
+
+    await transformTemplate({
+      targetDir: tempDir,
+      projectName: "my-app",
+      scope: "@my-app",
+      bundleId: "com.myapp",
+      mobileName: "admin",
+      verbose: false,
+    });
+
+    const content = readFileSync(join(tempDir, "src/workflow.yml"), "utf-8");
+    expect(content).toContain("apps/mobile-admin");
+    expect(content).not.toContain("mobile-main");
   });
 });

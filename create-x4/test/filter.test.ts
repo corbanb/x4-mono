@@ -19,7 +19,7 @@ function createMinimalTemplate(): void {
   const dirs = [
     "apps/api/src/routers",
     "apps/web/src/app/(dashboard)/ai",
-    "apps/mobile",
+    "apps/mobile-main",
     "apps/desktop",
     "apps/marketing",
     "apps/docs",
@@ -34,7 +34,7 @@ function createMinimalTemplate(): void {
 
   // Workflow files
   for (const wf of [
-    "deploy-mobile.yml",
+    "deploy-mobile-main.yml",
     "deploy-desktop.yml",
     "deploy-marketing.yml",
     "deploy-docs.yml",
@@ -149,12 +149,13 @@ describe("filterPlatforms", () => {
       targetDir: tempDir,
       excludePlatforms: ["mobile"],
       scope: "@test",
+      mobileName: "main",
       verbose: false,
     });
 
-    expect(existsSync(join(tempDir, "apps/mobile"))).toBe(false);
+    expect(existsSync(join(tempDir, "apps/mobile-main"))).toBe(false);
     expect(
-      existsSync(join(tempDir, ".github/workflows/deploy-mobile.yml")),
+      existsSync(join(tempDir, ".github/workflows/deploy-mobile-main.yml")),
     ).toBe(false);
     expect(
       existsSync(join(tempDir, "packages/auth/src/client.native.ts")),
@@ -172,6 +173,7 @@ describe("filterPlatforms", () => {
       targetDir: tempDir,
       excludePlatforms: ["desktop"],
       scope: "@test",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -180,7 +182,7 @@ describe("filterPlatforms", () => {
       existsSync(join(tempDir, ".github/workflows/deploy-desktop.yml")),
     ).toBe(false);
     // Other dirs should still exist
-    expect(existsSync(join(tempDir, "apps/mobile"))).toBe(true);
+    expect(existsSync(join(tempDir, "apps/mobile-main"))).toBe(true);
   });
 
   test("--no-marketing removes marketing and env vars", () => {
@@ -188,6 +190,7 @@ describe("filterPlatforms", () => {
       targetDir: tempDir,
       excludePlatforms: ["marketing"],
       scope: "@test",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -209,6 +212,7 @@ describe("filterPlatforms", () => {
       targetDir: tempDir,
       excludePlatforms: ["docs"],
       scope: "@test",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -227,6 +231,7 @@ describe("filterPlatforms", () => {
       targetDir: tempDir,
       excludePlatforms: ["ai"],
       scope: "@test",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -272,10 +277,11 @@ describe("filterPlatforms", () => {
       targetDir: tempDir,
       excludePlatforms: ["mobile", "desktop", "docs"],
       scope: "@test",
+      mobileName: "main",
       verbose: false,
     });
 
-    expect(existsSync(join(tempDir, "apps/mobile"))).toBe(false);
+    expect(existsSync(join(tempDir, "apps/mobile-main"))).toBe(false);
     expect(existsSync(join(tempDir, "apps/desktop"))).toBe(false);
     expect(existsSync(join(tempDir, "apps/docs"))).toBe(false);
     // These should still exist
@@ -288,13 +294,38 @@ describe("filterPlatforms", () => {
       targetDir: tempDir,
       excludePlatforms: [],
       scope: "@test",
+      mobileName: "main",
       verbose: false,
     });
 
-    expect(existsSync(join(tempDir, "apps/mobile"))).toBe(true);
+    expect(existsSync(join(tempDir, "apps/mobile-main"))).toBe(true);
     expect(existsSync(join(tempDir, "apps/desktop"))).toBe(true);
     expect(existsSync(join(tempDir, "apps/marketing"))).toBe(true);
     expect(existsSync(join(tempDir, "apps/docs"))).toBe(true);
     expect(existsSync(join(tempDir, "packages/ai-integrations"))).toBe(true);
+  });
+
+  test("removes custom-named mobile app when excluded", () => {
+    // Simulate a custom-named mobile dir (as if mobileName was "consumer" during scaffold)
+    mkdirSync(join(tempDir, "apps/mobile-consumer"), { recursive: true });
+    writeFileSync(
+      join(tempDir, ".github/workflows/deploy-mobile-consumer.yml"),
+      "name: deploy-mobile-consumer\n",
+    );
+
+    filterPlatforms({
+      targetDir: tempDir,
+      excludePlatforms: ["mobile"],
+      scope: "@test",
+      mobileName: "consumer",
+      verbose: false,
+    });
+
+    expect(existsSync(join(tempDir, "apps/mobile-consumer"))).toBe(false);
+    expect(
+      existsSync(join(tempDir, ".github/workflows/deploy-mobile-consumer.yml")),
+    ).toBe(false);
+    // Original mobile-main (from template) should still exist since mobileName is "consumer"
+    expect(existsSync(join(tempDir, "apps/mobile-main"))).toBe(true);
   });
 });

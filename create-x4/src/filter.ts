@@ -7,6 +7,7 @@ export interface FilterOptions {
   targetDir: string;
   excludePlatforms: Platform[];
   scope: string;
+  mobileName: string;
   verbose: boolean;
 }
 
@@ -15,7 +16,7 @@ export function filterPlatforms(opts: FilterOptions): void {
     if (opts.verbose) {
       console.log(`  Removing ${platform} platform...`);
     }
-    removePlatform(opts.targetDir, platform, opts.scope, opts.verbose);
+    removePlatform(opts.targetDir, platform, opts.scope, opts.mobileName, opts.verbose);
   }
 }
 
@@ -23,12 +24,23 @@ function removePlatform(
   dir: string,
   platform: Platform,
   scope: string,
+  mobileName: string,
   verbose: boolean,
 ): void {
   const config = PLATFORMS[platform];
 
+  // Override dirs/workflows for mobile with mobileName-based paths
+  const dirs = platform === "mobile"
+    ? [`apps/mobile-${mobileName}`]
+    : [...config.dirs];
+  const workflows = "workflows" in config && config.workflows
+    ? (platform === "mobile"
+      ? [`deploy-mobile-${mobileName}.yml`]
+      : [...config.workflows])
+    : undefined;
+
   // Remove directories
-  for (const d of config.dirs) {
+  for (const d of dirs) {
     const target = join(dir, d);
     if (existsSync(target)) {
       if (verbose) console.log(`    Deleting ${d}/`);
@@ -37,8 +49,8 @@ function removePlatform(
   }
 
   // Remove workflow files
-  if ("workflows" in config && config.workflows) {
-    for (const wf of config.workflows) {
+  if (workflows) {
+    for (const wf of workflows) {
       const target = join(dir, ".github/workflows", wf);
       if (existsSync(target)) {
         if (verbose) console.log(`    Deleting .github/workflows/${wf}`);

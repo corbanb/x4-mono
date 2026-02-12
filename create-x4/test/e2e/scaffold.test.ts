@@ -26,7 +26,7 @@ function createRealisticTemplate(): void {
     "apps/api/src/lib",
     "apps/web/src/app/(dashboard)/ai",
     "apps/web/src/components",
-    "apps/mobile/assets",
+    "apps/mobile-main/assets",
     "apps/desktop/src",
     "apps/marketing/src/components/hero",
     "apps/docs/content",
@@ -99,22 +99,22 @@ export type AppRouter = typeof appRouter;
   );
 
   writeFileSync(
-    join(tempDir, "apps/mobile/package.json"),
+    join(tempDir, "apps/mobile-main/package.json"),
     JSON.stringify({
-      name: "@x4/mobile",
+      name: "@x4/mobile-main",
       dependencies: { "@x4/shared": "workspace:*" },
     }),
   );
 
   writeFileSync(
-    join(tempDir, "apps/mobile/app.json"),
+    join(tempDir, "apps/mobile-main/app.json"),
     JSON.stringify({
       expo: {
         name: "x4",
-        slug: "x4-mobile",
-        scheme: "x4",
-        ios: { bundleIdentifier: "com.x4.mobile" },
-        android: { package: "com.x4.mobile" },
+        slug: "x4-mobile-main",
+        scheme: "x4-main",
+        ios: { bundleIdentifier: "com.x4.mobile.main" },
+        android: { package: "com.x4.mobile.main" },
       },
     }),
   );
@@ -200,7 +200,7 @@ export type AppRouter = typeof appRouter;
   // Workflow files
   for (const wf of [
     "ci.yml",
-    "deploy-mobile.yml",
+    "deploy-mobile-main.yml",
     "deploy-desktop.yml",
     "deploy-marketing.yml",
     "deploy-docs.yml",
@@ -259,6 +259,7 @@ describe("E2E: full scaffold pipeline", () => {
       projectName: "acme-app",
       scope: "@acme",
       bundleId: "com.acmeapp",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -300,6 +301,7 @@ describe("E2E: full scaffold pipeline", () => {
       projectName: "my-proj",
       scope: "@proj",
       bundleId: "com.myproj",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -307,6 +309,7 @@ describe("E2E: full scaffold pipeline", () => {
       targetDir: tempDir,
       excludePlatforms: ["ai"],
       scope: "@proj",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -342,6 +345,7 @@ describe("E2E: full scaffold pipeline", () => {
       projectName: "web-only",
       scope: "@web-only",
       bundleId: "com.webonly",
+      mobileName: "main",
       verbose: false,
     });
 
@@ -349,10 +353,11 @@ describe("E2E: full scaffold pipeline", () => {
       targetDir: tempDir,
       excludePlatforms: ["mobile", "desktop"],
       scope: "@web-only",
+      mobileName: "main",
       verbose: false,
     });
 
-    expect(existsSync(join(tempDir, "apps/mobile"))).toBe(false);
+    expect(existsSync(join(tempDir, "apps/mobile-main"))).toBe(false);
     expect(existsSync(join(tempDir, "apps/desktop"))).toBe(false);
     expect(existsSync(join(tempDir, "apps/web"))).toBe(true);
     expect(existsSync(join(tempDir, "apps/api"))).toBe(true);
@@ -373,6 +378,7 @@ describe("E2E: full scaffold pipeline", () => {
       projectName: "test-proj",
       scope: "@test-proj",
       bundleId: "com.testproj",
+      mobileName: "main",
       verbose: false,
     });
 

@@ -1,15 +1,10 @@
 import { describe, expect, test, mock, beforeEach } from "bun:test";
-
-// Mock @clack/prompts and process.exit before import
-const mockCancel = mock(() => {});
-const mockLogError = mock(() => {});
-let mockIsCancel = mock((_value: unknown) => false);
-
-mock.module("@clack/prompts", () => ({
-  isCancel: (...args: unknown[]) => mockIsCancel(...args),
-  cancel: mockCancel,
-  log: { error: mockLogError },
-}));
+import {
+  mockIsCancel,
+  mockCancel,
+  mockLogError,
+  clearAllClackMocks,
+} from "./helpers/mock-clack.js";
 
 // Mock process.exit to throw so we can catch it
 const originalExit = process.exit;
@@ -25,12 +20,11 @@ const { handleCancel, exitWithError } = await import("../src/ui.js");
 
 describe("handleCancel", () => {
   beforeEach(() => {
-    mockCancel.mockClear();
-    mockIsCancel = mock((_value: unknown) => false);
+    clearAllClackMocks();
   });
 
   test("no-op for non-cancel values", () => {
-    mockIsCancel = mock(() => false);
+    mockIsCancel.mockImplementation(() => false);
     // Should not throw or exit
     handleCancel("some-value");
     handleCancel(42);
@@ -39,7 +33,7 @@ describe("handleCancel", () => {
   });
 
   test("calls process.exit(0) for cancel symbol", () => {
-    mockIsCancel = mock(() => true);
+    mockIsCancel.mockImplementation(() => true);
     const mockExit = mock((_code?: number) => {
       throw new ExitError(0);
     });

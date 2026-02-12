@@ -20,7 +20,7 @@ body:
         - "packages/ai-integrations"
         - "apps/api"
         - "apps/web"
-        - "apps/mobile"
+        - "apps/mobile-main"
         - "apps/desktop"
         - "apps/marketing"
         - "Root / Monorepo tooling"

@@ -15,6 +15,7 @@ export interface WizardResult {
   projectName: string;
   scope: string;
   bundleId: string;
+  mobileName: string;
   excludePlatforms: Platform[];
   pm: PackageManager;
   git: boolean;
@@ -26,6 +27,7 @@ interface WizardOpts {
   /** Pre-filled from CLI flags — wizard skips these steps */
   projectName?: string;
   scope?: string;
+  mobileName?: string;
   preset?: string;
   pm?: string;
   noGit?: boolean;
@@ -121,6 +123,24 @@ export async function runWizard(opts: WizardOpts): Promise<WizardResult> {
     scope = scopeInput as string;
   }
 
+  // Mobile app name (only if mobile is included)
+  let mobileName = opts.mobileName ?? "main";
+  if (!opts.mobileName && !excludePlatforms.includes("mobile")) {
+    const mobileInput = await p.text({
+      message: "Mobile app name:",
+      placeholder: "main",
+      defaultValue: "main",
+      validate: (v) => {
+        if (!/^[a-z][a-z0-9-]*$/.test(v)) {
+          return "Must be kebab-case (lowercase letters, numbers, hyphens)";
+        }
+        return undefined;
+      },
+    });
+    handleCancel(mobileInput);
+    mobileName = mobileInput as string;
+  }
+
   const bundleId = deriveBundleId(projectName);
   const pm = (opts.pm as PackageManager) || detectPackageManager();
 
@@ -135,6 +155,7 @@ export async function runWizard(opts: WizardOpts): Promise<WizardResult> {
     projectName,
     scope,
     bundleId,
+    mobileName,
     excludePlatforms,
     pm,
     git: !opts.noGit,

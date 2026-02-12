@@ -49,6 +49,7 @@ const main = defineCommand({
     "no-marketing": { type: "boolean", description: "Exclude marketing site", default: false },
     "no-docs": { type: "boolean", description: "Exclude docs site", default: false },
     "no-ai": { type: "boolean", description: "Exclude AI integration", default: false },
+    "mobile-name": { type: "string", description: "Mobile app name (default: main)" },
     pm: { type: "string", description: "Package manager: bun|npm|yarn|pnpm (default: auto-detect)" },
     "no-git": { type: "boolean", description: "Skip git initialization", default: false },
     "no-install": { type: "boolean", description: "Skip dependency installation", default: false },
@@ -57,6 +58,14 @@ const main = defineCommand({
     verbose: { type: "boolean", alias: "v", description: "Verbose output", default: false },
   },
   async run({ args }) {
+    // Route to "add" subcommand if first positional arg is "add"
+    if (args.projectName === "add") {
+      const { runAddCommand } = await import("./commands/add.js");
+      const addArgs = process.argv.slice(process.argv.indexOf("add") + 1);
+      await runAddCommand(addArgs);
+      return;
+    }
+
     p.intro(pc.bgCyan(pc.black(" create-x4 ")));
 
     // Collect --no-* flags
@@ -102,6 +111,7 @@ const main = defineCommand({
       if (!bundleIdResult.valid) exitWithError(bundleIdResult.error);
 
       const pm = (args.pm as PackageManager) ?? detectPackageManager();
+      const mobileName = args["mobile-name"] ?? "main";
 
       // Resolve exclude platforms from preset + flags
       let excludePlatforms: Platform[] = [];
@@ -117,6 +127,7 @@ const main = defineCommand({
         projectName,
         scope,
         bundleId,
+        mobileName,
         excludePlatforms,
         pm,
         git: !args["no-git"],
@@ -130,6 +141,7 @@ const main = defineCommand({
       const result = await runWizard({
         projectName: args.projectName,
         scope: args.scope,
+        mobileName: args["mobile-name"],
         preset: args.preset,
         pm: args.pm,
         noGit: args["no-git"],
@@ -141,6 +153,7 @@ const main = defineCommand({
         projectName: result.projectName,
         scope: result.scope,
         bundleId: result.bundleId,
+        mobileName: result.mobileName,
         excludePlatforms: result.excludePlatforms,
         pm: result.pm,
         git: result.git,
