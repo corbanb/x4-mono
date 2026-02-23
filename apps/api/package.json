@@ -16,7 +16,7 @@
     "@x4/database": "workspace:*",
     "@x4/shared": "workspace:*",
     "hono": "^4.7.0",
-    "trpc-to-openapi": "2.4.0",
+    "trpc-to-openapi": "3.1.0",
     "zod": "^3.23.0",
     "zod-openapi": "4.2.4"
   },
