@@ -302,3 +302,33 @@ Key environment variables (defined in `apps/api/src/lib/env.ts`):
 | `DOCS_URL`           | Docs site URL for CORS (default: `http://localhost:3003`)      | No       |
 | `NODE_ENV`           | `development` / `production` / `test`                          | No       |
 | `APP_VERSION`        | App version string                                             | No       |
+
+## Plugins & Developer Tooling
+
+Claude Code plugins installed for this project (configured in `.claude/settings.json`):
+
+| Plugin                | Purpose                                                                     |
+| --------------------- | --------------------------------------------------------------------------- |
+| **superpowers**       | TDD, systematic debugging, brainstorming, planning, code review workflows   |
+| **ralph-loop**        | Autonomous iteration loops (`/ralph-loop`) — keeps working until completion |
+| **hookify**           | Convention enforcement via rule files (`.claude/hookify.*.local.md`)        |
+| **security-guidance** | Auto-warns on security anti-patterns (eval, innerHTML, exec, etc.)          |
+| **plugin-dev**        | Toolkit for building Claude Code plugins, skills, agents, hooks             |
+| **pr-review-toolkit** | PR review automation with specialized agents                                |
+| **feature-dev**       | Guided feature development workflow                                         |
+| **greptile**          | AI code review (requires `GREPTILE_API_KEY` — optional)                     |
+| **neon-plugin**       | Neon Postgres database skills + MCP tools                                   |
+| **vercel**            | Vercel deployment integration                                               |
+| **stripe**            | Stripe API patterns and test cards                                          |
+
+### Hookify Convention Rules
+
+Tracked in `.claude/hookify.*.local.md` (the `.local.md` suffix is required by hookify):
+
+- **no-console-log** — Warns on `console.log` (use Pino loggers)
+- **no-any-type** — Warns on `any` type (use `unknown` + narrow)
+- **no-apps-in-packages** — BLOCKS importing from `apps/*` in `packages/*`
+- **no-db-query** — Warns on `db.query` (use `db.select().from()`)
+- **require-tests** — Reminds to run tests before stopping (disabled by default)
+
+Manage rules: `/hookify:list`, `/hookify:configure`
