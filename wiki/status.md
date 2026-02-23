@@ -39,6 +39,7 @@ PRDs move through four stages:
 | PRD-014 | [CI/CD, Deployment & DevOps](completed/prd-014-cicd-devops.md)                          | Completed | All previous PRDs                           | completed |
 | PRD-015 | [Testing Strategy & Infrastructure](completed/prd-015-testing-strategy.md)              | Completed | PRD-001, PRD-003                            | completed |
 | PRD-016 | [Getting Started Guide & Developer Experience](completed/prd-016-getting-started-dx.md) | Completed | All previous PRDs                           | completed |
+| PRD-017 | [Storybook Component Catalog](inbox/prd-017-storybook.md)                               | Draft     | PRD-004, PRD-010                            | inbox     |
 
 ---
 
@@ -79,7 +80,8 @@ PRD-001 (Monorepo Foundation) ← ROOT — everything depends on this
   │     └── PRD-013 (Marketing Site)
   │
   ├── PRD-014 (CI/CD & DevOps) ← depends on all previous
-  └── PRD-016 (Getting Started) ← depends on all previous
+  ├── PRD-016 (Getting Started) ← depends on all previous
+  └── PRD-017 (Storybook) ← depends on PRD-004, PRD-010
 ```
 
 **Recommended implementation order**: PRD-001 → PRD-002 → PRD-003 → PRD-004 + PRD-005 (parallel) → PRD-006 → PRD-007 → PRD-008 → PRD-009 → PRD-010 → PRD-011 + PRD-012 (parallel) → PRD-013 → PRD-014 → PRD-015 → PRD-016

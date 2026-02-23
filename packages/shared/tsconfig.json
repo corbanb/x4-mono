@@ -20,5 +20,5 @@
     "ui/**/*.tsx",
     "ai-types/**/*.ts"
   ],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "**/*.stories.tsx", "**/*.stories.ts"]
 }

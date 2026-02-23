@@ -13,6 +13,7 @@ x4-mono is a full-stack TypeScript monorepo boilerplate for building multi-platf
 - **Mobile**: Expo + React Native (`apps/mobile-main`)
 - **Desktop**: Electron (`apps/desktop`)
 - **Marketing**: Next.js static (`apps/marketing`, port 3001)
+- **Storybook**: Component catalog (`apps/storybook`, port 6006)
 - **Database**: Neon (Postgres) + Drizzle ORM (`packages/database`)
 - **Auth**: Better Auth with bearer tokens (`packages/auth`)
 - **AI**: Vercel AI SDK + Claude (`packages/ai-integrations`)
@@ -244,6 +245,8 @@ Each PRD Section 6 contains a task table with columns: Task #, Description, Esti
 | `bun db:migrate`       | Run migrations against production database      |
 | `bun db:studio`        | Open Drizzle Studio (database GUI)              |
 | `bun db:seed`          | Seed database with test data                    |
+| `bun storybook`        | Start Storybook dev server on port 6006         |
+| `bun storybook:build`  | Build static Storybook site                     |
 | `bun clean`            | Remove all build artifacts and node_modules     |
 
 ## Do NOT

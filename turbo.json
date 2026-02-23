@@ -14,6 +14,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "!**/*.stories.{tsx,ts,mdx}"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "dev": {
@@ -48,6 +49,14 @@
     },
     "clean": {
       "cache": false
+    },
+    "storybook:dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "storybook:build": {
+      "dependsOn": ["^build"],
+      "outputs": ["storybook-static/**"]
     },
     "openapi:generate": {
       "dependsOn": ["^build"],

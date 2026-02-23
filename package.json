@@ -17,6 +17,8 @@
     "db:migrate": "turbo db:migrate",
     "db:seed": "turbo db:seed",
     "db:studio": "turbo db:studio",
+    "storybook": "turbo storybook:dev --filter=@x4/storybook",
+    "storybook:build": "turbo storybook:build --filter=@x4/storybook",
     "setup:ai-docs": "bun scripts/download-ai-docs.ts"
   },
   "devDependencies": {
