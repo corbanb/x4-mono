@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@hono/trpc-server": "^0.4.2",
-    "@scalar/hono-api-reference": "0.9.40",
+    "@scalar/hono-api-reference": "0.9.44",
     "@trpc/server": "^11.0.0",
     "@x4/ai-integrations": "workspace:*",
     "@x4/auth": "workspace:*",
