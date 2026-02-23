@@ -11,11 +11,13 @@ Read and edit Railway environment configuration using the CLI.
 ## Prerequisites
 
 Requires Railway CLI **v4.27.3+**. Check with:
+
 ```bash
 railway --version
 ```
 
 If below 4.27.3, upgrade:
+
 ```bash
 railway upgrade
 ```
@@ -88,15 +90,18 @@ railway environment <environment-id>
 ## Get Context
 
 **JSON output** — project/environment IDs and service list:
+
 ```bash
 railway status --json
 ```
 
 Extract:
+
 - `project.id` — project ID
 - `environment.id` — environment ID
 
 **Plain output** — linked service name:
+
 ```bash
 railway status
 ```
@@ -106,11 +111,13 @@ Shows `Service: <name>` line with the currently linked service.
 ### Resolve Service ID
 
 Get service IDs from the environment config:
+
 ```bash
 railway environment config --json | jq '.services | keys'
 ```
 
 Map service IDs to names via status:
+
 ```bash
 railway status --json
 ```
@@ -164,9 +171,10 @@ railway variables --service <service-name> --json
 ```
 
 **When to use:**
+
 - Debugging connection issues (see actual URLs/ports)
 - Verifying variable resolution is correct
-- Viewing Railway-injected values (RAILWAY_*)
+- Viewing Railway-injected values (RAILWAY\_\*)
 
 ## Edit Configuration
 
@@ -185,31 +193,37 @@ railway environment edit -m "description of change" --json <<< '<json-patch>'
 ### Examples
 
 **Set build command:**
+
 ```bash
 railway environment edit --json <<< '{"services":{"SERVICE_ID":{"build":{"buildCommand":"npm run build"}}}}'
 ```
 
 **Add variable:**
+
 ```bash
 railway environment edit -m "add API_KEY" --json <<< '{"services":{"SERVICE_ID":{"variables":{"API_KEY":{"value":"secret"}}}}}'
 ```
 
 **Delete variable:**
+
 ```bash
 railway environment edit --json <<< '{"services":{"SERVICE_ID":{"variables":{"OLD_VAR":null}}}}'
 ```
 
 **Delete service:**
+
 ```bash
 railway environment edit --json <<< '{"services":{"SERVICE_ID":{"isDeleted":true}}}'
 ```
 
 **Set replicas:**
+
 ```bash
 railway environment edit --json <<< '{"services":{"SERVICE_ID":{"deploy":{"multiRegionConfig":{"us-west2":{"numReplicas":3}}}}}}'
 ```
 
 **Add shared variable:**
+
 ```bash
 railway environment edit --json <<< '{"sharedVariables":{"DATABASE_URL":{"value":"postgres://..."}}}'
 ```

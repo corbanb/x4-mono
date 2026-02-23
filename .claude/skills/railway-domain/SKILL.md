@@ -24,11 +24,13 @@ railway domain --json
 ```
 
 For a specific service:
+
 ```bash
 railway domain --json --service backend
 ```
 
 ### Response
+
 Returns the generated domain URL. Service must have a deployment.
 
 ## Add Custom Domain
@@ -38,13 +40,13 @@ railway domain example.com --json
 ```
 
 ### Response
+
 Returns required DNS records:
+
 ```json
 {
   "domain": "example.com",
-  "dnsRecords": [
-    { "type": "CNAME", "host": "@", "value": "..." }
-  ]
+  "dnsRecords": [{ "type": "CNAME", "host": "@", "value": "..." }]
 }
 ```
 
@@ -63,6 +65,7 @@ query domains($envId: String!) {
 ```
 
 Domains are in `config.services.<serviceId>.networking`:
+
 - `serviceDomains` - Railway-provided domains
 - `customDomains` - User-provided domains
 
@@ -71,6 +74,7 @@ Domains are in `config.services.<serviceId>.networking`:
 Use `environment` skill to remove domains:
 
 ### Remove custom domain
+
 ```json
 {
   "services": {
@@ -84,6 +88,7 @@ Use `environment` skill to remove domains:
 ```
 
 ### Remove railway domain
+
 ```json
 {
   "services": {
@@ -100,12 +105,12 @@ Then use `environment` skill to apply and commit the change.
 
 ## CLI Options
 
-| Flag | Description |
-|------|-------------|
-| `[DOMAIN]` | Custom domain to add (omit for railway domain) |
-| `-p, --port <PORT>` | Port to connect |
-| `-s, --service <NAME>` | Target service (defaults to linked) |
-| `--json` | JSON output |
+| Flag                   | Description                                    |
+| ---------------------- | ---------------------------------------------- |
+| `[DOMAIN]`             | Custom domain to add (omit for railway domain) |
+| `-p, --port <PORT>`    | Port to connect                                |
+| `-s, --service <NAME>` | Target service (defaults to linked)            |
+| `--json`               | JSON output                                    |
 
 ## Composability
 
@@ -117,21 +122,25 @@ Then use `environment` skill to apply and commit the change.
 ## Error Handling
 
 ### No Service Linked
+
 ```
 No service linked. Use --service flag or run `railway service` to select one.
 ```
 
 ### Domain Already Exists
+
 ```
 Service already has a railway-provided domain. Maximum 1 per service.
 ```
 
 ### No Deployment
+
 ```
 Service has no deployment. Deploy first with `railway up`.
 ```
 
 ### Invalid Domain
+
 ```
 Invalid domain format. Use a valid domain like "example.com" or "api.example.com".
 ```

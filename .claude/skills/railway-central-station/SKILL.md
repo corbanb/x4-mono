@@ -10,12 +10,12 @@ Search and browse Railway's Central Station - the community support platform for
 
 ## API Endpoints
 
-| Endpoint | URL |
-|----------|-----|
-| GraphQL | `https://station-server.railway.com/gql` |
+| Endpoint        | URL                                                    |
+| --------------- | ------------------------------------------------------ |
+| GraphQL         | `https://station-server.railway.com/gql`               |
 | Thread Markdown | `https://station-server.railway.com/api/threads/:slug` |
-| LLM Data Export | `https://station-server.railway.com/api/llms-station` |
-| Frontend | `https://station.railway.com` |
+| LLM Data Export | `https://station-server.railway.com/api/llms-station`  |
+| Frontend        | `https://station.railway.com`                          |
 
 ## When to Use
 
@@ -139,24 +139,24 @@ This endpoint returns all public threads with full content, useful for searching
 
 ## Thread Statuses
 
-| Status | Description |
-|--------|-------------|
-| `OPEN` | Unresolved, accepting responses |
-| `SOLVED` | Marked as resolved |
-| `AWAITING_RAILWAY_RESPONSE` | Waiting for Railway team |
-| `AWAITING_USER_RESPONSE` | Waiting for original poster |
-| `CLOSED` | No longer accepting responses |
-| `ARCHIVED` | Old thread, preserved for reference |
+| Status                      | Description                         |
+| --------------------------- | ----------------------------------- |
+| `OPEN`                      | Unresolved, accepting responses     |
+| `SOLVED`                    | Marked as resolved                  |
+| `AWAITING_RAILWAY_RESPONSE` | Waiting for Railway team            |
+| `AWAITING_USER_RESPONSE`    | Waiting for original poster         |
+| `CLOSED`                    | No longer accepting responses       |
+| `ARCHIVED`                  | Old thread, preserved for reference |
 
 ## Sort Options
 
 For the `threads` query, use the `sort` parameter:
 
-| Sort Value | Description |
-|------------|-------------|
+| Sort Value        | Description                    |
+| ----------------- | ------------------------------ |
 | `recent_activity` | Most recently active (default) |
-| `newest` | Newest first |
-| `highest_votes` | Most upvoted |
+| `newest`          | Newest first                   |
+| `highest_votes`   | Most upvoted                   |
 
 ## Presenting Results
 
@@ -169,6 +169,7 @@ When showing threads:
 5. **Link** - `https://station.railway.com/{topic_slug}/{thread_slug}`
 
 Format example:
+
 ```
 Found 3 threads about "postgres":
 
@@ -187,13 +188,13 @@ Found 3 threads about "postgres":
 
 ## Common Search Patterns
 
-| User Query | Filter/Search |
-|------------|---------------|
-| "Why is my deploy failing?" | topic: questions, search: "deploy" |
+| User Query                  | Filter/Search                                      |
+| --------------------------- | -------------------------------------------------- |
+| "Why is my deploy failing?" | topic: questions, search: "deploy"                 |
 | "Can't connect to database" | topic: questions, search: "database" or "postgres" |
-| "Domain not working" | topic: questions, search: "domain" |
-| "Feature requests" | topic: feedback |
-| "What are people building?" | topic: community |
+| "Domain not working"        | topic: questions, search: "domain"                 |
+| "Feature requests"          | topic: feedback                                    |
+| "What are people building?" | topic: community                                   |
 
 ## Composability
 
@@ -215,6 +216,7 @@ No threads found. Try:
 ### Invalid Topic
 
 List available topics first:
+
 ```bash
 curl -s 'https://station-server.railway.com/gql' -H 'content-type: application/json' -d '{"query": "{ topics { slug } }"}'
 ```

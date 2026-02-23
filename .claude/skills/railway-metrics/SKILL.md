@@ -24,31 +24,32 @@ railway status --json
 ```
 
 Extract:
+
 - `environment.id` → environmentId
 - `service.id` → serviceId (optional - omit to get all services)
 
 ## MetricMeasurement Values
 
-| Measurement | Description |
-|-------------|-------------|
-| CPU_USAGE | CPU usage (cores) |
-| CPU_LIMIT | CPU limit (cores) |
-| MEMORY_USAGE_GB | Memory usage in GB |
-| MEMORY_LIMIT_GB | Memory limit in GB |
-| NETWORK_RX_GB | Network received in GB |
-| NETWORK_TX_GB | Network transmitted in GB |
-| DISK_USAGE_GB | Disk usage in GB |
+| Measurement             | Description                |
+| ----------------------- | -------------------------- |
+| CPU_USAGE               | CPU usage (cores)          |
+| CPU_LIMIT               | CPU limit (cores)          |
+| MEMORY_USAGE_GB         | Memory usage in GB         |
+| MEMORY_LIMIT_GB         | Memory limit in GB         |
+| NETWORK_RX_GB           | Network received in GB     |
+| NETWORK_TX_GB           | Network transmitted in GB  |
+| DISK_USAGE_GB           | Disk usage in GB           |
 | EPHEMERAL_DISK_USAGE_GB | Ephemeral disk usage in GB |
-| BACKUP_USAGE_GB | Backup usage in GB |
+| BACKUP_USAGE_GB         | Backup usage in GB         |
 
 ## MetricTag Values (for groupBy)
 
-| Tag | Description |
-|-----|-------------|
-| DEPLOYMENT_ID | Group by deployment |
-| DEPLOYMENT_INSTANCE_ID | Group by instance |
-| REGION | Group by region |
-| SERVICE_ID | Group by service |
+| Tag                    | Description         |
+| ---------------------- | ------------------- |
+| DEPLOYMENT_ID          | Group by deployment |
+| DEPLOYMENT_INSTANCE_ID | Group by instance   |
+| REGION                 | Group by region     |
+| SERVICE_ID             | Group by service    |
 
 ## Query
 
@@ -144,12 +145,12 @@ SCRIPT
 
 ## Time Parameters
 
-| Parameter | Description |
-|-----------|-------------|
-| startDate | Required. ISO 8601 format (e.g., `2024-01-01T00:00:00Z`) |
-| endDate | Optional. Defaults to now |
-| sampleRateSeconds | Sample interval (e.g., 60 for 1-minute samples) |
-| averagingWindowSeconds | Averaging window for smoothing |
+| Parameter              | Description                                              |
+| ---------------------- | -------------------------------------------------------- |
+| startDate              | Required. ISO 8601 format (e.g., `2024-01-01T00:00:00Z`) |
+| endDate                | Optional. Defaults to now                                |
+| sampleRateSeconds      | Sample interval (e.g., 60 for 1-minute samples)          |
+| averagingWindowSeconds | Averaging window for smoothing                           |
 
 **Tip:** For last hour, calculate startDate as `now - 1 hour` in ISO format.
 
@@ -164,7 +165,7 @@ SCRIPT
         "tags": { "deploymentId": "...", "serviceId": "...", "region": "us-west1" },
         "values": [
           { "ts": "2024-01-01T00:00:00Z", "value": 0.25 },
-          { "ts": "2024-01-01T00:01:00Z", "value": 0.30 }
+          { "ts": "2024-01-01T00:01:00Z", "value": 0.3 }
         ]
       }
     ]
@@ -199,6 +200,7 @@ jq -e '.data.metrics | length > 0' response.json && echo "has metrics"
 ### No Metrics Data
 
 Service may be new or have no traffic. Check:
+
 - Service has active deployment (stopped services have no metrics)
 - Time range includes deployment period
 

@@ -78,25 +78,28 @@ The `config.services` object contains each service's configuration. Check `sourc
 
 ## Available Databases
 
-| Database | Template Code |
-|----------|---------------|
-| PostgreSQL | `postgres` |
-| Redis | `redis` |
-| MySQL | `mysql` |
-| MongoDB | `mongodb` |
+| Database   | Template Code |
+| ---------- | ------------- |
+| PostgreSQL | `postgres`    |
+| Redis      | `redis`       |
+| MySQL      | `mysql`       |
+| MongoDB    | `mongodb`     |
 
 ## Prerequisites
 
 Get project context:
+
 ```bash
 railway status --json
 ```
 
 Extract:
+
 - `id` - project ID
 - `environments.edges[0].node.id` - environment ID
 
 Get workspace ID (not in status output):
+
 ```bash
 bash <<'SCRIPT'
 scripts/railway-api.sh \
@@ -162,18 +165,19 @@ For complete variable reference syntax and wiring patterns, see [variables.md](r
 
 Use the private/internal URL for server-to-server communication:
 
-| Database | Variable Reference |
-|----------|-------------------|
+| Database   | Variable Reference           |
+| ---------- | ---------------------------- |
 | PostgreSQL | `${{Postgres.DATABASE_URL}}` |
-| Redis | `${{Redis.REDIS_URL}}` |
-| MySQL | `${{MySQL.MYSQL_URL}}` |
-| MongoDB | `${{MongoDB.MONGO_URL}}` |
+| Redis      | `${{Redis.REDIS_URL}}`       |
+| MySQL      | `${{MySQL.MYSQL_URL}}`       |
+| MongoDB    | `${{MongoDB.MONGO_URL}}`     |
 
 ### Frontend Applications
 
 **Important:** Frontends run in the user's browser and cannot access Railway's private network. They must use public URLs or go through a backend API.
 
 For direct database access from frontend (not recommended):
+
 - Use the public URL variables (e.g., `${{MongoDB.MONGO_PUBLIC_URL}}`)
 - Requires TCP proxy to be enabled
 
@@ -223,6 +227,7 @@ Use `environment` skill to add the variable reference:
 ## Response
 
 Successful deployment returns:
+
 ```json
 {
   "data": {
@@ -237,6 +242,7 @@ Successful deployment returns:
 ## What Gets Created
 
 Each database template creates:
+
 - A service with the database image
 - A volume for data persistence
 - Environment variables for connection strings
@@ -244,11 +250,11 @@ Each database template creates:
 
 ## Error Handling
 
-| Error | Cause | Solution |
-|-------|-------|----------|
+| Error              | Cause                 | Solution                                     |
+| ------------------ | --------------------- | -------------------------------------------- |
 | Template not found | Invalid template code | Use: `postgres`, `redis`, `mysql`, `mongodb` |
-| Permission denied | User lacks access | Need DEVELOPER role or higher |
-| Project not found | Invalid project ID | Run `railway status --json` for correct ID |
+| Permission denied  | User lacks access     | Need DEVELOPER role or higher                |
+| Project not found  | Invalid project ID    | Run `railway status --json` for correct ID   |
 
 ## Example Workflows
 

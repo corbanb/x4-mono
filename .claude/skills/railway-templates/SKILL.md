@@ -18,16 +18,16 @@ Search and deploy services from Railway's template marketplace.
 
 ## Common Template Codes
 
-| Category | Template | Code |
-|----------|----------|------|
-| **Databases** | PostgreSQL | `postgres` |
-| | Redis | `redis` |
-| | MySQL | `mysql` |
-| | MongoDB | `mongodb` |
-| **CMS** | Ghost | `ghost` |
-| | Strapi | `strapi` |
-| **Storage** | Minio | `minio` |
-| **Automation** | n8n | `n8n` |
+| Category       | Template    | Code          |
+| -------------- | ----------- | ------------- |
+| **Databases**  | PostgreSQL  | `postgres`    |
+|                | Redis       | `redis`       |
+|                | MySQL       | `mysql`       |
+|                | MongoDB     | `mongodb`     |
+| **CMS**        | Ghost       | `ghost`       |
+|                | Strapi      | `strapi`      |
+| **Storage**    | Minio       | `minio`       |
+| **Automation** | n8n         | `n8n`         |
 | **Monitoring** | Uptime Kuma | `uptime-kuma` |
 
 For other templates, use the search query below.
@@ -35,15 +35,18 @@ For other templates, use the search query below.
 ## Prerequisites
 
 Get project context:
+
 ```bash
 railway status --json
 ```
 
 Extract:
+
 - `id` - project ID
 - `environments.edges[0].node.id` - environment ID
 
 Get workspace ID:
+
 ```bash
 bash <<'SCRIPT'
 scripts/railway-api.sh \
@@ -79,11 +82,11 @@ SCRIPT
 
 ### Arguments
 
-| Argument | Type | Description |
-|----------|------|-------------|
-| `first` | Int | Number of results (max ~100) |
-| `verified` | Boolean | Only verified templates |
-| `recommended` | Boolean | Only recommended templates |
+| Argument      | Type    | Description                  |
+| ------------- | ------- | ---------------------------- |
+| `first`       | Int     | Number of results (max ~100) |
+| `verified`    | Boolean | Only verified templates      |
+| `recommended` | Boolean | Only recommended templates   |
 
 ### Rate Limit
 
@@ -109,6 +112,7 @@ SCRIPT
 ```
 
 Returns:
+
 - `id` - template ID (needed for deployment)
 - `serializedConfig` - service configuration (needed for deployment)
 
@@ -168,21 +172,23 @@ ${{ServiceName.VARIABLE_NAME}}
 
 ### Common Database Variables
 
-| Service | Connection Variable |
-|---------|---------------------|
+| Service               | Connection Variable          |
+| --------------------- | ---------------------------- |
 | PostgreSQL (Postgres) | `${{Postgres.DATABASE_URL}}` |
-| Redis | `${{Redis.REDIS_URL}}` |
-| MySQL | `${{MySQL.MYSQL_URL}}` |
-| MongoDB | `${{MongoDB.MONGO_URL}}` |
+| Redis                 | `${{Redis.REDIS_URL}}`       |
+| MySQL                 | `${{MySQL.MYSQL_URL}}`       |
+| MongoDB               | `${{MongoDB.MONGO_URL}}`     |
 
 ### Backend vs Frontend
 
 **Backend services** can use private URLs (internal network):
+
 ```
 ${{Postgres.DATABASE_URL}}
 ```
 
 **Frontend applications** run in the browser and cannot access Railway's private network. Options:
+
 1. Use public URL variables (e.g., `${{MongoDB.MONGO_PUBLIC_URL}}`)
 2. Better: Route through a backend API
 
@@ -239,6 +245,7 @@ SCRIPT
 ## What Gets Created
 
 Templates typically create:
+
 - Service with pre-configured image/source
 - Environment variables (connection strings, secrets)
 - Volume for persistent data (databases)
@@ -247,6 +254,7 @@ Templates typically create:
 ## Response
 
 Successful deployment returns:
+
 ```json
 {
   "data": {
@@ -260,12 +268,12 @@ Successful deployment returns:
 
 ## Error Handling
 
-| Error | Cause | Solution |
-|-------|-------|----------|
-| Template not found | Invalid code | Search templates or check spelling |
-| Rate limit exceeded | Too many searches | Wait 1 minute, then retry |
-| Permission denied | User lacks access | Need DEVELOPER role or higher |
-| Project not found | Invalid project ID | Run `railway status --json` |
+| Error               | Cause              | Solution                           |
+| ------------------- | ------------------ | ---------------------------------- |
+| Template not found  | Invalid code       | Search templates or check spelling |
+| Rate limit exceeded | Too many searches  | Wait 1 minute, then retry          |
+| Permission denied   | User lacks access  | Need DEVELOPER role or higher      |
+| Project not found   | Invalid project ID | Run `railway status --json`        |
 
 ## Composability
 

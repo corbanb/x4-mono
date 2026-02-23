@@ -142,6 +142,7 @@ Only use this section when NO project is linked (directly or via parent).
 ### Check User's Projects
 
 The output can be large. Run in a subagent and extract only:
+
 - Project `id` and `name`
 - Workspace `id` and `name`
 
@@ -321,6 +322,7 @@ npm create astro@latest
 For adding databases (Postgres, Redis, MySQL, MongoDB), use the `database` skill.
 
 The `database` skill handles:
+
 - Creating database services
 - Connection variable references
 - Wiring services to databases
