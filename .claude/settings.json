@@ -9,7 +9,8 @@
       "Bash(bun --watch*)",
       "Bash(bun build*)",
       "Bash(bun clean*)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(npx prettier*)"
     ],
     "deny": [
       "Bash(rm -rf /)",
@@ -19,10 +20,44 @@
       "Bash(bun pm publish*)"
     ]
   },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write \"$TOOL_INPUT_FILE_PATH\" 2>/dev/null || true",
+            "statusMessage": "Formatting with Prettier"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "case \"$TOOL_INPUT_FILE_PATH\" in *.env|*.env.*|*/bun.lock) echo 'BLOCKED: Cannot edit .env or lock files directly.' >&2; exit 1;; *) exit 0;; esac"
+          }
+        ]
+      }
+    ]
+  },
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
     "superpowers-lab@superpowers-marketplace": true,
     "vercel@claude-plugins-official": true,
-    "neon-plugin@neon": true
+    "neon-plugin@neon": true,
+    "skill-creator@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "ralph-loop@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "stripe@claude-plugins-official": true
   }
 }
