@@ -20,6 +20,9 @@
     ]
   },
   "enabledPlugins": {
-    "superpowers@claude-plugins-official": true
+    "superpowers@claude-plugins-official": true,
+    "superpowers-lab@superpowers-marketplace": true,
+    "vercel@claude-plugins-official": true,
+    "neon-plugin@neon": true
   }
 }
