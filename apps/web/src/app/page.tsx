@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 import {
   ArrowRight,
   Shield,
@@ -8,66 +8,63 @@ import {
   Workflow,
   Code2,
   Zap,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 
 const features = [
   {
     icon: Code2,
-    title: "Type-Safe APIs",
+    title: 'Type-Safe APIs',
     description:
-      "End-to-end type safety with tRPC v11 and Zod validation. Zero runtime errors from API mismatches.",
-    className: "md:col-span-2",
+      'End-to-end type safety with tRPC v11 and Zod validation. Zero runtime errors from API mismatches.',
+    className: 'md:col-span-2',
   },
   {
     icon: Shield,
-    title: "Authentication",
+    title: 'Authentication',
     description:
-      "Better Auth with session management, role-based access, and multi-platform support.",
-    className: "md:col-span-1",
+      'Better Auth with session management, role-based access, and multi-platform support.',
+    className: 'md:col-span-1',
   },
   {
     icon: Sparkles,
-    title: "AI Integration",
-    description:
-      "Vercel AI SDK with Claude. Built-in cost tracking and usage analytics.",
-    className: "md:col-span-1",
+    title: 'AI Integration',
+    description: 'Vercel AI SDK with Claude. Built-in cost tracking and usage analytics.',
+    className: 'md:col-span-1',
   },
   {
     icon: Smartphone,
-    title: "Multi-Platform",
+    title: 'Multi-Platform',
     description:
-      "Web (Next.js), Mobile (Expo), and Desktop (Electron) from a single codebase with shared packages.",
-    className: "md:col-span-2",
+      'Web (Next.js), Mobile (Expo), and Desktop (Electron) from a single codebase with shared packages.',
+    className: 'md:col-span-2',
   },
   {
     icon: Database,
-    title: "Database",
-    description:
-      "Drizzle ORM with Neon Postgres. Type-safe queries, migrations, and seeding.",
-    className: "md:col-span-1",
+    title: 'Database',
+    description: 'Drizzle ORM with Neon Postgres. Type-safe queries, migrations, and seeding.',
+    className: 'md:col-span-1',
   },
   {
     icon: Workflow,
-    title: "CI/CD",
-    description:
-      "GitHub Actions with Neon branching, migration checks, and automated deployments.",
-    className: "md:col-span-1",
+    title: 'CI/CD',
+    description: 'GitHub Actions with Neon branching, migration checks, and automated deployments.',
+    className: 'md:col-span-1',
   },
 ];
 
 const techStack = [
-  "Next.js 15",
-  "React 19",
-  "TypeScript",
-  "tRPC",
-  "Drizzle",
-  "Tailwind v4",
-  "Bun",
-  "Turborepo",
+  'Next.js 15',
+  'React 19',
+  'TypeScript',
+  'tRPC',
+  'Drizzle',
+  'Tailwind v4',
+  'Bun',
+  'Turborepo',
 ];
 
 export default function HomePage() {
@@ -102,8 +99,8 @@ export default function HomePage() {
           </span>
         </h1>
         <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-          Production-ready monorepo with type-safe APIs, authentication, AI
-          integration, and multi-platform support. Start building in minutes.
+          Production-ready monorepo with type-safe APIs, authentication, AI integration, and
+          multi-platform support. Start building in minutes.
         </p>
         <div className="mt-8 flex gap-4">
           <Button size="lg" asChild>
@@ -120,9 +117,7 @@ export default function HomePage() {
 
       {/* Features Bento Grid */}
       <section className="mx-auto w-full max-w-5xl px-6 pb-20">
-        <h2 className="mb-8 text-center text-2xl font-bold">
-          Everything you need
-        </h2>
+        <h2 className="mb-8 text-center text-2xl font-bold">Everything you need</h2>
         <div className="grid gap-4 md:grid-cols-3">
           {features.map((feature) => (
             <Card
@@ -134,9 +129,7 @@ export default function HomePage() {
                   <feature.icon className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                 </div>
                 <h3 className="mb-1 font-semibold">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {feature.description}
-                </p>
+                <p className="text-sm text-muted-foreground">{feature.description}</p>
               </CardContent>
             </Card>
           ))}

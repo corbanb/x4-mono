@@ -1,36 +1,23 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { trpc } from "@x4/shared/api-client";
-import {
-  ArrowLeft,
-  Pencil,
-  Trash2,
-  Calendar,
-  User,
-  Loader2,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { trpc } from '@x4/shared/api-client';
+import { ArrowLeft, Pencil, Trash2, Calendar, User, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { toast } from "sonner";
-import { EditProjectDialog } from "@/components/edit-project-dialog";
-import { DeleteProjectDialog } from "@/components/delete-project-dialog";
+} from '@/components/ui/select';
+import { toast } from 'sonner';
+import { EditProjectDialog } from '@/components/edit-project-dialog';
+import { DeleteProjectDialog } from '@/components/delete-project-dialog';
 
 export default function ProjectDetailPage() {
   const params = useParams<{ id: string }>();
@@ -46,7 +33,7 @@ export default function ProjectDetailPage() {
 
   const updateStatus = trpc.projects.update.useMutation({
     onSuccess: () => {
-      toast.success("Status updated");
+      toast.success('Status updated');
       utils.projects.get.invalidate({ id: params.id });
       utils.projects.list.invalidate();
     },
@@ -75,11 +62,7 @@ export default function ProjectDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <p className="text-muted-foreground">Project not found</p>
-        <Button
-          variant="link"
-          className="mt-2"
-          onClick={() => router.push("/projects")}
-        >
+        <Button variant="link" className="mt-2" onClick={() => router.push('/projects')}>
           Back to Projects
         </Button>
       </div>
@@ -88,11 +71,7 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => router.push("/projects")}
-      >
+      <Button variant="ghost" size="sm" onClick={() => router.push('/projects')}>
         <ArrowLeft className="mr-2 h-4 w-4" />
         Back to Projects
       </Button>
@@ -102,15 +81,9 @@ export default function ProjectDetailPage() {
           <div className="flex items-start justify-between">
             <div className="space-y-1">
               <CardTitle className="text-xl">{project.name}</CardTitle>
-              {project.description && (
-                <CardDescription>{project.description}</CardDescription>
-              )}
+              {project.description && <CardDescription>{project.description}</CardDescription>}
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setEditOpen(true)}
-            >
+            <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
               <Pencil className="mr-2 h-3 w-3" />
               Edit
             </Button>
@@ -122,7 +95,7 @@ export default function ProjectDetailPage() {
             <span className="text-sm font-medium">Status</span>
             <Select
               value={project.status}
-              onValueChange={(value: "active" | "archived") =>
+              onValueChange={(value: 'active' | 'archived') =>
                 updateStatus.mutate({ id: project.id, status: value })
               }
               disabled={updateStatus.isPending}
@@ -154,10 +127,10 @@ export default function ProjectDetailPage() {
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">Created:</span>
               <span>
-                {new Date(project.createdAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
+                {new Date(project.createdAt).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
                 })}
               </span>
             </div>
@@ -166,10 +139,10 @@ export default function ProjectDetailPage() {
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <span className="text-muted-foreground">Updated:</span>
                 <span>
-                  {new Date(project.updatedAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
+                  {new Date(project.updatedAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
                   })}
                 </span>
               </div>
@@ -180,14 +153,8 @@ export default function ProjectDetailPage() {
 
           {/* Danger Zone */}
           <div className="space-y-3">
-            <h3 className="text-sm font-medium text-destructive">
-              Danger Zone
-            </h3>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => setDeleteOpen(true)}
-            >
+            <h3 className="text-sm font-medium text-destructive">Danger Zone</h3>
+            <Button variant="destructive" size="sm" onClick={() => setDeleteOpen(true)}>
               <Trash2 className="mr-2 h-3 w-3" />
               Delete Project
             </Button>
@@ -209,7 +176,7 @@ export default function ProjectDetailPage() {
         open={deleteOpen}
         onOpenChange={(open) => {
           setDeleteOpen(open);
-          if (!open) router.push("/projects");
+          if (!open) router.push('/projects');
         }}
       />
     </div>

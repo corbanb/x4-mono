@@ -1,3 +1,3 @@
-import { openapi } from "@/lib/openapi";
+import { openapi } from '@/lib/openapi';
 
 export const { APIPage } = openapi;

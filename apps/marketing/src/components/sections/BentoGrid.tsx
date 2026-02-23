@@ -1,71 +1,64 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import { motion, useInView } from "motion/react";
-import { GlowCard } from "@/components/effects/GlowCard";
-import {
-  Shield,
-  Zap,
-  Smartphone,
-  Brain,
-  Lock,
-  Globe,
-} from "lucide-react";
+import { useRef } from 'react';
+import { motion, useInView } from 'motion/react';
+import { GlowCard } from '@/components/effects/GlowCard';
+import { Shield, Zap, Smartphone, Brain, Lock, Globe } from 'lucide-react';
 
 const FEATURES = [
   {
     icon: Zap,
-    title: "Type-Safe End to End",
+    title: 'Type-Safe End to End',
     description:
-      "tRPC connects frontend to backend with zero code generation. Change an API — TypeScript catches every caller instantly.",
-    color: "text-yellow-400",
-    span: "md:col-span-2",
+      'tRPC connects frontend to backend with zero code generation. Change an API — TypeScript catches every caller instantly.',
+    color: 'text-yellow-400',
+    span: 'md:col-span-2',
   },
   {
     icon: Smartphone,
-    title: "Three Platforms, One Codebase",
+    title: 'Three Platforms, One Codebase',
     description:
-      "Next.js for web, Expo for mobile, Electron for desktop. Shared types, validation, and business logic across all.",
-    color: "text-blue-glow",
-    span: "",
+      'Next.js for web, Expo for mobile, Electron for desktop. Shared types, validation, and business logic across all.',
+    color: 'text-blue-glow',
+    span: '',
   },
   {
     icon: Brain,
-    title: "AI-Powered",
+    title: 'AI-Powered',
     description:
-      "Vercel AI SDK with Claude integration. Streaming responses, cost tracking, and usage analytics built in.",
-    color: "text-violet-glow",
-    span: "",
+      'Vercel AI SDK with Claude integration. Streaming responses, cost tracking, and usage analytics built in.',
+    color: 'text-violet-glow',
+    span: '',
   },
   {
     icon: Lock,
-    title: "Auth Built-In",
+    title: 'Auth Built-In',
     description:
-      "Better Auth with session management, bearer tokens, role-based access control. Works across all platforms.",
-    color: "text-emerald-400",
-    span: "",
+      'Better Auth with session management, bearer tokens, role-based access control. Works across all platforms.',
+    color: 'text-emerald-400',
+    span: '',
   },
   {
     icon: Globe,
-    title: "Edge-Ready",
+    title: 'Edge-Ready',
     description:
-      "Deploy to Vercel, Cloudflare, or any edge runtime. Neon serverless Postgres for globally distributed data.",
-    color: "text-cyan-glow",
-    span: "md:col-span-2",
+      'Deploy to Vercel, Cloudflare, or any edge runtime. Neon serverless Postgres for globally distributed data.',
+    color: 'text-cyan-glow',
+    span: 'md:col-span-2',
   },
   {
     icon: Shield,
-    title: "Production Ready",
+    title: 'Production Ready',
     description:
-      "Error handling, rate limiting, structured logging, CI/CD pipelines, and 350+ tests. Ship with confidence.",
-    color: "text-orange-400",
-    span: "",
+      'Error handling, rate limiting, structured logging, CI/CD pipelines, and 350+ tests. Ship with confidence.',
+    color: 'text-orange-400',
+    span: '',
   },
 ];
 
 export function BentoGrid() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
     <section className="relative py-32">
@@ -78,12 +71,11 @@ export function BentoGrid() {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl font-bold sm:text-4xl">
-            Everything you need to{" "}
-            <span className="gradient-text">ship fast</span>
+            Everything you need to <span className="gradient-text">ship fast</span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            A batteries-included monorepo boilerplate so you can focus on your
-            product, not your infrastructure.
+            A batteries-included monorepo boilerplate so you can focus on your product, not your
+            infrastructure.
           </p>
         </motion.div>
 
@@ -98,9 +90,7 @@ export function BentoGrid() {
             >
               <GlowCard className="h-full">
                 <feature.icon className={`h-8 w-8 ${feature.color}`} />
-                <h3 className="mt-4 text-lg font-semibold text-foreground">
-                  {feature.title}
-                </h3>
+                <h3 className="mt-4 text-lg font-semibold text-foreground">{feature.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {feature.description}
                 </p>

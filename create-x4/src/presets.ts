@@ -1,4 +1,4 @@
-import type { Platform } from "./constants.js";
+import type { Platform } from './constants.js';
 
 export interface Preset {
   name: string;
@@ -7,25 +7,25 @@ export interface Preset {
 }
 
 export const PRESETS: Record<string, Preset> = {
-  "full-stack": {
-    name: "Full Stack",
-    description: "Web + API + Mobile + Desktop + AI + Marketing + Docs",
+  'full-stack': {
+    name: 'Full Stack',
+    description: 'Web + API + Mobile + Desktop + AI + Marketing + Docs',
     exclude: [],
   },
   saas: {
-    name: "SaaS",
-    description: "Web + API + AI",
-    exclude: ["mobile", "desktop", "marketing", "docs"],
+    name: 'SaaS',
+    description: 'Web + API + AI',
+    exclude: ['mobile', 'desktop', 'marketing', 'docs'],
   },
   landing: {
-    name: "Landing",
-    description: "Web + API + Marketing",
-    exclude: ["mobile", "desktop", "docs", "ai"],
+    name: 'Landing',
+    description: 'Web + API + Marketing',
+    exclude: ['mobile', 'desktop', 'docs', 'ai'],
   },
-  "api-only": {
-    name: "API Only",
-    description: "Hono + tRPC API server",
-    exclude: ["mobile", "desktop", "marketing", "docs", "ai"],
+  'api-only': {
+    name: 'API Only',
+    description: 'Hono + tRPC API server',
+    exclude: ['mobile', 'desktop', 'marketing', 'docs', 'ai'],
   },
 };
 

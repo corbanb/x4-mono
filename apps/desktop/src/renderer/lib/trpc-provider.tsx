@@ -1,15 +1,11 @@
-import { useState } from "react";
-import { QueryClient } from "@tanstack/react-query";
-import {
-  TRPCProvider as SharedTRPCProvider,
-  createTRPCClient,
-} from "@x4/shared/api-client";
+import { useState } from 'react';
+import { QueryClient } from '@tanstack/react-query';
+import { TRPCProvider as SharedTRPCProvider, createTRPCClient } from '@x4/shared/api-client';
 
 const API_URL =
-  (typeof import.meta !== "undefined" &&
-    (import.meta as unknown as { env: Record<string, string> }).env
-      ?.VITE_API_URL) ||
-  "http://localhost:3002";
+  (typeof import.meta !== 'undefined' &&
+    (import.meta as unknown as { env: Record<string, string> }).env?.VITE_API_URL) ||
+  'http://localhost:3002';
 
 export function TRPCProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(

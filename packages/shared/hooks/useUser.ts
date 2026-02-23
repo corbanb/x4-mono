@@ -1,4 +1,4 @@
-import { useAuth } from "./useAuth";
+import { useAuth } from './useAuth';
 
 /**
  * Convenience hook for accessing the current user from auth state.

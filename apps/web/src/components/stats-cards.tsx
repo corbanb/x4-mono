@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { FolderKanban, Activity, Sparkles, DollarSign } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { FolderKanban, Activity, Sparkles, DollarSign } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type StatsCardsProps = {
   totalProjects: number;
@@ -21,26 +21,25 @@ export function StatsCards({
 }: StatsCardsProps) {
   const stats = [
     {
-      title: "Total Projects",
+      title: 'Total Projects',
       value: totalProjects,
       icon: FolderKanban,
       format: (v: number) => v.toString(),
     },
     {
-      title: "Active Projects",
+      title: 'Active Projects',
       value: activeProjects,
       icon: Activity,
       format: (v: number) => v.toString(),
     },
     {
-      title: "AI Tokens Used",
+      title: 'AI Tokens Used',
       value: tokensUsed,
       icon: Sparkles,
-      format: (v: number) =>
-        v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v.toString(),
+      format: (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v.toString()),
     },
     {
-      title: "Total Cost",
+      title: 'Total Cost',
       value: totalCost,
       icon: DollarSign,
       format: (v: number) => `$${v.toFixed(4)}`,

@@ -1,4 +1,4 @@
-import { trpc } from "./client";
+import { trpc } from './client';
 
 /** Fetch the current authenticated user */
 export function useMe() {

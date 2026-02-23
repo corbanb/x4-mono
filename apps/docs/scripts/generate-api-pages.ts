@@ -1,8 +1,8 @@
-import { generateFiles } from "fumadocs-openapi";
+import { generateFiles } from 'fumadocs-openapi';
 
 void generateFiles({
-  input: ["../../apps/api/openapi.json"],
-  output: "./content/docs/api-reference",
+  input: ['../../apps/api/openapi.json'],
+  output: './content/docs/api-reference',
   includeDescription: true,
-  groupBy: "tag",
+  groupBy: 'tag',
 });

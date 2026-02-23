@@ -35,11 +35,11 @@ src/
 
 ## Pages
 
-| Path | Description |
-|------|-------------|
-| `/` | Landing page with hero and CTA |
-| `/pricing` | Pricing tiers |
-| `/about` | About the product |
+| Path       | Description                    |
+| ---------- | ------------------------------ |
+| `/`        | Landing page with hero and CTA |
+| `/pricing` | Pricing tiers                  |
+| `/about`   | About the product              |
 
 ## Deployment
 

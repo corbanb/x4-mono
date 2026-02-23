@@ -1,6 +1,6 @@
-import { createOpenAI } from "@ai-sdk/openai";
+import { createOpenAI } from '@ai-sdk/openai';
 
-const DEFAULT_MODEL = "gpt-4o";
+const DEFAULT_MODEL = 'gpt-4o';
 
 export function createOpenAIProvider(apiKey?: string) {
   return createOpenAI({

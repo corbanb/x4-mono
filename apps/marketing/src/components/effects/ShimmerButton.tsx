@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface ShimmerButtonProps {
   children: React.ReactNode;
@@ -8,14 +8,10 @@ interface ShimmerButtonProps {
   href?: string;
 }
 
-export function ShimmerButton({
-  children,
-  className,
-  href,
-}: ShimmerButtonProps) {
+export function ShimmerButton({ children, className, href }: ShimmerButtonProps) {
   const classes = cn(
-    "group relative inline-flex items-center justify-center overflow-hidden rounded-xl px-8 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]",
-    className
+    'group relative inline-flex items-center justify-center overflow-hidden rounded-xl px-8 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]',
+    className,
   );
 
   const inner = (

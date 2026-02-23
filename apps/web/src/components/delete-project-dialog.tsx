@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { trpc } from "@x4/shared/api-client";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { trpc } from '@x4/shared/api-client';
+import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,7 +12,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 
 type DeleteProjectDialogProps = {
   projectId: string;
@@ -30,7 +30,7 @@ export function DeleteProjectDialog({
   const utils = trpc.useUtils();
   const deleteMutation = trpc.projects.delete.useMutation({
     onSuccess: () => {
-      toast.success("Project deleted");
+      toast.success('Project deleted');
       utils.projects.list.invalidate();
       onOpenChange(false);
     },
@@ -45,8 +45,8 @@ export function DeleteProjectDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Delete project</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete &ldquo;{projectName}&rdquo;? This
-            action cannot be undone.
+            Are you sure you want to delete &ldquo;{projectName}&rdquo;? This action cannot be
+            undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -56,9 +56,7 @@ export function DeleteProjectDialog({
             onClick={() => deleteMutation.mutate({ id: projectId })}
             disabled={deleteMutation.isPending}
           >
-            {deleteMutation.isPending && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
+            {deleteMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>

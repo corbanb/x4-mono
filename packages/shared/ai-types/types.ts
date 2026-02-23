@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // --- AI Options Schema ---
 
@@ -25,7 +25,7 @@ export interface AIResponse {
 // --- AI Message ---
 
 export interface AIMessage {
-  role: "user" | "assistant" | "system";
+  role: 'user' | 'assistant' | 'system';
   content: string;
 }
 

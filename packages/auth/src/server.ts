@@ -1,16 +1,16 @@
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { bearer } from "better-auth/plugins";
-import { account, db, session, user, verification } from "@x4/database";
+import { betterAuth } from 'better-auth';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { bearer } from 'better-auth/plugins';
+import { account, db, session, user, verification } from '@x4/database';
 
 const trustedOrigins = [
-  process.env.WEB_URL ?? "http://localhost:3000",
-  process.env.MARKETING_URL ?? "http://localhost:3001",
+  process.env.WEB_URL ?? 'http://localhost:3000',
+  process.env.MARKETING_URL ?? 'http://localhost:3001',
 ].filter(Boolean);
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: "pg",
+    provider: 'pg',
     schema: {
       user,
       session,
@@ -20,11 +20,11 @@ export const auth = betterAuth({
   }),
 
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3002",
+  baseURL: process.env.BETTER_AUTH_URL ?? 'http://localhost:3002',
   trustedOrigins,
   advanced: {
     database: {
-      generateId: "uuid",
+      generateId: 'uuid',
     },
   },
 
@@ -44,9 +44,9 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       role: {
-        type: "string",
+        type: 'string',
         required: false,
-        defaultValue: "user",
+        defaultValue: 'user',
         input: false, // users cannot set their own role
       },
     },

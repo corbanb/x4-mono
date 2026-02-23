@@ -1,39 +1,39 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import { motion, useInView } from "motion/react";
-import { Sparkles, Brain, Cpu, DollarSign } from "lucide-react";
-import { GlowCard } from "@/components/effects/GlowCard";
-import { CodeBlock } from "@/components/ui/code-block";
+import { useRef } from 'react';
+import { motion, useInView } from 'motion/react';
+import { Sparkles, Brain, Cpu, DollarSign } from 'lucide-react';
+import { GlowCard } from '@/components/effects/GlowCard';
+import { CodeBlock } from '@/components/ui/code-block';
 
 const SKILLS = [
   {
-    name: "Better Auth",
+    name: 'Better Auth',
     description:
-      "Injects domain knowledge about Better Auth setup, session management, and multi-platform token flows. The agent knows exactly how to configure auth for web, mobile, and desktop.",
+      'Injects domain knowledge about Better Auth setup, session management, and multi-platform token flows. The agent knows exactly how to configure auth for web, mobile, and desktop.',
   },
   {
-    name: "Better Auth Best Practices",
+    name: 'Better Auth Best Practices',
     description:
-      "Security patterns, RBAC implementation, token rotation, and session invalidation. Production-hardened auth practices applied automatically.",
+      'Security patterns, RBAC implementation, token rotation, and session invalidation. Production-hardened auth practices applied automatically.',
   },
 ];
 
 const AI_FEATURES = [
   {
     icon: Brain,
-    title: "Multi-Provider",
-    description: "Claude, OpenAI, and more via Vercel AI SDK",
+    title: 'Multi-Provider',
+    description: 'Claude, OpenAI, and more via Vercel AI SDK',
   },
   {
     icon: Cpu,
-    title: "Streaming",
-    description: "Real-time streaming responses via tRPC",
+    title: 'Streaming',
+    description: 'Real-time streaming responses via tRPC',
   },
   {
     icon: DollarSign,
-    title: "Cost Tracking",
-    description: "Per-request token usage and cost analytics",
+    title: 'Cost Tracking',
+    description: 'Per-request token usage and cost analytics',
   },
 ];
 
@@ -55,7 +55,7 @@ console.log(result.usage);
 
 export function SkillsSection() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const isInView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
     <section ref={ref} className="py-24">
@@ -69,13 +69,10 @@ export function SkillsSection() {
           <span className="inline-block rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 text-xs font-medium text-emerald-400">
             Skills & AI SDK
           </span>
-          <h2 className="mt-6 text-3xl font-bold sm:text-4xl">
-            Domain knowledge, built in
-          </h2>
+          <h2 className="mt-6 text-3xl font-bold sm:text-4xl">Domain knowledge, built in</h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            Skills inject specialized knowledge into the AI agent. The AI
-            integration package gives every platform type-safe access to Claude
-            and other models.
+            Skills inject specialized knowledge into the AI agent. The AI integration package gives
+            every platform type-safe access to Claude and other models.
           </p>
         </motion.div>
 
@@ -91,8 +88,8 @@ export function SkillsSection() {
               <h3 className="text-lg font-semibold">Agent Skills</h3>
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
-              Skills are injectable knowledge modules that give agents deep
-              expertise in specific domains.
+              Skills are injectable knowledge modules that give agents deep expertise in specific
+              domains.
             </p>
 
             <div className="mt-6 space-y-4">
@@ -104,12 +101,8 @@ export function SkillsSection() {
                   transition={{ duration: 0.3, delay: 0.3 + i * 0.1 }}
                 >
                   <GlowCard>
-                    <h4 className="font-medium text-foreground">
-                      {skill.name}
-                    </h4>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {skill.description}
-                    </p>
+                    <h4 className="font-medium text-foreground">{skill.name}</h4>
+                    <p className="mt-2 text-sm text-muted-foreground">{skill.description}</p>
                   </GlowCard>
                 </motion.div>
               ))}
@@ -124,14 +117,9 @@ export function SkillsSection() {
                   transition={{ duration: 0.3, delay: 0.5 + i * 0.1 }}
                   className="rounded-xl border border-border bg-card/50 p-4 text-center"
                 >
-                  <feature.icon
-                    size={20}
-                    className="mx-auto text-emerald-400"
-                  />
+                  <feature.icon size={20} className="mx-auto text-emerald-400" />
                   <p className="mt-2 text-sm font-medium">{feature.title}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {feature.description}
-                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">{feature.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -149,9 +137,7 @@ export function SkillsSection() {
               <div className="h-3 w-3 rounded-full bg-red-500/60" />
               <div className="h-3 w-3 rounded-full bg-yellow-500/60" />
               <div className="h-3 w-3 rounded-full bg-green-500/60" />
-              <span className="ml-2 text-xs text-white/40">
-                ai-integration.ts
-              </span>
+              <span className="ml-2 text-xs text-white/40">ai-integration.ts</span>
             </div>
 
             {/* Code */}

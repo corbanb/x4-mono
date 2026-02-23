@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { motion } from "motion/react";
-import { ShimmerButton } from "@/components/effects/ShimmerButton";
-import { ArrowRight, Github } from "lucide-react";
+import { motion } from 'motion/react';
+import { ShimmerButton } from '@/components/effects/ShimmerButton';
+import { ArrowRight, Github } from 'lucide-react';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
 export function HeroContent() {
   return (
@@ -34,8 +34,7 @@ export function HeroContent() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.4, 0, 1] }}
       >
-        Ship Multi-Platform Apps{" "}
-        <span className="gradient-text">From One Codebase</span>
+        Ship Multi-Platform Apps <span className="gradient-text">From One Codebase</span>
       </motion.h1>
 
       {/* Subtitle */}
@@ -45,9 +44,8 @@ export function HeroContent() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
       >
-        Web, mobile, and desktop — powered by TypeScript, tRPC, and a shared
-        backend. Type-safe from database to UI, with auth, AI, and CI/CD
-        built in.
+        Web, mobile, and desktop — powered by TypeScript, tRPC, and a shared backend. Type-safe from
+        database to UI, with auth, AI, and CI/CD built in.
       </motion.p>
 
       {/* CTAs */}
@@ -87,7 +85,7 @@ export function HeroContent() {
               <span className="h-3 w-3 rounded-full bg-green-500/80" />
             </div>
             <div className="text-muted-foreground">
-              <span className="text-cyan-glow">$</span>{" "}
+              <span className="text-cyan-glow">$</span>{' '}
               <span className="text-foreground">bunx create-x4 my-app</span>
             </div>
             <div className="mt-1 text-muted-foreground">
@@ -106,11 +104,15 @@ export function HeroContent() {
               <span className="text-emerald-400">&#9670;</span> Your project is ready!
             </div>
             <div className="mt-1 text-muted-foreground">
-              {"  "}<span className="text-foreground font-semibold">API</span>{"       "}
+              {'  '}
+              <span className="text-foreground font-semibold">API</span>
+              {'       '}
               <span className="text-cyan-glow">http://localhost:3002</span>
             </div>
             <div className="text-muted-foreground">
-              {"  "}<span className="text-foreground font-semibold">Web</span>{"       "}
+              {'  '}
+              <span className="text-foreground font-semibold">Web</span>
+              {'       '}
               <span className="text-cyan-glow">http://localhost:3000</span>
             </div>
           </div>

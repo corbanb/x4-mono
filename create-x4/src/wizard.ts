@@ -1,15 +1,15 @@
-import * as p from "@clack/prompts";
-import { PRESETS, PRESET_NAMES, type Preset } from "./presets.js";
-import type { Platform } from "./constants.js";
+import * as p from '@clack/prompts';
+import { PRESETS, PRESET_NAMES, type Preset } from './presets.js';
+import type { Platform } from './constants.js';
 import {
   validateProjectName,
   validateScope,
   validateTargetDir,
   deriveScope,
   deriveBundleId,
-} from "./validate.js";
-import { detectPackageManager, type PackageManager } from "./detect.js";
-import { handleCancel } from "./ui.js";
+} from './validate.js';
+import { detectPackageManager, type PackageManager } from './detect.js';
+import { handleCancel } from './ui.js';
 
 export interface WizardResult {
   projectName: string;
@@ -40,8 +40,8 @@ export async function runWizard(opts: WizardOpts): Promise<WizardResult> {
   let projectName = opts.projectName;
   if (!projectName) {
     const name = await p.text({
-      message: "Project name:",
-      placeholder: "my-app",
+      message: 'Project name:',
+      placeholder: 'my-app',
       validate: (v) => {
         const result = validateProjectName(v);
         return result.valid ? undefined : result.error;
@@ -66,34 +66,34 @@ export async function runWizard(opts: WizardOpts): Promise<WizardResult> {
     excludePlatforms = [...opts.excludeFlags];
   } else {
     const presetChoice = await p.select({
-      message: "Which preset?",
+      message: 'Which preset?',
       options: [
         ...PRESET_NAMES.map((key) => ({
           value: key,
           label: PRESETS[key].name,
           hint: PRESETS[key].description,
         })),
-        { value: "custom", label: "Custom", hint: "Choose platforms individually" },
+        { value: 'custom', label: 'Custom', hint: 'Choose platforms individually' },
       ],
     });
     handleCancel(presetChoice);
 
-    if (presetChoice === "custom") {
+    if (presetChoice === 'custom') {
       const platforms = await p.multiselect({
-        message: "Which optional platforms? (space to toggle, web + API always included)",
+        message: 'Which optional platforms? (space to toggle, web + API always included)',
         options: [
-          { value: "mobile" as Platform, label: "Mobile (Expo)" },
-          { value: "desktop" as Platform, label: "Desktop (Electron)" },
-          { value: "marketing" as Platform, label: "Marketing site" },
-          { value: "docs" as Platform, label: "Docs site" },
-          { value: "ai" as Platform, label: "AI integration" },
+          { value: 'mobile' as Platform, label: 'Mobile (Expo)' },
+          { value: 'desktop' as Platform, label: 'Desktop (Electron)' },
+          { value: 'marketing' as Platform, label: 'Marketing site' },
+          { value: 'docs' as Platform, label: 'Docs site' },
+          { value: 'ai' as Platform, label: 'AI integration' },
         ],
         required: false,
       });
       handleCancel(platforms);
 
       // Exclude platforms NOT selected
-      const allOptional: Platform[] = ["mobile", "desktop", "marketing", "docs", "ai"];
+      const allOptional: Platform[] = ['mobile', 'desktop', 'marketing', 'docs', 'ai'];
       const selected = new Set(platforms as Platform[]);
       excludePlatforms = allOptional.filter((pl) => !selected.has(pl));
     } else {
@@ -111,7 +111,7 @@ export async function runWizard(opts: WizardOpts): Promise<WizardResult> {
   if (!scope) {
     const defaultScope = deriveScope(projectName);
     const scopeInput = await p.text({
-      message: "npm scope for packages:",
+      message: 'npm scope for packages:',
       placeholder: defaultScope,
       defaultValue: defaultScope,
       validate: (v) => {
@@ -124,15 +124,15 @@ export async function runWizard(opts: WizardOpts): Promise<WizardResult> {
   }
 
   // Mobile app name (only if mobile is included)
-  let mobileName = opts.mobileName ?? "main";
-  if (!opts.mobileName && !excludePlatforms.includes("mobile")) {
+  let mobileName = opts.mobileName ?? 'main';
+  if (!opts.mobileName && !excludePlatforms.includes('mobile')) {
     const mobileInput = await p.text({
-      message: "Mobile app name:",
-      placeholder: "main",
-      defaultValue: "main",
+      message: 'Mobile app name:',
+      placeholder: 'main',
+      defaultValue: 'main',
       validate: (v) => {
         if (!/^[a-z][a-z0-9-]*$/.test(v)) {
-          return "Must be kebab-case (lowercase letters, numbers, hyphens)";
+          return 'Must be kebab-case (lowercase letters, numbers, hyphens)';
         }
         return undefined;
       },
@@ -146,7 +146,7 @@ export async function runWizard(opts: WizardOpts): Promise<WizardResult> {
 
   // Env wizard offer
   const envChoice = await p.confirm({
-    message: "Set up environment variables now?",
+    message: 'Set up environment variables now?',
     initialValue: true,
   });
   handleCancel(envChoice);

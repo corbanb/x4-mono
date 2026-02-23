@@ -1,4 +1,4 @@
-export type UserRole = "user" | "admin";
+export type UserRole = 'user' | 'admin';
 
 export type User = {
   id: string;
@@ -9,7 +9,7 @@ export type User = {
   updatedAt: Date;
 };
 
-export type ProjectStatus = "active" | "archived";
+export type ProjectStatus = 'active' | 'archived';
 
 export type Project = {
   id: string;

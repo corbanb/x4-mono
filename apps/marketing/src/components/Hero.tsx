@@ -1,4 +1,4 @@
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
 export function Hero() {
   return (
@@ -10,8 +10,8 @@ export function Hero() {
       </h1>
 
       <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600">
-        Web, mobile, and desktop — powered by TypeScript, tRPC, and a shared
-        backend. Stop duplicating code across platforms.
+        Web, mobile, and desktop — powered by TypeScript, tRPC, and a shared backend. Stop
+        duplicating code across platforms.
       </p>
 
       <div className="mt-10 flex items-center justify-center gap-4">

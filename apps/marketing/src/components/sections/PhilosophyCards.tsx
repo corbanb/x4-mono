@@ -1,44 +1,44 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import { motion, useInView } from "motion/react";
-import { GlowCard } from "@/components/effects/GlowCard";
-import { Code, Sparkles, Shield, Layers } from "lucide-react";
+import { useRef } from 'react';
+import { motion, useInView } from 'motion/react';
+import { GlowCard } from '@/components/effects/GlowCard';
+import { Code, Sparkles, Shield, Layers } from 'lucide-react';
 
 const PRINCIPLES = [
   {
     icon: Code,
-    title: "Type Safety First",
+    title: 'Type Safety First',
     description:
-      "Types flow from database schema to UI components. Zod validates at runtime. TypeScript catches errors at compile time. No gaps.",
-    color: "text-blue-glow",
+      'Types flow from database schema to UI components. Zod validates at runtime. TypeScript catches errors at compile time. No gaps.',
+    color: 'text-blue-glow',
   },
   {
     icon: Sparkles,
-    title: "Developer Experience",
+    title: 'Developer Experience',
     description:
-      "Fast builds with Turborepo, instant feedback with hot reload, clear conventions with CLAUDE.md. Spend time coding, not configuring.",
-    color: "text-violet-glow",
+      'Fast builds with Turborepo, instant feedback with hot reload, clear conventions with CLAUDE.md. Spend time coding, not configuring.',
+    color: 'text-violet-glow',
   },
   {
     icon: Shield,
-    title: "Production Ready",
+    title: 'Production Ready',
     description:
-      "Not a toy. Error handling, rate limiting, structured logging, auth, CI/CD, and 350+ tests. Everything you need to ship confidently.",
-    color: "text-emerald-400",
+      'Not a toy. Error handling, rate limiting, structured logging, auth, CI/CD, and 350+ tests. Everything you need to ship confidently.',
+    color: 'text-emerald-400',
   },
   {
     icon: Layers,
-    title: "Modular by Design",
+    title: 'Modular by Design',
     description:
-      "Use the whole stack or just the parts you need. Every package is independent. Swap any technology without touching the rest.",
-    color: "text-cyan-glow",
+      'Use the whole stack or just the parts you need. Every package is independent. Swap any technology without touching the rest.',
+    color: 'text-cyan-glow',
   },
 ];
 
 export function PhilosophyCards() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
     <section ref={ref} className="py-24">
@@ -62,9 +62,7 @@ export function PhilosophyCards() {
             >
               <GlowCard className="h-full">
                 <principle.icon className={`h-8 w-8 ${principle.color}`} />
-                <h3 className="mt-4 text-lg font-semibold text-foreground">
-                  {principle.title}
-                </h3>
+                <h3 className="mt-4 text-lg font-semibold text-foreground">{principle.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {principle.description}
                 </p>

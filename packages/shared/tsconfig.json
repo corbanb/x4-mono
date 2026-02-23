@@ -7,6 +7,18 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*.ts", "utils/**/*.ts", "api-client/**/*.ts", "api-client/**/*.tsx", "hooks/**/*.ts", "hooks/**/*.tsx", "ui/**/*.ts", "ui/**/*.tsx", "ai-types/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "types/**/*.ts",
+    "utils/**/*.ts",
+    "api-client/**/*.ts",
+    "api-client/**/*.tsx",
+    "hooks/**/*.ts",
+    "hooks/**/*.tsx",
+    "ui/**/*.ts",
+    "ui/**/*.tsx",
+    "ai-types/**/*.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }

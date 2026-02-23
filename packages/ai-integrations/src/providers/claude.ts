@@ -1,6 +1,6 @@
-import { createAnthropic } from "@ai-sdk/anthropic";
+import { createAnthropic } from '@ai-sdk/anthropic';
 
-const DEFAULT_MODEL = "claude-sonnet-4-20250514";
+const DEFAULT_MODEL = 'claude-sonnet-4-20250514';
 
 export function createClaudeProvider(apiKey?: string) {
   return createAnthropic({

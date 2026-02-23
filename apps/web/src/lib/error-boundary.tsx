@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Component, type ErrorInfo, type ReactNode } from "react";
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 type ErrorBoundaryProps = {
   children: ReactNode;
@@ -13,10 +13,7 @@ type ErrorBoundaryState = {
   error: Error | null;
 };
 
-export class ErrorBoundary extends Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -39,11 +36,8 @@ export class ErrorBoundary extends Component<
       return (
         <div role="alert">
           <h2>Something went wrong</h2>
-          <p>{this.state.error?.message ?? "An unexpected error occurred."}</p>
-          <button
-            type="button"
-            onClick={() => this.setState({ hasError: false, error: null })}
-          >
+          <p>{this.state.error?.message ?? 'An unexpected error occurred.'}</p>
+          <button type="button" onClick={() => this.setState({ hasError: false, error: null })}>
             Try again
           </button>
         </div>

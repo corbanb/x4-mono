@@ -1,5 +1,5 @@
-import app from "./app";
-import { env } from "./lib/env";
+import app from './app';
+import { env } from './lib/env';
 
 export default {
   port: env.PORT,
@@ -7,4 +7,4 @@ export default {
 };
 
 export { app };
-export type { AppRouter } from "./routers";
+export type { AppRouter } from './routers';

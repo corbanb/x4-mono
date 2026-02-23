@@ -10,14 +10,14 @@
  *   registerAuthIPC(ipcMain);
  */
 
-import { safeStorage, type IpcMain, type IpcMainInvokeEvent } from "electron";
+import { safeStorage, type IpcMain, type IpcMainInvokeEvent } from 'electron';
 
-const TOKEN_KEY = "x4_auth_token";
+const TOKEN_KEY = 'x4_auth_token';
 let encryptedToken: Buffer | null = null;
 
 export function storeToken(token: string): void {
   if (!safeStorage.isEncryptionAvailable()) {
-    throw new Error("safeStorage encryption is not available on this system");
+    throw new Error('safeStorage encryption is not available on this system');
   }
   encryptedToken = safeStorage.encryptString(token);
 }
@@ -42,16 +42,16 @@ export function clearToken(): void {
  *   "auth:clear-token"  — wipe the stored token
  */
 export function registerAuthIPC(ipcMain: IpcMain): void {
-  ipcMain.handle("auth:store-token", (_event: IpcMainInvokeEvent, token: string) => {
+  ipcMain.handle('auth:store-token', (_event: IpcMainInvokeEvent, token: string) => {
     storeToken(token);
     return true;
   });
 
-  ipcMain.handle("auth:get-token", () => {
+  ipcMain.handle('auth:get-token', () => {
     return getToken();
   });
 
-  ipcMain.handle("auth:clear-token", () => {
+  ipcMain.handle('auth:clear-token', () => {
     clearToken();
     return true;
   });

@@ -1,4 +1,4 @@
-import type { User, Project } from "./domain";
+import type { User, Project } from './domain';
 
 export type GetUserRequest = { userId: string };
 export type GetUserResponse = User;

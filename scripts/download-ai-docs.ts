@@ -6,24 +6,24 @@
  * Usage: bun scripts/download-ai-docs.ts
  */
 
-import { mkdirSync } from "node:fs";
-import { join } from "node:path";
+import { mkdirSync } from 'node:fs';
+import { join } from 'node:path';
 
-const DOCS_DIR = join(import.meta.dir, "..", ".claude", "docs");
+const DOCS_DIR = join(import.meta.dir, '..', '.claude', 'docs');
 
 const SOURCES: { name: string; url: string; filename: string }[] = [
-  { name: "Hono", url: "https://hono.dev/llms-full.txt", filename: "hono.txt" },
-  { name: "Drizzle", url: "https://orm.drizzle.team/llms-full.txt", filename: "drizzle.txt" },
-  { name: "tRPC", url: "https://trpc.io/llms-full.txt", filename: "trpc.txt" },
-  { name: "Better Auth", url: "https://www.better-auth.com/llms.txt", filename: "better-auth.txt" },
-  { name: "Bun", url: "https://bun.sh/llms-full.txt", filename: "bun.txt" },
-  { name: "Turborepo", url: "https://turborepo.dev/llms-full.txt", filename: "turborepo.txt" },
-  { name: "Zod", url: "https://zod.dev/llms-full.txt", filename: "zod.txt" },
-  { name: "Next.js", url: "https://nextjs.org/docs/llms-full.txt", filename: "nextjs.txt" },
-  { name: "Expo", url: "https://docs.expo.dev/llms-full.txt", filename: "expo.txt" },
-  { name: "React", url: "https://react.dev/llms.txt", filename: "react.txt" },
-  { name: "Neon", url: "https://neon.com/llms.txt", filename: "neon.txt" },
-  { name: "Vercel", url: "https://vercel.com/llms.txt", filename: "vercel.txt" },
+  { name: 'Hono', url: 'https://hono.dev/llms-full.txt', filename: 'hono.txt' },
+  { name: 'Drizzle', url: 'https://orm.drizzle.team/llms-full.txt', filename: 'drizzle.txt' },
+  { name: 'tRPC', url: 'https://trpc.io/llms-full.txt', filename: 'trpc.txt' },
+  { name: 'Better Auth', url: 'https://www.better-auth.com/llms.txt', filename: 'better-auth.txt' },
+  { name: 'Bun', url: 'https://bun.sh/llms-full.txt', filename: 'bun.txt' },
+  { name: 'Turborepo', url: 'https://turborepo.dev/llms-full.txt', filename: 'turborepo.txt' },
+  { name: 'Zod', url: 'https://zod.dev/llms-full.txt', filename: 'zod.txt' },
+  { name: 'Next.js', url: 'https://nextjs.org/docs/llms-full.txt', filename: 'nextjs.txt' },
+  { name: 'Expo', url: 'https://docs.expo.dev/llms-full.txt', filename: 'expo.txt' },
+  { name: 'React', url: 'https://react.dev/llms.txt', filename: 'react.txt' },
+  { name: 'Neon', url: 'https://neon.com/llms.txt', filename: 'neon.txt' },
+  { name: 'Vercel', url: 'https://vercel.com/llms.txt', filename: 'vercel.txt' },
 ];
 
 function formatSize(bytes: number): string {
@@ -51,7 +51,7 @@ async function main() {
       }
       const text = await res.text();
       // Verify we got text content, not an HTML error page
-      if (text.trimStart().startsWith("<!DOCTYPE") || text.trimStart().startsWith("<html")) {
+      if (text.trimStart().startsWith('<!DOCTYPE') || text.trimStart().startsWith('<html')) {
         console.log(`  SKIP  ${source.name} — received HTML instead of text`);
         failed++;
         continue;

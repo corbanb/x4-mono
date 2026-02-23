@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { Copy, Check } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
+import { Copy, Check } from 'lucide-react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 
 type AIOutputProps = {
   text: string | null;
@@ -14,12 +14,7 @@ type AIOutputProps = {
   loading: boolean;
 };
 
-export function AIOutput({
-  text,
-  tokensUsed,
-  estimatedCost,
-  loading,
-}: AIOutputProps) {
+export function AIOutput({ text, tokensUsed, estimatedCost, loading }: AIOutputProps) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -48,9 +43,7 @@ export function AIOutput({
   if (!text) {
     return (
       <div className="flex h-full items-center justify-center text-center">
-        <p className="text-sm text-muted-foreground">
-          AI response will appear here
-        </p>
+        <p className="text-sm text-muted-foreground">AI response will appear here</p>
       </div>
     );
   }
@@ -60,17 +53,11 @@ export function AIOutput({
       <div className="flex items-center justify-between pb-3">
         <span className="text-sm font-medium">Output</span>
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleCopy}>
-          {copied ? (
-            <Check className="h-4 w-4 text-green-500" />
-          ) : (
-            <Copy className="h-4 w-4" />
-          )}
+          {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
         </Button>
       </div>
       <ScrollArea className="flex-1">
-        <div className="whitespace-pre-wrap text-sm leading-relaxed">
-          {text}
-        </div>
+        <div className="whitespace-pre-wrap text-sm leading-relaxed">{text}</div>
       </ScrollArea>
       {tokensUsed > 0 && (
         <div className="flex gap-2 border-t pt-3 mt-3">

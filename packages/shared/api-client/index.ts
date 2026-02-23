@@ -4,8 +4,8 @@ export {
   createServerClient,
   type TRPCClientConfig,
   type AppRouter,
-} from "./client";
-export { TRPCProvider } from "./provider";
+} from './client';
+export { TRPCProvider } from './provider';
 export {
   useMe,
   useProjects,
@@ -13,11 +13,11 @@ export {
   useCreateProject,
   useUpdateProject,
   useDeleteProject,
-} from "./hooks";
+} from './hooks';
 export {
   isTRPCClientError,
   extractErrorMessage,
   extractErrorCode,
   extractZodErrors,
   createTokenGetter,
-} from "./utils";
+} from './utils';

@@ -9,14 +9,14 @@
  * Usage: import the mock functions you need, then use .mockResolvedValueOnce()
  * or .mockImplementation() to customize per-test behavior.
  */
-import { mock } from "bun:test";
+import { mock } from 'bun:test';
 
 // Prompt mocks
-export const mockText = mock(async () => "" as string | symbol);
-export const mockSelect = mock(async () => "" as string | symbol);
+export const mockText = mock(async () => '' as string | symbol);
+export const mockSelect = mock(async () => '' as string | symbol);
 export const mockMultiselect = mock(async () => [] as string[] | symbol);
 export const mockConfirm = mock(async () => true as boolean | symbol);
-export const mockPassword = mock(async () => "" as string | symbol);
+export const mockPassword = mock(async () => '' as string | symbol);
 
 // UI mocks
 export const mockIsCancel = mock((_value: unknown) => false);
@@ -35,7 +35,7 @@ export const mockLogWarning = mock(() => {});
 export const mockLogMessage = mock(() => {});
 
 // Register the comprehensive mock — only the first call takes effect in Bun
-mock.module("@clack/prompts", () => ({
+mock.module('@clack/prompts', () => ({
   text: mockText,
   select: mockSelect,
   multiselect: mockMultiselect,

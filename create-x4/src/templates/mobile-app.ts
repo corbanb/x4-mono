@@ -1,8 +1,8 @@
-import type { TemplateFile } from "./apply.js";
+import type { TemplateFile } from './apply.js';
 
 export const MOBILE_APP_TEMPLATE: TemplateFile[] = [
   {
-    path: "package.json",
+    path: 'package.json',
     content: `{
   "name": "__SCOPE__/mobile-__MOBILE_NAME__",
   "version": "0.0.0",
@@ -41,7 +41,7 @@ export const MOBILE_APP_TEMPLATE: TemplateFile[] = [
 `,
   },
   {
-    path: "app.json",
+    path: 'app.json',
     content: `{
   "expo": {
     "name": "__PROJECT_NAME__",
@@ -77,7 +77,7 @@ export const MOBILE_APP_TEMPLATE: TemplateFile[] = [
 `,
   },
   {
-    path: "tsconfig.json",
+    path: 'tsconfig.json',
     content: `{
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
@@ -94,7 +94,7 @@ export const MOBILE_APP_TEMPLATE: TemplateFile[] = [
 `,
   },
   {
-    path: "eas.json",
+    path: 'eas.json',
     content: `{
   "cli": {
     "version": ">= 12.0.0"
@@ -116,12 +116,12 @@ export const MOBILE_APP_TEMPLATE: TemplateFile[] = [
 `,
   },
   {
-    path: ".env.example",
+    path: '.env.example',
     content: `EXPO_PUBLIC_API_URL=http://localhost:3002
 `,
   },
   {
-    path: "src/lib/api.ts",
+    path: 'src/lib/api.ts',
     content: `import { createTRPCClient } from "__SCOPE__/shared/api-client";
 import { getStoredToken } from "__SCOPE__/auth/client/native";
 
@@ -134,7 +134,7 @@ export const api = createTRPCClient({
 `,
   },
   {
-    path: "src/lib/trpc-provider.tsx",
+    path: 'src/lib/trpc-provider.tsx',
     content: `import React, { useState } from "react";
 import { QueryClient } from "@tanstack/react-query";
 import { SharedTRPCProvider } from "__SCOPE__/shared/trpc-provider";
@@ -159,7 +159,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
 `,
   },
   {
-    path: "app/_layout.tsx",
+    path: 'app/_layout.tsx',
     content: `import { Stack } from "expo-router";
 import { TRPCProvider } from "../src/lib/trpc-provider";
 
@@ -187,7 +187,7 @@ export default function RootLayout() {
 `,
   },
   {
-    path: "app/index.tsx",
+    path: 'app/index.tsx',
     content: `import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
 `,
   },
   {
-    path: "app/login.tsx",
+    path: 'app/login.tsx',
     content: `import { useState } from "react";
 import {
   View,
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
 `,
   },
   {
-    path: "app/signup.tsx",
+    path: 'app/signup.tsx',
     content: `import { useState } from "react";
 import {
   View,
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
 `,
   },
   {
-    path: "app/(authenticated)/_layout.tsx",
+    path: 'app/(authenticated)/_layout.tsx',
     content: `import { useEffect, useState } from "react";
 import { ActivityIndicator, View, Text, Pressable } from "react-native";
 import { Stack, useRouter } from "expo-router";
@@ -492,7 +492,7 @@ export default function AuthenticatedLayout() {
 `,
   },
   {
-    path: "app/(authenticated)/index.tsx",
+    path: 'app/(authenticated)/index.tsx',
     content: `import { View, Text, StyleSheet } from "react-native";
 
 export default function HomeScreen() {

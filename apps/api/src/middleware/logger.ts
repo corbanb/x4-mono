@@ -1,17 +1,16 @@
-import type { MiddlewareHandler } from "hono";
-import { logger } from "../lib/logger";
+import type { MiddlewareHandler } from 'hono';
+import { logger } from '../lib/logger';
 
-declare module "hono" {
+declare module 'hono' {
   interface ContextVariableMap {
     requestId: string;
   }
 }
 
 export const requestLogger: MiddlewareHandler = async (c, next) => {
-  const requestId =
-    c.req.header("x-request-id") ?? crypto.randomUUID();
-  c.set("requestId", requestId);
-  c.header("X-Request-Id", requestId);
+  const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
+  c.set('requestId', requestId);
+  c.header('X-Request-Id', requestId);
 
   const start = performance.now();
 
@@ -31,10 +30,10 @@ export const requestLogger: MiddlewareHandler = async (c, next) => {
   };
 
   if (status >= 500) {
-    logger.error(logData, "Request completed");
+    logger.error(logData, 'Request completed');
   } else if (status >= 400) {
-    logger.warn(logData, "Request completed");
+    logger.warn(logData, 'Request completed');
   } else {
-    logger.info(logData, "Request completed");
+    logger.info(logData, 'Request completed');
   }
 };

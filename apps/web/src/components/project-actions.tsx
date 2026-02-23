@@ -1,27 +1,24 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { MoreHorizontal, Eye, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { MoreHorizontal, Eye, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { DeleteProjectDialog } from "@/components/delete-project-dialog";
+} from '@/components/ui/dropdown-menu';
+import { DeleteProjectDialog } from '@/components/delete-project-dialog';
 
 type ProjectActionsProps = {
   projectId: string;
   projectName: string;
 };
 
-export function ProjectActions({
-  projectId,
-  projectName,
-}: ProjectActionsProps) {
+export function ProjectActions({ projectId, projectName }: ProjectActionsProps) {
   const router = useRouter();
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -35,17 +32,12 @@ export function ProjectActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            onClick={() => router.push(`/projects/${projectId}`)}
-          >
+          <DropdownMenuItem onClick={() => router.push(`/projects/${projectId}`)}>
             <Eye className="mr-2 h-4 w-4" />
             View Details
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="text-destructive"
-            onClick={() => setDeleteOpen(true)}
-          >
+          <DropdownMenuItem className="text-destructive" onClick={() => setDeleteOpen(true)}>
             <Trash2 className="mr-2 h-4 w-4" />
             Delete
           </DropdownMenuItem>

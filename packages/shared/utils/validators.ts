@@ -1,7 +1,7 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // --- User Schemas ---
-export const UserRoleSchema = z.enum(["user", "admin"]);
+export const UserRoleSchema = z.enum(['user', 'admin']);
 
 export const UserSchema = z.object({
   id: z.string().uuid(),
@@ -15,11 +15,11 @@ export const UserSchema = z.object({
 export const CreateUserSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1).max(255),
-  role: UserRoleSchema.default("user"),
+  role: UserRoleSchema.default('user'),
 });
 
 // --- Project Schemas ---
-export const ProjectStatusSchema = z.enum(["active", "archived"]);
+export const ProjectStatusSchema = z.enum(['active', 'archived']);
 
 export const ProjectSchema = z.object({
   id: z.string().uuid(),

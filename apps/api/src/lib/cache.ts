@@ -1,5 +1,5 @@
-import { Redis } from "@upstash/redis";
-import { logger } from "./logger";
+import { Redis } from '@upstash/redis';
+import { logger } from './logger';
 
 /**
  * Cache key patterns:
@@ -19,7 +19,7 @@ function getRedis(): Redis | null {
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
   // Don't create real Redis in test env — use _setRedisForTest for mocked tests
-  if (!url || !token || process.env.NODE_ENV === "test") return null;
+  if (!url || !token || process.env.NODE_ENV === 'test') return null;
 
   redis = new Redis({ url, token });
   return redis;
@@ -34,7 +34,7 @@ export const cache = {
       const value = await client.get<T>(key);
       return value ?? null;
     } catch (err) {
-      logger.warn({ err, key }, "Cache get error — returning null");
+      logger.warn({ err, key }, 'Cache get error — returning null');
       return null;
     }
   },
@@ -46,7 +46,7 @@ export const cache = {
     try {
       await client.set(key, value, { ex: ttlSeconds });
     } catch (err) {
-      logger.warn({ err, key }, "Cache set error");
+      logger.warn({ err, key }, 'Cache set error');
     }
   },
 
@@ -57,15 +57,11 @@ export const cache = {
     try {
       await client.del(key);
     } catch (err) {
-      logger.warn({ err, key }, "Cache del error");
+      logger.warn({ err, key }, 'Cache del error');
     }
   },
 
-  async getOrGenerate<T>(
-    key: string,
-    generator: () => Promise<T>,
-    ttlSeconds: number,
-  ): Promise<T> {
+  async getOrGenerate<T>(key: string, generator: () => Promise<T>, ttlSeconds: number): Promise<T> {
     // Try cache first
     const cached = await cache.get<T>(key);
     if (cached !== null) return cached;

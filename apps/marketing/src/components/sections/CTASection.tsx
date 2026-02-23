@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import { motion, useInView } from "motion/react";
-import { ShimmerButton } from "@/components/effects/ShimmerButton";
-import { ArrowRight } from "lucide-react";
+import { useRef } from 'react';
+import { motion, useInView } from 'motion/react';
+import { ShimmerButton } from '@/components/effects/ShimmerButton';
+import { ArrowRight } from 'lucide-react';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
 export function CTASection() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
     <section ref={ref} className="relative overflow-hidden py-32">
@@ -23,21 +23,18 @@ export function CTASection() {
         transition={{ duration: 0.6 }}
       >
         <h2 className="text-4xl font-bold sm:text-5xl">
-          Ready to build{" "}
-          <span className="gradient-text">something great</span>?
+          Ready to build <span className="gradient-text">something great</span>?
         </h2>
         <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
-          Get started in minutes with a production-ready monorepo. Web, mobile,
-          and desktop — all wired up and ready to ship.
+          Get started in minutes with a production-ready monorepo. Web, mobile, and desktop — all
+          wired up and ready to ship.
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <ShimmerButton href={`${APP_URL}/signup`}>
             Start Building
             <ArrowRight size={16} className="ml-2" />
           </ShimmerButton>
-          <span className="text-sm text-muted-foreground">
-            Free and open source
-          </span>
+          <span className="text-sm text-muted-foreground">Free and open source</span>
         </div>
       </motion.div>
     </section>

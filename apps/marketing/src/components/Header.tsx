@@ -1,11 +1,11 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 const NAV_LINKS = [
-  { href: "/pricing", label: "Pricing" },
-  { href: "/about", label: "About" },
+  { href: '/pricing', label: 'Pricing' },
+  { href: '/about', label: 'About' },
 ];
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
 export function Header() {
   return (
@@ -19,10 +19,7 @@ export function Header() {
           <ul className="flex items-center gap-6">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="text-sm text-gray-600 hover:text-gray-900"
-                >
+                <Link href={link.href} className="text-sm text-gray-600 hover:text-gray-900">
                   {link.label}
                 </Link>
               </li>
@@ -30,10 +27,7 @@ export function Header() {
           </ul>
 
           <div className="flex items-center gap-3">
-            <a
-              href={`${APP_URL}/login`}
-              className="text-sm text-gray-600 hover:text-gray-900"
-            >
+            <a href={`${APP_URL}/login`} className="text-sm text-gray-600 hover:text-gray-900">
               Sign In
             </a>
             <a

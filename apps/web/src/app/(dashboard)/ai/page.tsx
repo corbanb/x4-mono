@@ -1,37 +1,27 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { trpc } from "@x4/shared/api-client";
-import { toast } from "sonner";
-import { Sparkles, Loader2, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useState } from 'react';
+import { trpc } from '@x4/shared/api-client';
+import { toast } from 'sonner';
+import { Sparkles, Loader2, ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { AIOutput } from "@/components/ai-output";
+} from '@/components/ui/select';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { AIOutput } from '@/components/ai-output';
 
 export default function AIPlaygroundPage() {
-  const [prompt, setPrompt] = useState("");
-  const [systemPrompt, setSystemPrompt] = useState("");
-  const [maxTokens, setMaxTokens] = useState("1024");
+  const [prompt, setPrompt] = useState('');
+  const [systemPrompt, setSystemPrompt] = useState('');
+  const [maxTokens, setMaxTokens] = useState('1024');
   const [systemOpen, setSystemOpen] = useState(false);
   const [result, setResult] = useState<{
     text: string;
@@ -50,7 +40,7 @@ export default function AIPlaygroundPage() {
 
   function handleGenerate() {
     if (!prompt.trim()) {
-      toast.error("Please enter a prompt");
+      toast.error('Please enter a prompt');
       return;
     }
     generateMutation.mutate({
@@ -79,14 +69,10 @@ export default function AIPlaygroundPage() {
           <CardContent className="space-y-4">
             <Collapsible open={systemOpen} onOpenChange={setSystemOpen}>
               <CollapsibleTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-between px-0"
-                >
+                <Button variant="ghost" size="sm" className="w-full justify-between px-0">
                   <span className="text-sm font-medium">System Prompt</span>
                   <ChevronDown
-                    className={`h-4 w-4 transition-transform ${systemOpen ? "rotate-180" : ""}`}
+                    className={`h-4 w-4 transition-transform ${systemOpen ? 'rotate-180' : ''}`}
                   />
                 </Button>
               </CollapsibleTrigger>
@@ -137,7 +123,7 @@ export default function AIPlaygroundPage() {
                 ) : (
                   <Sparkles className="mr-2 h-4 w-4" />
                 )}
-                {generateMutation.isPending ? "Generating..." : "Generate"}
+                {generateMutation.isPending ? 'Generating...' : 'Generate'}
               </Button>
             </div>
           </CardContent>

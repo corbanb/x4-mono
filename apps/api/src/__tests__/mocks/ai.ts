@@ -1,4 +1,4 @@
-import { mock } from "bun:test";
+import { mock } from 'bun:test';
 
 /**
  * Mock AI generation response factory.
@@ -12,7 +12,7 @@ export function createMockAIResponse(overrides?: {
 }) {
   return mock(() =>
     Promise.resolve({
-      text: overrides?.text ?? "Mock AI response",
+      text: overrides?.text ?? 'Mock AI response',
       usage: {
         promptTokens: overrides?.promptTokens ?? 10,
         completionTokens: overrides?.completionTokens ?? 50,
@@ -31,13 +31,12 @@ export function createMockAIModule(generateFn?: ReturnType<typeof mock>) {
 
   return {
     generateAIResponse: mockGenerate,
-    calculatePreciseCost: (_input: number, _output: number, _model: string) =>
-      0.00054,
+    calculatePreciseCost: (_input: number, _output: number, _model: string) => 0.00054,
     estimateTokenCost: (_tokens: number, _model: string) => 0.00054,
     getModelRates: (_model: string) => ({ input: 3.0, output: 15.0 }),
     getProvider: () => ({}),
-    DEFAULT_CLAUDE_MODEL: "claude-sonnet-4-20250514",
-    DEFAULT_OPENAI_MODEL: "gpt-4o",
+    DEFAULT_CLAUDE_MODEL: 'claude-sonnet-4-20250514',
+    DEFAULT_OPENAI_MODEL: 'gpt-4o',
     streamAIResponse: () => Promise.resolve(new ReadableStream()),
   };
 }

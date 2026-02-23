@@ -1,8 +1,8 @@
-import type { TemplateFile } from "./apply.js";
+import type { TemplateFile } from './apply.js';
 
 export const WEB_APP_TEMPLATE: TemplateFile[] = [
   {
-    path: "package.json",
+    path: 'package.json',
     content: `{
   "name": "__SCOPE__/__WEB_NAME__",
   "version": "0.0.0",
@@ -37,7 +37,7 @@ export const WEB_APP_TEMPLATE: TemplateFile[] = [
 `,
   },
   {
-    path: "next.config.ts",
+    path: 'next.config.ts',
     content: `import type { NextConfig } from "next";
 import path from "node:path";
 
@@ -50,7 +50,7 @@ export default nextConfig;
 `,
   },
   {
-    path: "tsconfig.json",
+    path: 'tsconfig.json',
     content: `{
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
@@ -75,7 +75,7 @@ export default nextConfig;
 `,
   },
   {
-    path: "postcss.config.js",
+    path: 'postcss.config.js',
     content: `module.exports = {
   plugins: {
     "@tailwindcss/postcss": {},
@@ -84,17 +84,17 @@ export default nextConfig;
 `,
   },
   {
-    path: "src/styles/globals.css",
+    path: 'src/styles/globals.css',
     content: `@import "tailwindcss";
 `,
   },
   {
-    path: ".env.example",
+    path: '.env.example',
     content: `NEXT_PUBLIC_API_URL=http://localhost:3002
 `,
   },
   {
-    path: "src/lib/trpc-provider.tsx",
+    path: 'src/lib/trpc-provider.tsx',
     content: `"use client";
 
 import React, { useState } from "react";
@@ -135,7 +135,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
 `,
   },
   {
-    path: "src/lib/utils.ts",
+    path: 'src/lib/utils.ts',
     content: `import { type ClassValue, clsx } from "clsx";
 
 export function cn(...inputs: ClassValue[]) {
@@ -144,7 +144,7 @@ export function cn(...inputs: ClassValue[]) {
 `,
   },
   {
-    path: "src/app/layout.tsx",
+    path: 'src/app/layout.tsx',
     content: `import type { Metadata } from "next";
 import "@/styles/globals.css";
 import { TRPCProvider } from "@/lib/trpc-provider";
@@ -170,7 +170,7 @@ export default function RootLayout({
 `,
   },
   {
-    path: "src/app/page.tsx",
+    path: 'src/app/page.tsx',
     content: `import Link from "next/link";
 
 export default function HomePage() {
@@ -190,7 +190,7 @@ export default function HomePage() {
 `,
   },
   {
-    path: "src/app/(auth)/layout.tsx",
+    path: 'src/app/(auth)/layout.tsx',
     content: `export default function AuthLayout({
   children,
 }: {
@@ -205,7 +205,7 @@ export default function HomePage() {
 `,
   },
   {
-    path: "src/app/(auth)/login/page.tsx",
+    path: 'src/app/(auth)/login/page.tsx',
     content: `"use client";
 
 import { useState } from "react";
@@ -286,7 +286,7 @@ export default function LoginPage() {
 `,
   },
   {
-    path: "src/app/(auth)/signup/page.tsx",
+    path: 'src/app/(auth)/signup/page.tsx',
     content: `"use client";
 
 import { useState } from "react";
@@ -379,7 +379,7 @@ export default function SignupPage() {
 `,
   },
   {
-    path: "src/app/(dashboard)/layout.tsx",
+    path: 'src/app/(dashboard)/layout.tsx',
     content: `import Link from "next/link";
 
 export default function DashboardLayout({
@@ -402,7 +402,7 @@ export default function DashboardLayout({
 `,
   },
   {
-    path: "src/app/(dashboard)/page.tsx",
+    path: 'src/app/(dashboard)/page.tsx',
     content: `export default function DashboardPage() {
   return (
     <div>
@@ -414,7 +414,7 @@ export default function DashboardLayout({
 `,
   },
   {
-    path: "src/middleware.ts",
+    path: 'src/middleware.ts',
     content: `import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 

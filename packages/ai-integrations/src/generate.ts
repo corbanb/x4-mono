@@ -1,15 +1,12 @@
-import { generateText, streamText } from "ai";
-import type { AIOptions, AIResponse } from "@x4/shared/ai";
-import { getProvider, DEFAULT_CLAUDE_MODEL } from "./providers";
+import { generateText, streamText } from 'ai';
+import type { AIOptions, AIResponse } from '@x4/shared/ai';
+import { getProvider, DEFAULT_CLAUDE_MODEL } from './providers';
 
 /**
  * Generate a text response from an AI model.
  * Uses Vercel AI SDK for provider abstraction.
  */
-export async function generateAIResponse(
-  prompt: string,
-  options?: AIOptions,
-): Promise<AIResponse> {
+export async function generateAIResponse(prompt: string, options?: AIOptions): Promise<AIResponse> {
   const model = getProvider(options?.model ?? DEFAULT_CLAUDE_MODEL);
 
   const result = await generateText({

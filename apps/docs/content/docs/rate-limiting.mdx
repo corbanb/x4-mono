@@ -7,22 +7,22 @@ The x4 API uses sliding-window rate limiting powered by Upstash Redis. Rate limi
 
 ## Rate Limit Tiers
 
-| Tier | Limit | Window | Applied To |
-|------|-------|--------|------------|
+| Tier        | Limit        | Window     | Applied To              |
+| ----------- | ------------ | ---------- | ----------------------- |
 | **General** | 100 requests | 60 seconds | All `/trpc/*` endpoints |
-| **AI** | 10 requests | 60 seconds | `ai.generate` |
-| **Auth** | 5 requests | 60 seconds | `/api/auth/*` endpoints |
+| **AI**      | 10 requests  | 60 seconds | `ai.generate`           |
+| **Auth**    | 5 requests   | 60 seconds | `/api/auth/*` endpoints |
 
 ## Response Headers
 
 Rate limit information is included in response headers:
 
-| Header | Description |
-|--------|-------------|
-| `X-RateLimit-Limit` | Maximum requests allowed in the window |
-| `X-RateLimit-Remaining` | Requests remaining in the current window |
-| `X-RateLimit-Reset` | Unix timestamp when the window resets |
-| `Retry-After` | Seconds to wait before retrying (only on 429) |
+| Header                  | Description                                   |
+| ----------------------- | --------------------------------------------- |
+| `X-RateLimit-Limit`     | Maximum requests allowed in the window        |
+| `X-RateLimit-Remaining` | Requests remaining in the current window      |
+| `X-RateLimit-Reset`     | Unix timestamp when the window resets         |
+| `Retry-After`           | Seconds to wait before retrying (only on 429) |
 
 ## Rate Limit Exceeded
 
@@ -56,9 +56,9 @@ async function fetchWithRetry(fn: () => Promise<Response>, retries = 3) {
     const response = await fn();
     if (response.status !== 429) return response;
 
-    const retryAfter = parseInt(response.headers.get("Retry-After") ?? "5");
+    const retryAfter = parseInt(response.headers.get('Retry-After') ?? '5');
     await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
   }
-  throw new Error("Rate limit exceeded after retries");
+  throw new Error('Rate limit exceeded after retries');
 }
 ```

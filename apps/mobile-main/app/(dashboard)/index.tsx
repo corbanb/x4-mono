@@ -1,6 +1,6 @@
-import { View, Pressable, Text, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
-import { ProjectList } from "@/components/ProjectList";
+import { View, Pressable, Text, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { ProjectList } from '@/components/ProjectList';
 
 export default function DashboardScreen() {
   const router = useRouter();
@@ -9,10 +9,7 @@ export default function DashboardScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Projects</Text>
-        <Pressable
-          style={styles.newButton}
-          onPress={() => router.push("/(dashboard)/new")}
-        >
+        <Pressable style={styles.newButton} onPress={() => router.push('/(dashboard)/new')}>
           <Text style={styles.newButtonText}>New Project</Text>
         </Pressable>
       </View>
@@ -24,29 +21,29 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: '#eee',
   },
   title: {
     fontSize: 20,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   newButton: {
-    backgroundColor: "#000",
+    backgroundColor: '#000',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 6,
   },
   newButtonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

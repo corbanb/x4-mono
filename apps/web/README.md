@@ -47,6 +47,7 @@ src/
 ## E2E Tests
 
 Playwright tests in `e2e/`:
+
 - `auth.spec.ts` — redirect, signup, login, invalid credentials
 - `projects.spec.ts` — dashboard, project CRUD
 

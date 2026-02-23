@@ -1,1 +1,1 @@
-export { auth, type Auth } from "./server";
+export { auth, type Auth } from './server';

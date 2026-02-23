@@ -1,4 +1,4 @@
-const NEON_API_BASE = "https://console.neon.tech/api/v2";
+const NEON_API_BASE = 'https://console.neon.tech/api/v2';
 
 interface NeonProject {
   id: string;
@@ -17,13 +17,13 @@ interface CreateProjectResponse {
 
 export async function createNeonProject(
   apiKey: string,
-  projectName: string
+  projectName: string,
 ): Promise<{ connectionString: string; region: string }> {
   const res = await fetch(`${NEON_API_BASE}/projects`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       project: { name: projectName },
@@ -39,7 +39,7 @@ export async function createNeonProject(
   const connectionString = data.connection_uris[0]?.connection_uri;
 
   if (!connectionString) {
-    throw new Error("Neon project created but no connection string returned.");
+    throw new Error('Neon project created but no connection string returned.');
   }
 
   return {

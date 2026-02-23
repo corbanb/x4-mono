@@ -14,9 +14,7 @@
     "/users/me": {
       "get": {
         "operationId": "users-me",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "security": [
           {
             "bearerAuth": []
@@ -43,10 +41,7 @@
                     },
                     "role": {
                       "type": "string",
-                      "enum": [
-                        "user",
-                        "admin"
-                      ]
+                      "enum": ["user", "admin"]
                     },
                     "emailVerified": {
                       "type": "boolean"
@@ -107,9 +102,7 @@
     "/projects": {
       "get": {
         "operationId": "projects-list",
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "security": [
           {
             "bearerAuth": []
@@ -195,12 +188,7 @@
                       "type": "integer"
                     }
                   },
-                  "required": [
-                    "items",
-                    "total",
-                    "limit",
-                    "offset"
-                  ]
+                  "required": ["items", "total", "limit", "offset"]
                 }
               }
             }
@@ -259,9 +247,7 @@
       },
       "post": {
         "operationId": "projects-create",
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "security": [
           {
             "bearerAuth": []
@@ -284,9 +270,7 @@
                     "maxLength": 1000
                   }
                 },
-                "required": [
-                  "name"
-                ]
+                "required": ["name"]
               }
             }
           }
@@ -383,9 +367,7 @@
     "/projects/{id}": {
       "get": {
         "operationId": "projects-get",
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "security": [
           {
             "bearerAuth": []
@@ -511,9 +493,7 @@
       },
       "patch": {
         "operationId": "projects-update",
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "security": [
           {
             "bearerAuth": []
@@ -548,10 +528,7 @@
                   },
                   "status": {
                     "type": "string",
-                    "enum": [
-                      "active",
-                      "archived"
-                    ]
+                    "enum": ["active", "archived"]
                   }
                 }
               }
@@ -658,9 +635,7 @@
       },
       "delete": {
         "operationId": "projects-delete",
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "security": [
           {
             "bearerAuth": []
@@ -687,14 +662,10 @@
                   "properties": {
                     "success": {
                       "type": "boolean",
-                      "enum": [
-                        true
-                      ]
+                      "enum": [true]
                     }
                   },
-                  "required": [
-                    "success"
-                  ]
+                  "required": ["success"]
                 }
               }
             }
@@ -755,9 +726,7 @@
     "/ai/generate": {
       "post": {
         "operationId": "ai-generate",
-        "tags": [
-          "AI"
-        ],
+        "tags": ["AI"],
         "security": [
           {
             "bearerAuth": []
@@ -785,9 +754,7 @@
                     "default": 1000
                   }
                 },
-                "required": [
-                  "prompt"
-                ]
+                "required": ["prompt"]
               }
             }
           }
@@ -810,11 +777,7 @@
                       "type": "number"
                     }
                   },
-                  "required": [
-                    "text",
-                    "tokensUsed",
-                    "estimatedCost"
-                  ]
+                  "required": ["text", "tokensUsed", "estimatedCost"]
                 }
               }
             }
@@ -894,18 +857,13 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "message"
-              ]
+              "required": ["message"]
             },
             "description": "An array of issues that were responsible for the error",
             "example": []
           }
         },
-        "required": [
-          "message",
-          "code"
-        ],
+        "required": ["message", "code"],
         "title": "Authorization not provided error (401)",
         "description": "The error information",
         "example": {
@@ -936,18 +894,13 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "message"
-              ]
+              "required": ["message"]
             },
             "description": "An array of issues that were responsible for the error",
             "example": []
           }
         },
-        "required": [
-          "message",
-          "code"
-        ],
+        "required": ["message", "code"],
         "title": "Insufficient access error (403)",
         "description": "The error information",
         "example": {
@@ -978,18 +931,13 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "message"
-              ]
+              "required": ["message"]
             },
             "description": "An array of issues that were responsible for the error",
             "example": []
           }
         },
-        "required": [
-          "message",
-          "code"
-        ],
+        "required": ["message", "code"],
         "title": "Internal server error error (500)",
         "description": "The error information",
         "example": {
@@ -1020,18 +968,13 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "message"
-              ]
+              "required": ["message"]
             },
             "description": "An array of issues that were responsible for the error",
             "example": []
           }
         },
-        "required": [
-          "message",
-          "code"
-        ],
+        "required": ["message", "code"],
         "title": "Invalid input data error (400)",
         "description": "The error information",
         "example": {
@@ -1062,18 +1005,13 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "message"
-              ]
+              "required": ["message"]
             },
             "description": "An array of issues that were responsible for the error",
             "example": []
           }
         },
-        "required": [
-          "message",
-          "code"
-        ],
+        "required": ["message", "code"],
         "title": "Not found error (404)",
         "description": "The error information",
         "example": {

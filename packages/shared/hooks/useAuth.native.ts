@@ -28,10 +28,10 @@ export function useAuth(): AuthState {
     isAuthenticated: false,
     isLoading: false,
     signIn: async (_credentials: { email: string; password: string }) => {
-      throw new Error("Auth not implemented — see PRD-006");
+      throw new Error('Auth not implemented — see PRD-006');
     },
     signOut: async () => {
-      throw new Error("Auth not implemented — see PRD-006");
+      throw new Error('Auth not implemented — see PRD-006');
     },
   };
 }

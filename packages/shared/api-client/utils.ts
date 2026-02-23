@@ -1,10 +1,8 @@
-import { TRPCClientError } from "@trpc/client";
-import type { AppRouter } from "./client";
+import { TRPCClientError } from '@trpc/client';
+import type { AppRouter } from './client';
 
 /** Type guard for tRPC client errors */
-export function isTRPCClientError(
-  error: unknown,
-): error is TRPCClientError<AppRouter> {
+export function isTRPCClientError(error: unknown): error is TRPCClientError<AppRouter> {
   return error instanceof TRPCClientError;
 }
 
@@ -16,13 +14,11 @@ export function extractErrorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
   }
-  return "An unexpected error occurred";
+  return 'An unexpected error occurred';
 }
 
 /** Extract the tRPC error code from a tRPC error */
-export function extractErrorCode(
-  error: unknown,
-): string | undefined {
+export function extractErrorCode(error: unknown): string | undefined {
   if (isTRPCClientError(error)) {
     return error.data?.code;
   }
@@ -30,9 +26,7 @@ export function extractErrorCode(
 }
 
 /** Extract Zod field errors from a tRPC error with Zod validation failure */
-export function extractZodErrors(
-  error: unknown,
-): Record<string, string[]> | undefined {
+export function extractZodErrors(error: unknown): Record<string, string[]> | undefined {
   if (isTRPCClientError(error)) {
     const zodError = (error.data as { zodError?: { fieldErrors?: Record<string, string[]> } })
       ?.zodError;
@@ -47,7 +41,7 @@ export function extractZodErrors(
  */
 export function createTokenGetter(
   storage: { getItem: (key: string) => string | null | Promise<string | null> },
-  key = "auth-token",
+  key = 'auth-token',
 ): () => Promise<string | undefined> {
   return async () => {
     const token = await storage.getItem(key);

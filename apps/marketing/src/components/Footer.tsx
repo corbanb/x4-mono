@@ -1,13 +1,13 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 const FOOTER_LINKS = {
   Product: [
-    { href: "/pricing", label: "Pricing" },
-    { href: "/about", label: "About" },
+    { href: '/pricing', label: 'Pricing' },
+    { href: '/about', label: 'About' },
   ],
   Resources: [
-    { href: "#", label: "Documentation" },
-    { href: "#", label: "Blog" },
+    { href: '#', label: 'Documentation' },
+    { href: '#', label: 'Blog' },
   ],
 };
 
@@ -27,16 +27,11 @@ export function Footer() {
 
           {Object.entries(FOOTER_LINKS).map(([category, links]) => (
             <div key={category}>
-              <h3 className="text-sm font-semibold text-gray-900">
-                {category}
-              </h3>
+              <h3 className="text-sm font-semibold text-gray-900">{category}</h3>
               <ul className="mt-3 space-y-2">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-gray-500 hover:text-gray-700"
-                    >
+                    <Link href={link.href} className="text-sm text-gray-500 hover:text-gray-700">
                       {link.label}
                     </Link>
                   </li>

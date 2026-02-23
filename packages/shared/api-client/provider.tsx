@@ -1,6 +1,6 @@
-import React from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { trpc, createTRPCClient } from "./client";
+import React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { trpc, createTRPCClient } from './client';
 
 export function TRPCProvider({
   client,

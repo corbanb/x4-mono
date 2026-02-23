@@ -1,4 +1,4 @@
-import type { Database } from "@x4/database";
+import type { Database } from '@x4/database';
 
 type QueryResult = Record<string, unknown>[];
 
@@ -27,7 +27,7 @@ export function createMockDb(config: MockDbConfig = {}): Database {
   function chainable(result: QueryResult): unknown {
     const handler: ProxyHandler<object> = {
       get(_target, prop) {
-        if (prop === "then") {
+        if (prop === 'then') {
           return (resolve: (v: unknown) => void) => resolve(result);
         }
         return () => new Proxy({}, handler);

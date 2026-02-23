@@ -1,5 +1,5 @@
-import { downloadTemplate } from "giget";
-import { TEMPLATE_REPO } from "./constants.js";
+import { downloadTemplate } from 'giget';
+import { TEMPLATE_REPO } from './constants.js';
 
 export interface DownloadOptions {
   targetDir: string;

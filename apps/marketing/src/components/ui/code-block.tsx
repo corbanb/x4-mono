@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { highlight } from "sugar-high";
+import { highlight } from 'sugar-high';
 
 interface CodeBlockProps {
   code: string;

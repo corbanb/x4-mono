@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useRef, useMemo } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, MeshDistortMaterial, Line } from "@react-three/drei";
-import * as THREE from "three";
+import { useRef, useMemo } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Float, MeshDistortMaterial, Line } from '@react-three/drei';
+import * as THREE from 'three';
 
 function Particles({ count = 200 }: { count?: number }) {
   const mesh = useRef<THREE.Points>(null);
@@ -35,14 +35,8 @@ function Particles({ count = 200 }: { count?: number }) {
   return (
     <points ref={mesh}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
-        <bufferAttribute
-          attach="attributes-size"
-          args={[sizes, 1]}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
       </bufferGeometry>
       <pointsMaterial
         size={0.02}
@@ -57,13 +51,7 @@ function Particles({ count = 200 }: { count?: number }) {
   );
 }
 
-function OrbitalNode({
-  position,
-  color,
-}: {
-  position: [number, number, number];
-  color: string;
-}) {
+function OrbitalNode({ position, color }: { position: [number, number, number]; color: string }) {
   const mesh = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
@@ -88,12 +76,7 @@ function OrbitalNode({
         {/* Glow ring */}
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <ringGeometry args={[0.35, 0.38, 32]} />
-          <meshBasicMaterial
-            color={color}
-            transparent
-            opacity={0.3}
-            side={THREE.DoubleSide}
-          />
+          <meshBasicMaterial color={color} transparent opacity={0.3} side={THREE.DoubleSide} />
         </mesh>
       </group>
     </Float>
@@ -141,10 +124,7 @@ function ConnectionLines() {
       {endpoints.map((pos, i) => (
         <Line
           key={i}
-          points={[
-            [0, 0, 0],
-            pos,
-          ]}
+          points={[[0, 0, 0], pos]}
           color="#6d28d9"
           lineWidth={1}
           transparent
@@ -164,12 +144,12 @@ function MouseParallax({ children }: { children: React.ReactNode }) {
     group.current.rotation.y = THREE.MathUtils.lerp(
       group.current.rotation.y,
       pointer.x * 0.15,
-      0.05
+      0.05,
     );
     group.current.rotation.x = THREE.MathUtils.lerp(
       group.current.rotation.x,
       -pointer.y * 0.1,
-      0.05
+      0.05,
     );
   });
 
@@ -183,7 +163,7 @@ export function HeroScene() {
         camera={{ position: [0, 0, 5], fov: 60 }}
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
-        style={{ background: "transparent" }}
+        style={{ background: 'transparent' }}
       >
         <ambientLight intensity={0.3} />
         <pointLight position={[5, 5, 5]} intensity={0.8} color="#8b5cf6" />
@@ -191,18 +171,9 @@ export function HeroScene() {
 
         <MouseParallax>
           <CentralCrystal />
-          <OrbitalNode
-            position={[-2.5, 1.2, -1]}
-            color="#8b5cf6"
-          />
-          <OrbitalNode
-            position={[2.5, 0.8, -0.5]}
-            color="#3b82f6"
-          />
-          <OrbitalNode
-            position={[0, -1.8, -1.5]}
-            color="#06b6d4"
-          />
+          <OrbitalNode position={[-2.5, 1.2, -1]} color="#8b5cf6" />
+          <OrbitalNode position={[2.5, 0.8, -0.5]} color="#3b82f6" />
+          <OrbitalNode position={[0, -1.8, -1.5]} color="#06b6d4" />
           <ConnectionLines />
           <Particles count={300} />
         </MouseParallax>

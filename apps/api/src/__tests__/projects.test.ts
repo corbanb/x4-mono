@@ -1,7 +1,7 @@
-import { describe, test, expect } from "bun:test";
-import { createCallerFactory } from "../trpc";
-import { appRouter } from "../routers";
-import type { Context } from "../trpc";
+import { describe, test, expect } from 'bun:test';
+import { createCallerFactory } from '../trpc';
+import { appRouter } from '../routers';
+import type { Context } from '../trpc';
 import {
   createMockDb,
   createTestUser,
@@ -10,7 +10,7 @@ import {
   OTHER_USER_ID,
   testProject,
   testProjectWithOwner,
-} from "./helpers";
+} from './helpers';
 
 // --- Helpers ---
 
@@ -18,7 +18,7 @@ function createTestContext(overrides: Partial<Context> = {}): Context {
   return {
     db: createMockDb(),
     user: null,
-    req: new Request("http://localhost:3002"),
+    req: new Request('http://localhost:3002'),
     ...overrides,
   };
 }
@@ -27,8 +27,8 @@ const createCaller = createCallerFactory(appRouter);
 
 // --- projects.list ---
 
-describe("projects.list", () => {
-  test("returns paginated projects with total count", async () => {
+describe('projects.list', () => {
+  test('returns paginated projects with total count', async () => {
     const db = createMockDb({
       select: [[testProject], [{ count: 1 }]],
     });
@@ -42,7 +42,7 @@ describe("projects.list", () => {
     expect(result.offset).toBe(0);
   });
 
-  test("applies default pagination", async () => {
+  test('applies default pagination', async () => {
     const db = createMockDb({
       select: [[], [{ count: 0 }]],
     });
@@ -54,19 +54,19 @@ describe("projects.list", () => {
     expect(result.offset).toBe(0);
   });
 
-  test("rejects invalid pagination input", async () => {
+  test('rejects invalid pagination input', async () => {
     const caller = createCaller(createTestContext());
 
-    await expect(
-      caller.projects.list({ limit: 20, offset: -1 }),
-    ).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    await expect(caller.projects.list({ limit: 20, offset: -1 })).rejects.toMatchObject({
+      code: 'BAD_REQUEST',
+    });
   });
 });
 
 // --- projects.get ---
 
-describe("projects.get", () => {
-  test("returns project with owner details", async () => {
+describe('projects.get', () => {
+  test('returns project with owner details', async () => {
     const db = createMockDb({ select: [[testProjectWithOwner]] });
     const caller = createCaller(
       createTestContext({
@@ -78,11 +78,11 @@ describe("projects.get", () => {
     const result = await caller.projects.get({ id: TEST_PROJECT_ID });
 
     expect(result).toEqual(testProjectWithOwner);
-    expect(result.ownerName).toBe("Test User");
-    expect(result.ownerEmail).toBe("user@test.com");
+    expect(result.ownerName).toBe('Test User');
+    expect(result.ownerEmail).toBe('user@test.com');
   });
 
-  test("throws NOT_FOUND for missing project", async () => {
+  test('throws NOT_FOUND for missing project', async () => {
     const db = createMockDb({ select: [[]] });
     const caller = createCaller(
       createTestContext({
@@ -91,28 +91,24 @@ describe("projects.get", () => {
       }),
     );
 
-    await expect(
-      caller.projects.get({ id: TEST_PROJECT_ID }),
-    ).rejects.toMatchObject({
-      code: "NOT_FOUND",
+    await expect(caller.projects.get({ id: TEST_PROJECT_ID })).rejects.toMatchObject({
+      code: 'NOT_FOUND',
     });
   });
 
-  test("rejects unauthenticated request", async () => {
+  test('rejects unauthenticated request', async () => {
     const caller = createCaller(createTestContext({ user: null }));
 
-    await expect(
-      caller.projects.get({ id: TEST_PROJECT_ID }),
-    ).rejects.toMatchObject({
-      code: "UNAUTHORIZED",
+    await expect(caller.projects.get({ id: TEST_PROJECT_ID })).rejects.toMatchObject({
+      code: 'UNAUTHORIZED',
     });
   });
 });
 
 // --- projects.create ---
 
-describe("projects.create", () => {
-  test("creates project with user as owner", async () => {
+describe('projects.create', () => {
+  test('creates project with user as owner', async () => {
     const createdProject = { ...testProject, ownerId: TEST_USER_ID };
     const db = createMockDb({ insert: [createdProject] });
     const caller = createCaller(
@@ -123,31 +119,31 @@ describe("projects.create", () => {
     );
 
     const result = await caller.projects.create({
-      name: "Test Project",
-      description: "A test project",
+      name: 'Test Project',
+      description: 'A test project',
     });
 
     expect(result).toEqual(createdProject);
   });
 
-  test("rejects invalid input (empty name)", async () => {
+  test('rejects invalid input (empty name)', async () => {
     const caller = createCaller(
       createTestContext({
         user: createTestUser(),
       }),
     );
 
-    await expect(
-      caller.projects.create({ name: "" }),
-    ).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    await expect(caller.projects.create({ name: '' })).rejects.toMatchObject({
+      code: 'BAD_REQUEST',
+    });
   });
 });
 
 // --- projects.update ---
 
-describe("projects.update", () => {
-  test("allows owner to update own project", async () => {
-    const updatedProject = { ...testProject, name: "Updated Name" };
+describe('projects.update', () => {
+  test('allows owner to update own project', async () => {
+    const updatedProject = { ...testProject, name: 'Updated Name' };
     const db = createMockDb({
       select: [[{ ownerId: TEST_USER_ID }]],
       update: [updatedProject],
@@ -161,13 +157,13 @@ describe("projects.update", () => {
 
     const result = await caller.projects.update({
       id: TEST_PROJECT_ID,
-      name: "Updated Name",
+      name: 'Updated Name',
     });
 
     expect(result).toEqual(updatedProject);
   });
 
-  test("throws FORBIDDEN for non-owner", async () => {
+  test('throws FORBIDDEN for non-owner', async () => {
     const db = createMockDb({
       select: [[{ ownerId: OTHER_USER_ID }]],
     });
@@ -179,13 +175,13 @@ describe("projects.update", () => {
     );
 
     await expect(
-      caller.projects.update({ id: TEST_PROJECT_ID, name: "Nope" }),
+      caller.projects.update({ id: TEST_PROJECT_ID, name: 'Nope' }),
     ).rejects.toMatchObject({
-      code: "FORBIDDEN",
+      code: 'FORBIDDEN',
     });
   });
 
-  test("throws NOT_FOUND on update of missing project", async () => {
+  test('throws NOT_FOUND on update of missing project', async () => {
     const db = createMockDb({ select: [[]] });
     const caller = createCaller(
       createTestContext({
@@ -195,17 +191,17 @@ describe("projects.update", () => {
     );
 
     await expect(
-      caller.projects.update({ id: TEST_PROJECT_ID, name: "Nope" }),
+      caller.projects.update({ id: TEST_PROJECT_ID, name: 'Nope' }),
     ).rejects.toMatchObject({
-      code: "NOT_FOUND",
+      code: 'NOT_FOUND',
     });
   });
 });
 
 // --- projects.delete ---
 
-describe("projects.delete", () => {
-  test("throws FORBIDDEN on delete by non-owner", async () => {
+describe('projects.delete', () => {
+  test('throws FORBIDDEN on delete by non-owner', async () => {
     const db = createMockDb({
       select: [[{ ownerId: OTHER_USER_ID }]],
     });
@@ -216,10 +212,8 @@ describe("projects.delete", () => {
       }),
     );
 
-    await expect(
-      caller.projects.delete({ id: TEST_PROJECT_ID }),
-    ).rejects.toMatchObject({
-      code: "FORBIDDEN",
+    await expect(caller.projects.delete({ id: TEST_PROJECT_ID })).rejects.toMatchObject({
+      code: 'FORBIDDEN',
     });
   });
 });

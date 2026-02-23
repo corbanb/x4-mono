@@ -1,18 +1,7 @@
-import {
-  View,
-  Text,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  ActivityIndicator,
-} from "react-native";
-import { trpc } from "@x4/shared/api-client";
+import { View, Text, FlatList, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
+import { trpc } from '@x4/shared/api-client';
 
-export function ProjectList({
-  onProjectPress,
-}: {
-  onProjectPress?: (id: string) => void;
-}) {
+export function ProjectList({ onProjectPress }: { onProjectPress?: (id: string) => void }) {
   const { data, isLoading, error, refetch } = trpc.projects.list.useQuery({
     limit: 50,
     offset: 0,
@@ -41,9 +30,7 @@ export function ProjectList({
     return (
       <View style={styles.center}>
         <Text style={styles.emptyText}>No projects yet</Text>
-        <Text style={styles.emptySubtext}>
-          Create your first project to get started
-        </Text>
+        <Text style={styles.emptySubtext}>Create your first project to get started</Text>
       </View>
     );
   }
@@ -54,10 +41,7 @@ export function ProjectList({
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.list}
       renderItem={({ item }) => (
-        <Pressable
-          style={styles.card}
-          onPress={() => onProjectPress?.(item.id)}
-        >
+        <Pressable style={styles.card} onPress={() => onProjectPress?.(item.id)}>
           <Text style={styles.projectName}>{item.name}</Text>
           {item.description ? (
             <Text style={styles.projectDescription} numberOfLines={2}>
@@ -73,8 +57,8 @@ export function ProjectList({
 const styles = StyleSheet.create({
   center: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 24,
   },
   list: {
@@ -82,43 +66,43 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
-    backgroundColor: "#f9f9f9",
+    backgroundColor: '#f9f9f9',
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#eee",
+    borderColor: '#eee',
   },
   projectName: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 4,
   },
   projectDescription: {
     fontSize: 14,
-    color: "#666",
+    color: '#666',
   },
   errorText: {
     fontSize: 16,
-    color: "#dc2626",
+    color: '#dc2626',
     marginBottom: 12,
   },
   retryButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#f5f5f5',
     borderRadius: 6,
   },
   retryText: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   emptyText: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 4,
   },
   emptySubtext: {
     fontSize: 14,
-    color: "#666",
+    color: '#666',
   },
 });

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useSession, signOut } from "@x4/auth/client";
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useSession, signOut } from '@x4/auth/client';
 import {
   LayoutDashboard,
   FolderKanban,
@@ -11,7 +11,7 @@ import {
   LogOut,
   ChevronsUpDown,
   Zap,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -23,21 +23,21 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 const navItems = [
-  { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { title: "Projects", href: "/projects", icon: FolderKanban },
-  { title: "AI Playground", href: "/ai", icon: Sparkles },
-  { title: "Settings", href: "/settings", icon: Settings },
+  { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { title: 'Projects', href: '/projects', icon: FolderKanban },
+  { title: 'AI Playground', href: '/ai', icon: Sparkles },
+  { title: 'Settings', href: '/settings', icon: Settings },
 ];
 
 export function AppSidebar() {
@@ -47,17 +47,17 @@ export function AppSidebar() {
 
   async function handleSignOut() {
     await signOut();
-    router.push("/");
+    router.push('/');
   }
 
   const initials = session?.user?.name
     ? session.user.name
-        .split(" ")
+        .split(' ')
         .map((n) => n[0])
-        .join("")
+        .join('')
         .toUpperCase()
         .slice(0, 2)
-    : "U";
+    : 'U';
 
   return (
     <Sidebar collapsible="icon" variant="inset">
@@ -71,9 +71,7 @@ export function AppSidebar() {
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">x4</span>
-                  <span className="truncate text-xs text-muted-foreground">
-                    Platform
-                  </span>
+                  <span className="truncate text-xs text-muted-foreground">Platform</span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -91,8 +89,7 @@ export function AppSidebar() {
                     asChild
                     isActive={
                       pathname === item.href ||
-                      (item.href !== "/dashboard" &&
-                        pathname.startsWith(item.href))
+                      (item.href !== '/dashboard' && pathname.startsWith(item.href))
                     }
                     tooltip={item.title}
                   >
@@ -117,16 +114,12 @@ export function AppSidebar() {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarFallback className="rounded-lg text-xs">
-                      {initials}
-                    </AvatarFallback>
+                    <AvatarFallback className="rounded-lg text-xs">{initials}</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      {session?.user?.name ?? "User"}
-                    </span>
+                    <span className="truncate font-semibold">{session?.user?.name ?? 'User'}</span>
                     <span className="truncate text-xs text-muted-foreground">
-                      {session?.user?.email ?? ""}
+                      {session?.user?.email ?? ''}
                     </span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
@@ -138,7 +131,7 @@ export function AppSidebar() {
                 align="end"
                 sideOffset={4}
               >
-                <DropdownMenuItem onClick={() => router.push("/settings")}>
+                <DropdownMenuItem onClick={() => router.push('/settings')}>
                   <Settings className="mr-2 h-4 w-4" />
                   Settings
                 </DropdownMenuItem>

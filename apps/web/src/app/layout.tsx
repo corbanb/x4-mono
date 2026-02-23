@@ -1,24 +1,20 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { TRPCProvider } from "@/lib/trpc-provider";
-import { ThemeProvider } from "@/components/theme-provider";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { Toaster } from "@/components/ui/sonner";
-import "@/styles/globals.css";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import { TRPCProvider } from '@/lib/trpc-provider';
+import { ThemeProvider } from '@/components/theme-provider';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { Toaster } from '@/components/ui/sonner';
+import '@/styles/globals.css';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "x4 Platform",
+  title: 'x4 Platform',
   description:
-    "Full-stack TypeScript platform with type-safe APIs, authentication, and AI integration.",
+    'Full-stack TypeScript platform with type-safe APIs, authentication, and AI integration.',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>

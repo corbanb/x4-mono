@@ -1,10 +1,10 @@
-import { HeroSceneLoader } from "@/components/hero/HeroSceneLoader";
-import { HeroContent } from "@/components/hero/HeroContent";
-import { BentoGrid } from "@/components/sections/BentoGrid";
-import { CodeShowcase } from "@/components/sections/CodeShowcase";
-import { StatsCounter } from "@/components/sections/StatsCounter";
-import { LogoMarquee } from "@/components/sections/LogoMarquee";
-import { CTASection } from "@/components/sections/CTASection";
+import { HeroSceneLoader } from '@/components/hero/HeroSceneLoader';
+import { HeroContent } from '@/components/hero/HeroContent';
+import { BentoGrid } from '@/components/sections/BentoGrid';
+import { CodeShowcase } from '@/components/sections/CodeShowcase';
+import { StatsCounter } from '@/components/sections/StatsCounter';
+import { LogoMarquee } from '@/components/sections/LogoMarquee';
+import { CTASection } from '@/components/sections/CTASection';
 
 export default function HomePage() {
   return (

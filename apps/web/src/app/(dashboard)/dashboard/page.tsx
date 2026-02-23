@@ -1,28 +1,24 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useSession } from "@x4/auth/client";
-import { trpc } from "@x4/shared/api-client";
-import { Plus, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { StatsCards } from "@/components/stats-cards";
-import { RecentProjects } from "@/components/recent-projects";
+import Link from 'next/link';
+import { useSession } from '@x4/auth/client';
+import { trpc } from '@x4/shared/api-client';
+import { Plus, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { StatsCards } from '@/components/stats-cards';
+import { RecentProjects } from '@/components/recent-projects';
 
 export default function DashboardPage() {
   const { data: session } = useSession();
-  const { data: projectsData, isLoading: projectsLoading } =
-    trpc.projects.list.useQuery({ limit: 50, offset: 0 });
+  const { data: projectsData, isLoading: projectsLoading } = trpc.projects.list.useQuery({
+    limit: 50,
+    offset: 0,
+  });
 
   const projects = projectsData?.items ?? [];
   const totalProjects = projects.length;
-  const activeProjects = projects.filter((p) => p.status === "active").length;
+  const activeProjects = projects.filter((p) => p.status === 'active').length;
   const recentProjects = projects.slice(0, 5);
 
   return (
@@ -31,11 +27,9 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Welcome back{session?.user?.name ? `, ${session.user.name}` : ""}
+            Welcome back{session?.user?.name ? `, ${session.user.name}` : ''}
           </h1>
-          <p className="text-muted-foreground">
-            Here&apos;s an overview of your workspace
-          </p>
+          <p className="text-muted-foreground">Here&apos;s an overview of your workspace</p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" asChild>
@@ -74,10 +68,7 @@ export default function DashboardPage() {
           </Button>
         </CardHeader>
         <CardContent>
-          <RecentProjects
-            projects={recentProjects}
-            loading={projectsLoading}
-          />
+          <RecentProjects projects={recentProjects} loading={projectsLoading} />
         </CardContent>
       </Card>
     </div>

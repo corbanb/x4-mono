@@ -1,23 +1,23 @@
-import Link from "next/link";
-import { Github, Twitter } from "lucide-react";
+import Link from 'next/link';
+import { Github, Twitter } from 'lucide-react';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-const DOCS_URL = process.env.NEXT_PUBLIC_DOCS_URL ?? "http://localhost:3003";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+const DOCS_URL = process.env.NEXT_PUBLIC_DOCS_URL ?? 'http://localhost:3003';
 
 const FOOTER_SECTIONS = {
   Product: [
-    { href: "/features", label: "Features" },
-    { href: "/stack", label: "Stack" },
-    { href: "/ai", label: "AI" },
+    { href: '/features', label: 'Features' },
+    { href: '/stack', label: 'Stack' },
+    { href: '/ai', label: 'AI' },
   ],
   Resources: [
-    { href: DOCS_URL, label: "Documentation", external: true },
-    { href: `${DOCS_URL}/api`, label: "API Reference", external: true },
-    { href: "/docs", label: "Quick Start" },
+    { href: DOCS_URL, label: 'Documentation', external: true },
+    { href: `${DOCS_URL}/api`, label: 'API Reference', external: true },
+    { href: '/docs', label: 'Quick Start' },
   ],
   Company: [
-    { href: "/about", label: "About" },
-    { href: "https://github.com/corbanb/x4-mono", label: "GitHub", external: true },
+    { href: '/about', label: 'About' },
+    { href: 'https://github.com/corbanb/x4-mono', label: 'GitHub', external: true },
   ],
 } as const;
 
@@ -32,8 +32,7 @@ export function Footer() {
               x4
             </Link>
             <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-              Ship web, mobile, and desktop apps from a single TypeScript
-              codebase.
+              Ship web, mobile, and desktop apps from a single TypeScript codebase.
             </p>
             <div className="mt-5 flex gap-3">
               <a
@@ -60,13 +59,11 @@ export function Footer() {
           {/* Link sections */}
           {Object.entries(FOOTER_SECTIONS).map(([category, links]) => (
             <div key={category}>
-              <h3 className="text-sm font-semibold text-foreground">
-                {category}
-              </h3>
+              <h3 className="text-sm font-semibold text-foreground">{category}</h3>
               <ul className="mt-4 space-y-3">
                 {links.map((link) => (
                   <li key={link.label}>
-                    {"external" in link && link.external ? (
+                    {'external' in link && link.external ? (
                       <a
                         href={link.href}
                         target="_blank"

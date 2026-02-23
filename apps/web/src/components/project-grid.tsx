@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ProjectActions } from "@/components/project-actions";
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ProjectActions } from '@/components/project-actions';
 
 type Project = {
   id: string;
@@ -16,22 +16,16 @@ type Project = {
 
 function statusVariant(status: string) {
   switch (status) {
-    case "active":
-      return "default" as const;
-    case "archived":
-      return "secondary" as const;
+    case 'active':
+      return 'default' as const;
+    case 'archived':
+      return 'secondary' as const;
     default:
-      return "outline" as const;
+      return 'outline' as const;
   }
 }
 
-export function ProjectGrid({
-  projects,
-  loading,
-}: {
-  projects: Project[];
-  loading?: boolean;
-}) {
+export function ProjectGrid({ projects, loading }: { projects: Project[]; loading?: boolean }) {
   if (loading) {
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -74,28 +68,18 @@ export function ProjectGrid({
           <CardHeader className="flex flex-row items-start justify-between space-y-0">
             <div className="min-w-0 flex-1 pr-2">
               <CardTitle className="text-base">
-                <Link
-                  href={`/projects/${project.id}`}
-                  className="hover:underline"
-                >
+                <Link href={`/projects/${project.id}`} className="hover:underline">
                   {project.name}
                 </Link>
               </CardTitle>
               {project.description && (
-                <p className="mt-1 truncate text-sm text-muted-foreground">
-                  {project.description}
-                </p>
+                <p className="mt-1 truncate text-sm text-muted-foreground">{project.description}</p>
               )}
             </div>
-            <ProjectActions
-              projectId={project.id}
-              projectName={project.name}
-            />
+            <ProjectActions projectId={project.id} projectName={project.name} />
           </CardHeader>
           <CardContent className="flex items-center justify-between">
-            <Badge variant={statusVariant(project.status)}>
-              {project.status}
-            </Badge>
+            <Badge variant={statusVariant(project.status)}>{project.status}</Badge>
             <span className="text-xs text-muted-foreground">
               {new Date(project.createdAt).toLocaleDateString()}
             </span>

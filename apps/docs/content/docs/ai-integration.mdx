@@ -31,19 +31,19 @@ Response:
 
 ## Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `prompt` | string | Yes | — | The input prompt (1-10,000 chars) |
-| `systemPrompt` | string | No | — | System instruction for the AI model |
-| `maxTokens` | number | No | 1000 | Maximum output tokens (1-4,000) |
+| Parameter      | Type   | Required | Default | Description                         |
+| -------------- | ------ | -------- | ------- | ----------------------------------- |
+| `prompt`       | string | Yes      | —       | The input prompt (1-10,000 chars)   |
+| `systemPrompt` | string | No       | —       | System instruction for the AI model |
+| `maxTokens`    | number | No       | 1000    | Maximum output tokens (1-4,000)     |
 
 ## Response Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `text` | string | The generated text response |
-| `tokensUsed` | number | Total tokens consumed (input + output) |
-| `estimatedCost` | number | Estimated cost in USD |
+| Field           | Type   | Description                            |
+| --------------- | ------ | -------------------------------------- |
+| `text`          | string | The generated text response            |
+| `tokensUsed`    | number | Total tokens consumed (input + output) |
+| `estimatedCost` | number | Estimated cost in USD                  |
 
 ## Token Limits
 
@@ -54,6 +54,7 @@ Response:
 ## Cost Tracking
 
 Every AI request is logged to the `ai_usage_log` table with:
+
 - User ID
 - Model used
 - Tokens consumed
@@ -70,8 +71,8 @@ The AI endpoint has a stricter rate limit of **10 requests per 60 seconds** per 
 
 ```typescript
 const result = await trpc.ai.generate.mutate({
-  prompt: "Write a haiku about TypeScript",
-  systemPrompt: "You are a creative poet",
+  prompt: 'Write a haiku about TypeScript',
+  systemPrompt: 'You are a creative poet',
   maxTokens: 200,
 });
 
@@ -91,6 +92,7 @@ If the AI provider fails, the API returns a 500 error:
 ```
 
 Common causes:
+
 - Invalid API key (`ANTHROPIC_API_KEY`)
 - Rate limiting from the AI provider
 - Prompt exceeding model context window

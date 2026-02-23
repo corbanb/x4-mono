@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type Project = {
   id: string;
@@ -14,22 +14,16 @@ type Project = {
 
 function statusVariant(status: string) {
   switch (status) {
-    case "active":
-      return "default" as const;
-    case "archived":
-      return "secondary" as const;
+    case 'active':
+      return 'default' as const;
+    case 'archived':
+      return 'secondary' as const;
     default:
-      return "outline" as const;
+      return 'outline' as const;
   }
 }
 
-export function RecentProjects({
-  projects,
-  loading,
-}: {
-  projects: Project[];
-  loading?: boolean;
-}) {
+export function RecentProjects({ projects, loading }: { projects: Project[]; loading?: boolean }) {
   if (loading) {
     return (
       <div className="space-y-4">
@@ -71,9 +65,7 @@ export function RecentProjects({
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium">{project.name}</p>
             {project.description && (
-              <p className="truncate text-xs text-muted-foreground">
-                {project.description}
-              </p>
+              <p className="truncate text-xs text-muted-foreground">{project.description}</p>
             )}
           </div>
           <Badge variant={statusVariant(project.status)} className="ml-4">

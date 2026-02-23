@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -9,19 +9,19 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { signInAndStore } from "@x4/auth/client/native";
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { signInAndStore } from '@x4/auth/client/native';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleLogin() {
     if (!email || !password) {
-      Alert.alert("Error", "Please fill in all fields");
+      Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
@@ -29,12 +29,12 @@ export default function LoginScreen() {
     try {
       const result = await signInAndStore({ email, password });
       if (result.error) {
-        Alert.alert("Login Failed", result.error.message ?? "Invalid credentials");
+        Alert.alert('Login Failed', result.error.message ?? 'Invalid credentials');
       } else {
-        router.replace("/(dashboard)");
+        router.replace('/(dashboard)');
       }
     } catch {
-      Alert.alert("Error", "Something went wrong. Please try again.");
+      Alert.alert('Error', 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -43,7 +43,7 @@ export default function LoginScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={styles.form}>
         <Text style={styles.title}>Log In</Text>
@@ -79,7 +79,7 @@ export default function LoginScreen() {
           )}
         </Pressable>
 
-        <Pressable onPress={() => router.push("/signup")}>
+        <Pressable onPress={() => router.push('/signup')}>
           <Text style={styles.link}>Don't have an account? Sign up</Text>
         </Pressable>
       </View>
@@ -90,44 +90,44 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   form: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     padding: 24,
     gap: 16,
   },
   title: {
     fontSize: 24,
-    fontWeight: "700",
+    fontWeight: '700',
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
     borderRadius: 8,
     padding: 14,
     fontSize: 16,
   },
   button: {
-    backgroundColor: "#000",
+    backgroundColor: '#000',
     paddingVertical: 14,
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 8,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   link: {
-    color: "#666",
-    textAlign: "center",
+    color: '#666',
+    textAlign: 'center',
     marginTop: 8,
     fontSize: 14,
   },

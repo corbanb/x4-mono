@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -10,19 +10,17 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { trpc } from "@x4/shared/api-client";
-import { CreateProjectSchema } from "@x4/shared/utils";
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { trpc } from '@x4/shared/api-client';
+import { CreateProjectSchema } from '@x4/shared/utils';
 
 export function CreateProjectForm() {
   const router = useRouter();
   const utils = trpc.useUtils();
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [errors, setErrors] = useState<{ name?: string; description?: string }>(
-    {},
-  );
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
 
   const createProject = trpc.projects.create.useMutation({
     onSuccess: () => {
@@ -30,7 +28,7 @@ export function CreateProjectForm() {
       router.back();
     },
     onError: (error) => {
-      Alert.alert("Error", error.message);
+      Alert.alert('Error', error.message);
     },
   });
 
@@ -42,7 +40,7 @@ export function CreateProjectForm() {
       const fieldErrors: { name?: string; description?: string } = {};
       for (const issue of result.error.issues) {
         const field = issue.path[0] as string;
-        if (field === "name" || field === "description") {
+        if (field === 'name' || field === 'description') {
           fieldErrors[field] = issue.message;
         }
       }
@@ -56,7 +54,7 @@ export function CreateProjectForm() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.form}>
         <View style={styles.field}>
@@ -67,19 +65,13 @@ export function CreateProjectForm() {
             value={name}
             onChangeText={setName}
           />
-          {errors.name ? (
-            <Text style={styles.errorText}>{errors.name}</Text>
-          ) : null}
+          {errors.name ? <Text style={styles.errorText}>{errors.name}</Text> : null}
         </View>
 
         <View style={styles.field}>
           <Text style={styles.label}>Description (optional)</Text>
           <TextInput
-            style={[
-              styles.input,
-              styles.textArea,
-              errors.description ? styles.inputError : null,
-            ]}
+            style={[styles.input, styles.textArea, errors.description ? styles.inputError : null]}
             placeholder="What is this project about?"
             value={description}
             onChangeText={setDescription}
@@ -87,16 +79,11 @@ export function CreateProjectForm() {
             numberOfLines={4}
             textAlignVertical="top"
           />
-          {errors.description ? (
-            <Text style={styles.errorText}>{errors.description}</Text>
-          ) : null}
+          {errors.description ? <Text style={styles.errorText}>{errors.description}</Text> : null}
         </View>
 
         <Pressable
-          style={[
-            styles.button,
-            createProject.isPending && styles.buttonDisabled,
-          ]}
+          style={[styles.button, createProject.isPending && styles.buttonDisabled]}
           onPress={handleSubmit}
           disabled={createProject.isPending}
         >
@@ -114,7 +101,7 @@ export function CreateProjectForm() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   form: {
     padding: 24,
@@ -125,39 +112,39 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: "600",
-    color: "#333",
+    fontWeight: '600',
+    color: '#333',
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
     borderRadius: 8,
     padding: 14,
     fontSize: 16,
   },
   inputError: {
-    borderColor: "#dc2626",
+    borderColor: '#dc2626',
   },
   textArea: {
     minHeight: 100,
   },
   errorText: {
     fontSize: 12,
-    color: "#dc2626",
+    color: '#dc2626',
   },
   button: {
-    backgroundColor: "#000",
+    backgroundColor: '#000',
     paddingVertical: 14,
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 8,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

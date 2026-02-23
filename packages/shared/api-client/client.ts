@@ -1,11 +1,8 @@
-import { createTRPCReact } from "@trpc/react-query";
-import {
-  createTRPCClient as createVanillaClient,
-  httpBatchLink,
-} from "@trpc/client";
+import { createTRPCReact } from '@trpc/react-query';
+import { createTRPCClient as createVanillaClient, httpBatchLink } from '@trpc/client';
 // Type-only import — no runtime dependency on @x4/api.
 // Uses relative path to avoid circular package.json dependency.
-import type { AppRouter } from "../../../apps/api/src/routers";
+import type { AppRouter } from '../../../apps/api/src/routers';
 
 export type TRPCClientConfig = {
   baseUrl: string;
@@ -22,7 +19,7 @@ export function createTRPCClient(config: TRPCClientConfig) {
       httpBatchLink({
         url: `${config.baseUrl}/trpc`,
         fetch(url, options) {
-          return fetch(url, { ...options, credentials: "include" });
+          return fetch(url, { ...options, credentials: 'include' });
         },
         async headers() {
           const token = await config.getToken?.();
@@ -40,7 +37,7 @@ export function createServerClient(config: TRPCClientConfig) {
       httpBatchLink({
         url: `${config.baseUrl}/trpc`,
         fetch(url, options) {
-          return fetch(url, { ...options, credentials: "include" });
+          return fetch(url, { ...options, credentials: 'include' });
         },
         async headers() {
           const token = await config.getToken?.();

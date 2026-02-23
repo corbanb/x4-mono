@@ -1,8 +1,8 @@
-import { describe, test, expect } from "bun:test";
-import { useUser } from "./useUser";
+import { describe, test, expect } from 'bun:test';
+import { useUser } from './useUser';
 
-describe("useUser", () => {
-  test("returns user data from useAuth", () => {
+describe('useUser', () => {
+  test('returns user data from useAuth', () => {
     const result = useUser();
 
     expect(result.user).toBeNull();
@@ -10,9 +10,9 @@ describe("useUser", () => {
     expect(result.isLoading).toBe(false);
   });
 
-  test("does not expose signIn/signOut", () => {
+  test('does not expose signIn/signOut', () => {
     const result = useUser();
-    expect(result).not.toHaveProperty("signIn");
-    expect(result).not.toHaveProperty("signOut");
+    expect(result).not.toHaveProperty('signIn');
+    expect(result).not.toHaveProperty('signOut');
   });
 });

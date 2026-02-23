@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
-import { AgentShowcase } from "@/components/sections/AgentShowcase";
-import { CommandPalette } from "@/components/sections/CommandPalette";
-import { WorkflowDemo } from "@/components/sections/WorkflowDemo";
-import { SkillsSection } from "@/components/sections/SkillsSection";
-import { CTASection } from "@/components/sections/CTASection";
+import type { Metadata } from 'next';
+import { AgentShowcase } from '@/components/sections/AgentShowcase';
+import { CommandPalette } from '@/components/sections/CommandPalette';
+import { WorkflowDemo } from '@/components/sections/WorkflowDemo';
+import { SkillsSection } from '@/components/sections/SkillsSection';
+import { CTASection } from '@/components/sections/CTASection';
 
 export const metadata: Metadata = {
-  title: "AI",
+  title: 'AI',
   description:
-    "7 specialist agents, 25 commands, 2 skills — Claude Code automation that ships production code.",
+    '7 specialist agents, 25 commands, 2 skills — Claude Code automation that ships production code.',
 };
 
 export default function AIPage() {
@@ -25,9 +25,9 @@ export default function AIPage() {
             <span className="gradient-text">AI-Powered</span> Development
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            7 specialist agents, 25 commands, 2 skills — Claude Code automation
-            that ships production code. From scaffolding to deployment, every
-            step is orchestrated by AI that understands your codebase.
+            7 specialist agents, 25 commands, 2 skills — Claude Code automation that ships
+            production code. From scaffolding to deployment, every step is orchestrated by AI that
+            understands your codebase.
           </p>
         </div>
       </section>

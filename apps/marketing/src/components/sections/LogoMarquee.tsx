@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import { motion, useInView } from "motion/react";
+import { useRef } from 'react';
+import { motion, useInView } from 'motion/react';
 
 const TECH_LOGOS = [
-  { name: "TypeScript", abbr: "TS" },
-  { name: "React", abbr: "Re" },
-  { name: "Next.js", abbr: "Nx" },
-  { name: "Expo", abbr: "Ex" },
-  { name: "Electron", abbr: "El" },
-  { name: "Hono", abbr: "Ho" },
-  { name: "tRPC", abbr: "tR" },
-  { name: "Drizzle", abbr: "Dz" },
-  { name: "Neon", abbr: "Ne" },
-  { name: "Tailwind", abbr: "Tw" },
-  { name: "Better Auth", abbr: "BA" },
-  { name: "Vercel AI", abbr: "AI" },
-  { name: "Bun", abbr: "Bn" },
-  { name: "Turborepo", abbr: "Tb" },
-  { name: "Zod", abbr: "Zd" },
-  { name: "Pino", abbr: "Pi" },
+  { name: 'TypeScript', abbr: 'TS' },
+  { name: 'React', abbr: 'Re' },
+  { name: 'Next.js', abbr: 'Nx' },
+  { name: 'Expo', abbr: 'Ex' },
+  { name: 'Electron', abbr: 'El' },
+  { name: 'Hono', abbr: 'Ho' },
+  { name: 'tRPC', abbr: 'tR' },
+  { name: 'Drizzle', abbr: 'Dz' },
+  { name: 'Neon', abbr: 'Ne' },
+  { name: 'Tailwind', abbr: 'Tw' },
+  { name: 'Better Auth', abbr: 'BA' },
+  { name: 'Vercel AI', abbr: 'AI' },
+  { name: 'Bun', abbr: 'Bn' },
+  { name: 'Turborepo', abbr: 'Tb' },
+  { name: 'Zod', abbr: 'Zd' },
+  { name: 'Pino', abbr: 'Pi' },
 ];
 
 function LogoPill({ name, abbr }: { name: string; abbr: string }) {
@@ -28,16 +28,14 @@ function LogoPill({ name, abbr }: { name: string; abbr: string }) {
       <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 font-mono text-xs font-bold text-violet-glow">
         {abbr}
       </span>
-      <span className="text-sm font-medium text-muted-foreground">
-        {name}
-      </span>
+      <span className="text-sm font-medium text-muted-foreground">{name}</span>
     </div>
   );
 }
 
 export function LogoMarquee() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
     <section ref={ref} className="py-20 overflow-hidden">

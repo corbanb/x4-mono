@@ -1,31 +1,31 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import { motion, useInView } from "motion/react";
-import { Copy, Check } from "lucide-react";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { useRef } from 'react';
+import { motion, useInView } from 'motion/react';
+import { Copy, Check } from 'lucide-react';
+import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 const STEPS = [
   {
     step: 1,
-    title: "Clone the repository",
-    command: "git clone https://github.com/corbanb/x4-mono my-app && cd my-app",
+    title: 'Clone the repository',
+    command: 'git clone https://github.com/corbanb/x4-mono my-app && cd my-app',
   },
   {
     step: 2,
-    title: "Install dependencies",
-    command: "bun install",
+    title: 'Install dependencies',
+    command: 'bun install',
   },
   {
     step: 3,
-    title: "Set up environment",
-    command: "cp .env.example .env.local",
+    title: 'Set up environment',
+    command: 'cp .env.example .env.local',
   },
   {
     step: 4,
-    title: "Start development",
-    command: "bun turbo dev",
+    title: 'Start development',
+    command: 'bun turbo dev',
   },
 ];
 
@@ -51,7 +51,7 @@ function CopyButton({ text }: { text: string }) {
 
 export function QuickStartSteps() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
     <section ref={ref} className="py-24">
@@ -76,20 +76,16 @@ export function QuickStartSteps() {
             >
               <span
                 className={cn(
-                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold",
-                  "bg-primary/10 text-primary"
+                  'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold',
+                  'bg-primary/10 text-primary',
                 )}
               >
                 {step.step}
               </span>
               <div className="flex-1">
-                <h3 className="text-sm font-medium text-foreground">
-                  {step.title}
-                </h3>
+                <h3 className="text-sm font-medium text-foreground">{step.title}</h3>
                 <div className="mt-2 flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3">
-                  <code className="font-mono text-sm text-muted-foreground">
-                    {step.command}
-                  </code>
+                  <code className="font-mono text-sm text-muted-foreground">{step.command}</code>
                   <CopyButton text={step.command} />
                 </div>
               </div>

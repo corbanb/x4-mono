@@ -1,13 +1,10 @@
-import { DocsLayout } from "fumadocs-ui/layouts/docs";
-import { source } from "@/lib/source";
-import type { ReactNode } from "react";
+import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { source } from '@/lib/source';
+import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <DocsLayout
-      tree={source.pageTree}
-      nav={{ title: "x4 Docs" }}
-    >
+    <DocsLayout tree={source.pageTree} nav={{ title: 'x4 Docs' }}>
       {children}
     </DocsLayout>
   );

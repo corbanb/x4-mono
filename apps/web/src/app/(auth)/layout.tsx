@@ -1,10 +1,6 @@
-import { Zap } from "lucide-react";
+import { Zap } from 'lucide-react';
 
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="relative hidden flex-col justify-between bg-primary p-10 text-primary-foreground lg:flex">
@@ -15,12 +11,10 @@ export default function AuthLayout({
           x4 Platform
         </div>
         <div className="space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">
-            Build. Ship. Scale.
-          </h2>
+          <h2 className="text-3xl font-bold tracking-tight">Build. Ship. Scale.</h2>
           <p className="text-primary-foreground/80">
-            Full-stack TypeScript platform with type-safe APIs, authentication,
-            AI integration, and multi-platform support.
+            Full-stack TypeScript platform with type-safe APIs, authentication, AI integration, and
+            multi-platform support.
           </p>
         </div>
         <p className="text-sm text-primary-foreground/60">

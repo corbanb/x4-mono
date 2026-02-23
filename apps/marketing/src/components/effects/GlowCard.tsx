@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useRef, useState } from "react";
-import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
+import { useRef, useState } from 'react';
+import { motion } from 'motion/react';
+import { cn } from '@/lib/utils';
 
 interface GlowCardProps {
   children: React.ReactNode;
@@ -30,8 +30,8 @@ export function GlowCard({ children, className }: GlowCardProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-colors duration-300 hover:border-white/15",
-        className
+        'relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-colors duration-300 hover:border-white/15',
+        className,
       )}
     >
       {/* Mouse-tracking glow */}

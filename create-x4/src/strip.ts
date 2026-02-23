@@ -1,6 +1,6 @@
-import { rmSync, existsSync } from "node:fs";
-import { join } from "node:path";
-import { STRIP_PATHS } from "./constants.js";
+import { rmSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { STRIP_PATHS } from './constants.js';
 
 export interface StripOptions {
   targetDir: string;

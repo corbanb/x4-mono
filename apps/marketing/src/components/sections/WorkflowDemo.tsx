@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import { motion, useInView } from "motion/react";
-import { cn } from "@/lib/utils";
+import { useRef } from 'react';
+import { motion, useInView } from 'motion/react';
+import { cn } from '@/lib/utils';
 import {
   BookOpen,
   Route,
@@ -16,7 +16,7 @@ import {
   GitPullRequest,
   Eye,
   Wrench,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface WorkflowStep {
   icon: React.ElementType;
@@ -26,84 +26,84 @@ interface WorkflowStep {
 
 const WORKFLOWS = [
   {
-    name: "/next-prd",
-    title: "Auto-pilot PRD implementation",
+    name: '/next-prd',
+    title: 'Auto-pilot PRD implementation',
     description:
-      "Reads project state, picks the next PRD by dependency order, routes tasks to specialist agents, implements sequentially, and verifies against success criteria.",
-    color: "from-violet-500 to-purple-600",
-    dotColor: "bg-violet-400",
-    lineColor: "from-violet-500/40 to-purple-600/40",
+      'Reads project state, picks the next PRD by dependency order, routes tasks to specialist agents, implements sequentially, and verifies against success criteria.',
+    color: 'from-violet-500 to-purple-600',
+    dotColor: 'bg-violet-400',
+    lineColor: 'from-violet-500/40 to-purple-600/40',
     steps: [
       {
         icon: BookOpen,
-        label: "Read state",
-        description: "Scan wiki/status.md for progress",
+        label: 'Read state',
+        description: 'Scan wiki/status.md for progress',
       },
       {
         icon: Route,
-        label: "Pick PRD",
-        description: "Follow dependency graph to next PRD",
+        label: 'Pick PRD',
+        description: 'Follow dependency graph to next PRD',
       },
       {
         icon: Bot,
-        label: "Route to agents",
-        description: "Assign tasks to specialist agents",
+        label: 'Route to agents',
+        description: 'Assign tasks to specialist agents',
       },
       {
         icon: Wrench,
-        label: "Implement",
-        description: "Execute tasks sequentially",
+        label: 'Implement',
+        description: 'Execute tasks sequentially',
       },
       {
         icon: CheckCircle,
-        label: "Verify & complete",
-        description: "Run checks, mark PRD done",
+        label: 'Verify & complete',
+        description: 'Run checks, mark PRD done',
       },
     ] satisfies WorkflowStep[],
   },
   {
-    name: "/ship",
-    title: "Branch to PR in one command",
+    name: '/ship',
+    title: 'Branch to PR in one command',
     description:
-      "Creates a branch, runs boundary checks, tests, and docs review, commits with context, opens a PR, watches CI, and auto-fixes failures.",
-    color: "from-cyan-500 to-blue-600",
-    dotColor: "bg-cyan-400",
-    lineColor: "from-cyan-500/40 to-blue-600/40",
+      'Creates a branch, runs boundary checks, tests, and docs review, commits with context, opens a PR, watches CI, and auto-fixes failures.',
+    color: 'from-cyan-500 to-blue-600',
+    dotColor: 'bg-cyan-400',
+    lineColor: 'from-cyan-500/40 to-blue-600/40',
     steps: [
       {
         icon: GitBranch,
-        label: "Branch",
-        description: "Create feature branch from main",
+        label: 'Branch',
+        description: 'Create feature branch from main',
       },
       {
         icon: ShieldCheck,
-        label: "Boundary check",
-        description: "Audit dependency conventions",
+        label: 'Boundary check',
+        description: 'Audit dependency conventions',
       },
       {
         icon: TestTube,
-        label: "Test review",
-        description: "Run and validate test suite",
+        label: 'Test review',
+        description: 'Run and validate test suite',
       },
       {
         icon: FileText,
-        label: "Docs review",
-        description: "Check docs accuracy & coverage",
+        label: 'Docs review',
+        description: 'Check docs accuracy & coverage',
       },
       {
         icon: GitCommit,
-        label: "Commit",
-        description: "Stage changes with context",
+        label: 'Commit',
+        description: 'Stage changes with context',
       },
       {
         icon: GitPullRequest,
-        label: "Open PR",
-        description: "Create pull request with summary",
+        label: 'Open PR',
+        description: 'Create pull request with summary',
       },
       {
         icon: Eye,
-        label: "Watch CI",
-        description: "Monitor pipeline, auto-fix failures",
+        label: 'Watch CI',
+        description: 'Monitor pipeline, auto-fix failures',
       },
     ] satisfies WorkflowStep[],
   },
@@ -129,16 +129,14 @@ function WorkflowTimeline({
       <div className="border-b border-border p-6">
         <code
           className={cn(
-            "inline-block rounded-md bg-gradient-to-r px-3 py-1 text-sm font-bold text-white",
-            workflow.color
+            'inline-block rounded-md bg-gradient-to-r px-3 py-1 text-sm font-bold text-white',
+            workflow.color,
           )}
         >
           {workflow.name}
         </code>
         <h3 className="mt-3 text-xl font-semibold">{workflow.title}</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {workflow.description}
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">{workflow.description}</p>
       </div>
 
       {/* Steps timeline */}
@@ -159,8 +157,8 @@ function WorkflowTimeline({
               {i < workflow.steps.length - 1 && (
                 <div
                   className={cn(
-                    "absolute left-[15px] top-[32px] h-[calc(100%-20px)] w-px bg-gradient-to-b",
-                    workflow.lineColor
+                    'absolute left-[15px] top-[32px] h-[calc(100%-20px)] w-px bg-gradient-to-b',
+                    workflow.lineColor,
                   )}
                 />
               )}
@@ -168,20 +166,19 @@ function WorkflowTimeline({
               {/* Icon dot */}
               <div
                 className={cn(
-                  "relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-card",
+                  'relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-card',
                 )}
               >
-                <step.icon size={14} className={cn("opacity-80", workflow.dotColor.replace("bg-", "text-"))} />
+                <step.icon
+                  size={14}
+                  className={cn('opacity-80', workflow.dotColor.replace('bg-', 'text-'))}
+                />
               </div>
 
               {/* Content */}
               <div className="pt-0.5">
-                <p className="text-sm font-medium text-foreground">
-                  {step.label}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {step.description}
-                </p>
+                <p className="text-sm font-medium text-foreground">{step.label}</p>
+                <p className="text-xs text-muted-foreground">{step.description}</p>
               </div>
             </motion.div>
           ))}
@@ -193,7 +190,7 @@ function WorkflowTimeline({
 
 export function WorkflowDemo() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const isInView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
     <section ref={ref} className="py-24">
@@ -211,9 +208,8 @@ export function WorkflowDemo() {
             From idea to production, automated
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            Two commands that orchestrate the entire development lifecycle. The
-            AI reads your project state, makes decisions, and ships code — with
-            human oversight at every step.
+            Two commands that orchestrate the entire development lifecycle. The AI reads your
+            project state, makes decisions, and ships code — with human oversight at every step.
           </p>
         </motion.div>
 

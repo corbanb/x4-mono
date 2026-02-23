@@ -1,4 +1,4 @@
-export { createMockDb } from "./mock-db";
+export { createMockDb } from './mock-db';
 export {
   TEST_USER_ID,
   TEST_ADMIN_ID,
@@ -9,12 +9,12 @@ export {
   testAdmin,
   testProject,
   testProjectWithOwner,
-} from "./fixtures";
+} from './fixtures';
 
-import type { Context } from "../../trpc";
-import { createCallerFactory } from "../../trpc";
-import { appRouter } from "../../routers";
-import { createMockDb } from "./mock-db";
+import type { Context } from '../../trpc';
+import { createCallerFactory } from '../../trpc';
+import { appRouter } from '../../routers';
+import { createMockDb } from './mock-db';
 
 /**
  * Create a mock tRPC context for router testing.
@@ -29,7 +29,7 @@ export function createTestContext(overrides: Partial<Context> = {}): Context {
   return {
     db: createMockDb(),
     user: null,
-    req: new Request("http://localhost:3002"),
+    req: new Request('http://localhost:3002'),
     ...overrides,
   };
 }

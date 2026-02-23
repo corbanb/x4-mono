@@ -1,12 +1,12 @@
-import { readFileSync, writeFileSync, renameSync, existsSync } from "node:fs";
-import { join } from "node:path";
-import fg from "fast-glob";
+import { readFileSync, writeFileSync, renameSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+import fg from 'fast-glob';
 import {
   TEMPLATE_SCOPE,
   TEMPLATE_NAME,
   TEMPLATE_BUNDLE_PREFIX,
   TEXT_REPLACE_EXTENSIONS,
-} from "./constants.js";
+} from './constants.js';
 
 export interface TransformOptions {
   targetDir: string;
@@ -25,8 +25,8 @@ export interface TransformOptions {
  */
 export async function transformTemplate(opts: TransformOptions): Promise<void> {
   // Pass 0: Rename mobile directory if mobileName !== "main"
-  if (opts.mobileName !== "main") {
-    const src = join(opts.targetDir, "apps/mobile-main");
+  if (opts.mobileName !== 'main') {
+    const src = join(opts.targetDir, 'apps/mobile-main');
     const dest = join(opts.targetDir, `apps/mobile-${opts.mobileName}`);
     if (existsSync(src)) {
       renameSync(src, dest);
@@ -47,14 +47,14 @@ export async function transformTemplate(opts: TransformOptions): Promise<void> {
 
 /** Transform all package.json files — name field and @x4/* dependencies */
 async function transformPackageJsonFiles(opts: TransformOptions): Promise<void> {
-  const files = await fg("**/package.json", {
+  const files = await fg('**/package.json', {
     cwd: opts.targetDir,
-    ignore: ["**/node_modules/**"],
+    ignore: ['**/node_modules/**'],
     absolute: true,
   });
 
   for (const file of files) {
-    const raw = readFileSync(file, "utf-8");
+    const raw = readFileSync(file, 'utf-8');
     let pkg: Record<string, unknown>;
     try {
       pkg = JSON.parse(raw);
@@ -65,7 +65,7 @@ async function transformPackageJsonFiles(opts: TransformOptions): Promise<void> 
     let modified = false;
 
     // Transform name field
-    if (typeof pkg.name === "string") {
+    if (typeof pkg.name === 'string') {
       const oldName = pkg.name as string;
       const newName = rewritePackageName(oldName, opts.scope, opts.projectName);
       if (newName !== oldName) {
@@ -75,11 +75,7 @@ async function transformPackageJsonFiles(opts: TransformOptions): Promise<void> 
     }
 
     // Transform dependency maps
-    for (const depKey of [
-      "dependencies",
-      "devDependencies",
-      "peerDependencies",
-    ] as const) {
+    for (const depKey of ['dependencies', 'devDependencies', 'peerDependencies'] as const) {
       const deps = pkg[depKey] as Record<string, string> | undefined;
       if (!deps) continue;
 
@@ -94,9 +90,9 @@ async function transformPackageJsonFiles(opts: TransformOptions): Promise<void> 
 
     if (modified) {
       if (opts.verbose) {
-        console.log(`  Transforming ${file.replace(opts.targetDir + "/", "")}`);
+        console.log(`  Transforming ${file.replace(opts.targetDir + '/', '')}`);
       }
-      writeFileSync(file, JSON.stringify(pkg, null, 2) + "\n");
+      writeFileSync(file, JSON.stringify(pkg, null, 2) + '\n');
     }
   }
 }
@@ -104,10 +100,10 @@ async function transformPackageJsonFiles(opts: TransformOptions): Promise<void> 
 /** Transform apps/mobile-{name}/app.json */
 function transformAppJson(opts: TransformOptions): void {
   const mobileDir = `apps/mobile-${opts.mobileName}`;
-  const file = join(opts.targetDir, mobileDir, "app.json");
+  const file = join(opts.targetDir, mobileDir, 'app.json');
   let raw: string;
   try {
-    raw = readFileSync(file, "utf-8");
+    raw = readFileSync(file, 'utf-8');
   } catch {
     return; // File may not exist if --no-mobile
   }
@@ -130,63 +126,63 @@ function transformAppJson(opts: TransformOptions): void {
   if (opts.verbose) {
     console.log(`  Transforming ${mobileDir}/app.json`);
   }
-  writeFileSync(file, JSON.stringify(config, null, 2) + "\n");
+  writeFileSync(file, JSON.stringify(config, null, 2) + '\n');
 }
 
 /** Transform apps/desktop/electron-builder.yml */
 function transformElectronBuilder(opts: TransformOptions): void {
-  const file = join(opts.targetDir, "apps/desktop/electron-builder.yml");
+  const file = join(opts.targetDir, 'apps/desktop/electron-builder.yml');
   let raw: string;
   try {
-    raw = readFileSync(file, "utf-8");
+    raw = readFileSync(file, 'utf-8');
   } catch {
     return; // File may not exist if --no-desktop
   }
 
   // Simple line-based YAML replacement (avoids adding a YAML parser dep)
-  const lines = raw.split("\n").map((line) => {
-    if (line.startsWith("appId:")) {
+  const lines = raw.split('\n').map((line) => {
+    if (line.startsWith('appId:')) {
       return `appId: ${opts.bundleId}.desktop`;
     }
-    if (line.startsWith("productName:")) {
+    if (line.startsWith('productName:')) {
       return `productName: ${opts.projectName}`;
     }
     return line;
   });
 
   if (opts.verbose) {
-    console.log("  Transforming apps/desktop/electron-builder.yml");
+    console.log('  Transforming apps/desktop/electron-builder.yml');
   }
-  writeFileSync(file, lines.join("\n"));
+  writeFileSync(file, lines.join('\n'));
 }
 
 /** Global text replacement across all text files */
 async function globalTextReplace(opts: TransformOptions): Promise<void> {
-  const extGlob = `**/*.{${TEXT_REPLACE_EXTENSIONS.join(",")}}`;
+  const extGlob = `**/*.{${TEXT_REPLACE_EXTENSIONS.join(',')}}`;
   const files = await fg(extGlob, {
     cwd: opts.targetDir,
-    ignore: ["**/node_modules/**"],
+    ignore: ['**/node_modules/**'],
     absolute: true,
   });
 
   const replacements: [RegExp, string][] = [
     // Scope replacement: @x4/ → @scope/
-    [new RegExp(escapeRegex(TEMPLATE_SCOPE + "/"), "g"), opts.scope + "/"],
+    [new RegExp(escapeRegex(TEMPLATE_SCOPE + '/'), 'g'), opts.scope + '/'],
     // Standalone scope reference: "@x4" (not followed by /)
-    [new RegExp(escapeRegex(TEMPLATE_SCOPE) + "(?!/)", "g"), opts.scope],
+    [new RegExp(escapeRegex(TEMPLATE_SCOPE) + '(?!/)', 'g'), opts.scope],
     // Project name
-    [new RegExp(escapeRegex(TEMPLATE_NAME), "g"), opts.projectName],
+    [new RegExp(escapeRegex(TEMPLATE_NAME), 'g'), opts.projectName],
     // Bundle ID prefix
-    [new RegExp(escapeRegex(TEMPLATE_BUNDLE_PREFIX + "."), "g"), opts.bundleId + "."],
+    [new RegExp(escapeRegex(TEMPLATE_BUNDLE_PREFIX + '.'), 'g'), opts.bundleId + '.'],
   ];
 
   // If mobileName is not "main", replace "mobile-main" references in text files
-  if (opts.mobileName !== "main") {
+  if (opts.mobileName !== 'main') {
     replacements.push([/mobile-main/g, `mobile-${opts.mobileName}`]);
   }
 
   for (const file of files) {
-    let content = readFileSync(file, "utf-8");
+    let content = readFileSync(file, 'utf-8');
     let changed = false;
 
     for (const [pattern, replacement] of replacements) {
@@ -204,13 +200,9 @@ async function globalTextReplace(opts: TransformOptions): Promise<void> {
 }
 
 /** Rewrite a package name from @x4/foo to @scope/foo or x4-mono to project-name */
-function rewritePackageName(
-  name: string,
-  scope: string,
-  projectName: string,
-): string {
-  if (name.startsWith(TEMPLATE_SCOPE + "/")) {
-    return scope + "/" + name.slice(TEMPLATE_SCOPE.length + 1);
+function rewritePackageName(name: string, scope: string, projectName: string): string {
+  if (name.startsWith(TEMPLATE_SCOPE + '/')) {
+    return scope + '/' + name.slice(TEMPLATE_SCOPE.length + 1);
   }
   if (name === TEMPLATE_NAME) {
     return projectName;
@@ -219,5 +211,5 @@ function rewritePackageName(
 }
 
 function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

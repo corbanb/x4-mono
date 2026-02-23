@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import { TechGrid } from "@/components/sections/TechGrid";
-import { ComparisonTable } from "@/components/sections/ComparisonTable";
-import { CTASection } from "@/components/sections/CTASection";
+import type { Metadata } from 'next';
+import { TechGrid } from '@/components/sections/TechGrid';
+import { ComparisonTable } from '@/components/sections/ComparisonTable';
+import { CTASection } from '@/components/sections/CTASection';
 
 export const metadata: Metadata = {
-  title: "Stack",
+  title: 'Stack',
   description:
     "Explore x4's technology stack: Bun, TypeScript, Next.js, Expo, Electron, Hono, tRPC, Drizzle, Neon, Better Auth, and more.",
 };
@@ -18,9 +18,8 @@ export default function StackPage() {
             The <span className="gradient-text">modern stack</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Every technology chosen for a reason. No legacy baggage, no
-            unnecessary abstractions — just the best tools for building
-            multi-platform TypeScript applications.
+            Every technology chosen for a reason. No legacy baggage, no unnecessary abstractions —
+            just the best tools for building multi-platform TypeScript applications.
           </p>
         </div>
       </section>

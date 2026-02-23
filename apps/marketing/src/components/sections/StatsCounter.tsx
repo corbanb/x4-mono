@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useRef, useEffect, useState } from "react";
-import { motion, useInView } from "motion/react";
+import { useRef, useEffect, useState } from 'react';
+import { motion, useInView } from 'motion/react';
 
 interface StatProps {
   value: number;
@@ -10,7 +10,7 @@ interface StatProps {
   delay?: number;
 }
 
-function AnimatedStat({ value, suffix = "", label, delay = 0 }: StatProps) {
+function AnimatedStat({ value, suffix = '', label, delay = 0 }: StatProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
   const [count, setCount] = useState(0);
@@ -57,10 +57,10 @@ function AnimatedStat({ value, suffix = "", label, delay = 0 }: StatProps) {
 }
 
 const STATS = [
-  { value: 351, suffix: "+", label: "Tests Passing" },
-  { value: 16, label: "PRDs Completed" },
-  { value: 9, label: "Packages" },
-  { value: 3, label: "Platforms" },
+  { value: 351, suffix: '+', label: 'Tests Passing' },
+  { value: 16, label: 'PRDs Completed' },
+  { value: 9, label: 'Packages' },
+  { value: 3, label: 'Platforms' },
 ];
 
 export function StatsCounter() {

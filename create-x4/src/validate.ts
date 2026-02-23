@@ -1,6 +1,6 @@
-import { existsSync } from "node:fs";
-import { resolve } from "node:path";
-import { NPM_RESERVED_NAMES } from "./constants.js";
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { NPM_RESERVED_NAMES } from './constants.js';
 
 const KEBAB_CASE_RE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 const SCOPE_RE = /^@[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
@@ -10,11 +10,11 @@ type ValidationResult = { valid: true } | { valid: false; error: string };
 
 export function validateProjectName(name: string): ValidationResult {
   if (!name) {
-    return { valid: false, error: "Project name is required." };
+    return { valid: false, error: 'Project name is required.' };
   }
 
   if (name.length > 214) {
-    return { valid: false, error: "Project name must be 214 characters or fewer." };
+    return { valid: false, error: 'Project name must be 214 characters or fewer.' };
   }
 
   if (NPM_RESERVED_NAMES.has(name)) {
@@ -24,7 +24,7 @@ export function validateProjectName(name: string): ValidationResult {
   if (!KEBAB_CASE_RE.test(name)) {
     return {
       valid: false,
-      error: "Project name must be lowercase kebab-case (e.g., my-app).",
+      error: 'Project name must be lowercase kebab-case (e.g., my-app).',
     };
   }
 
@@ -32,14 +32,14 @@ export function validateProjectName(name: string): ValidationResult {
 }
 
 export function validateScope(scope: string): ValidationResult {
-  if (!scope.startsWith("@")) {
-    return { valid: false, error: "Scope must start with @ (e.g., @my-org)." };
+  if (!scope.startsWith('@')) {
+    return { valid: false, error: 'Scope must start with @ (e.g., @my-org).' };
   }
 
   if (!SCOPE_RE.test(scope)) {
     return {
       valid: false,
-      error: "Scope must be lowercase kebab-case (e.g., @my-org).",
+      error: 'Scope must be lowercase kebab-case (e.g., @my-org).',
     };
   }
 
@@ -51,7 +51,7 @@ export function validateBundleId(bundleId: string): ValidationResult {
     return {
       valid: false,
       error:
-        "Bundle ID must be reverse-domain notation (e.g., com.myapp). Only lowercase letters and numbers, at least two segments.",
+        'Bundle ID must be reverse-domain notation (e.g., com.myapp). Only lowercase letters and numbers, at least two segments.',
     };
   }
 
@@ -77,6 +77,6 @@ export function deriveScope(name: string): string {
 
 /** Derive default bundle ID from project name (strip hyphens for Java compat) */
 export function deriveBundleId(name: string): string {
-  const clean = name.replace(/-/g, "");
+  const clean = name.replace(/-/g, '');
   return `com.${clean}`;
 }

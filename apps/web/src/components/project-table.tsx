@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -9,9 +9,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ProjectActions } from "@/components/project-actions";
+} from '@/components/ui/table';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ProjectActions } from '@/components/project-actions';
 
 type Project = {
   id: string;
@@ -23,22 +23,16 @@ type Project = {
 
 function statusVariant(status: string) {
   switch (status) {
-    case "active":
-      return "default" as const;
-    case "archived":
-      return "secondary" as const;
+    case 'active':
+      return 'default' as const;
+    case 'archived':
+      return 'secondary' as const;
     default:
-      return "outline" as const;
+      return 'outline' as const;
   }
 }
 
-export function ProjectTable({
-  projects,
-  loading,
-}: {
-  projects: Project[];
-  loading?: boolean;
-}) {
+export function ProjectTable({ projects, loading }: { projects: Project[]; loading?: boolean }) {
   if (loading) {
     return (
       <Table>
@@ -105,29 +99,21 @@ export function ProjectTable({
         {projects.map((project) => (
           <TableRow key={project.id}>
             <TableCell>
-              <Link
-                href={`/projects/${project.id}`}
-                className="font-medium hover:underline"
-              >
+              <Link href={`/projects/${project.id}`} className="font-medium hover:underline">
                 {project.name}
               </Link>
             </TableCell>
             <TableCell className="hidden max-w-xs truncate text-muted-foreground md:table-cell">
-              {project.description ?? "-"}
+              {project.description ?? '-'}
             </TableCell>
             <TableCell>
-              <Badge variant={statusVariant(project.status)}>
-                {project.status}
-              </Badge>
+              <Badge variant={statusVariant(project.status)}>{project.status}</Badge>
             </TableCell>
             <TableCell className="hidden text-muted-foreground sm:table-cell">
               {new Date(project.createdAt).toLocaleDateString()}
             </TableCell>
             <TableCell>
-              <ProjectActions
-                projectId={project.id}
-                projectName={project.name}
-              />
+              <ProjectActions projectId={project.id} projectName={project.name} />
             </TableCell>
           </TableRow>
         ))}

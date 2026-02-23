@@ -1,10 +1,10 @@
-import { describe, expect, test, mock, beforeEach } from "bun:test";
+import { describe, expect, test, mock, beforeEach } from 'bun:test';
 import {
   mockIsCancel,
   mockCancel,
   mockLogError,
   clearAllClackMocks,
-} from "./helpers/mock-clack.js";
+} from './helpers/mock-clack.js';
 
 // Mock process.exit to throw so we can catch it
 const originalExit = process.exit;
@@ -16,23 +16,23 @@ class ExitError extends Error {
   }
 }
 
-const { handleCancel, exitWithError } = await import("../src/ui.js");
+const { handleCancel, exitWithError } = await import('../src/ui.js');
 
-describe("handleCancel", () => {
+describe('handleCancel', () => {
   beforeEach(() => {
     clearAllClackMocks();
   });
 
-  test("no-op for non-cancel values", () => {
+  test('no-op for non-cancel values', () => {
     mockIsCancel.mockImplementation(() => false);
     // Should not throw or exit
-    handleCancel("some-value");
+    handleCancel('some-value');
     handleCancel(42);
     handleCancel(undefined);
     expect(mockCancel).not.toHaveBeenCalled();
   });
 
-  test("calls process.exit(0) for cancel symbol", () => {
+  test('calls process.exit(0) for cancel symbol', () => {
     mockIsCancel.mockImplementation(() => true);
     const mockExit = mock((_code?: number) => {
       throw new ExitError(0);
@@ -40,7 +40,7 @@ describe("handleCancel", () => {
     process.exit = mockExit as never;
 
     try {
-      handleCancel(Symbol("cancel"));
+      handleCancel(Symbol('cancel'));
     } catch (err) {
       expect(err).toBeInstanceOf(ExitError);
       expect((err as ExitError).code).toBe(0);
@@ -51,15 +51,15 @@ describe("handleCancel", () => {
   });
 });
 
-describe("exitWithError", () => {
-  test("calls process.exit(1)", () => {
+describe('exitWithError', () => {
+  test('calls process.exit(1)', () => {
     const mockExit = mock((_code?: number) => {
       throw new ExitError(1);
     });
     process.exit = mockExit as never;
 
     try {
-      exitWithError("something went wrong");
+      exitWithError('something went wrong');
     } catch (err) {
       expect(err).toBeInstanceOf(ExitError);
       expect((err as ExitError).code).toBe(1);

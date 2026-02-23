@@ -41,23 +41,23 @@ src/
 
 ## API Routes
 
-| Route | Method | Auth | Description |
-|-------|--------|------|-------------|
-| `/health` | GET | No | Health check |
-| `/api/auth/*` | ALL | No | Better Auth endpoints |
-| `/trpc/*` | ALL | Varies | tRPC procedures |
+| Route         | Method | Auth   | Description           |
+| ------------- | ------ | ------ | --------------------- |
+| `/health`     | GET    | No     | Health check          |
+| `/api/auth/*` | ALL    | No     | Better Auth endpoints |
+| `/trpc/*`     | ALL    | Varies | tRPC procedures       |
 
 ## tRPC Procedures
 
-| Procedure | Auth | Description |
-|-----------|------|-------------|
-| `projects.list` | Public | Paginated project list |
-| `projects.get` | Protected | Get project by ID |
-| `projects.create` | Protected | Create project |
-| `projects.update` | Protected | Update project (owner only) |
-| `projects.delete` | Protected | Delete project (owner only) |
-| `users.me` | Protected | Current user profile |
-| `ai.generate` | Protected | Generate AI text with cost logging |
+| Procedure         | Auth      | Description                        |
+| ----------------- | --------- | ---------------------------------- |
+| `projects.list`   | Public    | Paginated project list             |
+| `projects.get`    | Protected | Get project by ID                  |
+| `projects.create` | Protected | Create project                     |
+| `projects.update` | Protected | Update project (owner only)        |
+| `projects.delete` | Protected | Delete project (owner only)        |
+| `users.me`        | Protected | Current user profile               |
+| `ai.generate`     | Protected | Generate AI text with cost logging |
 
 ## Middleware Order
 
@@ -70,7 +70,7 @@ requestLogger -> CORS -> rate limiting -> auth -> route-specific
 Tests use Bun's test runner with the `createCaller` + `createTestContext` pattern:
 
 ```typescript
-import { createTestContext, createCaller, createTestUser } from "./helpers";
+import { createTestContext, createCaller, createTestUser } from './helpers';
 
 const caller = createCaller(createTestContext({ user: createTestUser() }));
 const result = await caller.projects.list({});

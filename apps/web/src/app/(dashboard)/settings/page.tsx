@@ -1,28 +1,21 @@
-"use client";
+'use client';
 
-import { useSession } from "@x4/auth/client";
-import { useTheme } from "next-themes";
-import { User, Palette, Shield } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { trpc } from "@x4/shared/api-client";
+import { useSession } from '@x4/auth/client';
+import { useTheme } from 'next-themes';
+import { User, Palette, Shield } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { trpc } from '@x4/shared/api-client';
 
 export default function SettingsPage() {
   const { data: session, isPending: sessionLoading } = useSession();
   const { theme, setTheme } = useTheme();
-  const { data: user, isLoading: userLoading } = trpc.users.me.useQuery(
-    undefined,
-    { enabled: !!session },
-  );
+  const { data: user, isLoading: userLoading } = trpc.users.me.useQuery(undefined, {
+    enabled: !!session,
+  });
 
   const isLoading = sessionLoading || userLoading;
 
@@ -30,9 +23,7 @@ export default function SettingsPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-        <p className="text-muted-foreground">
-          Manage your account and preferences
-        </p>
+        <p className="text-muted-foreground">Manage your account and preferences</p>
       </div>
 
       {/* Profile */}
@@ -55,14 +46,14 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Name</span>
                 <span className="text-sm font-medium">
-                  {user?.name ?? session?.user?.name ?? "-"}
+                  {user?.name ?? session?.user?.name ?? '-'}
                 </span>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Email</span>
                 <span className="text-sm font-medium">
-                  {user?.email ?? session?.user?.email ?? "-"}
+                  {user?.email ?? session?.user?.email ?? '-'}
                 </span>
               </div>
             </>
@@ -81,10 +72,10 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent>
           <div className="flex gap-3">
-            {(["light", "dark", "system"] as const).map((t) => (
+            {(['light', 'dark', 'system'] as const).map((t) => (
               <Button
                 key={t}
-                variant={theme === t ? "default" : "outline"}
+                variant={theme === t ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setTheme(t)}
                 className="capitalize"
@@ -115,32 +106,26 @@ export default function SettingsPage() {
             <>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Role</span>
-                <Badge variant="secondary">{user?.role ?? "user"}</Badge>
+                <Badge variant="secondary">{user?.role ?? 'user'}</Badge>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  Email Verified
-                </span>
-                <Badge
-                  variant={user?.emailVerified ? "default" : "outline"}
-                >
-                  {user?.emailVerified ? "Verified" : "Unverified"}
+                <span className="text-sm text-muted-foreground">Email Verified</span>
+                <Badge variant={user?.emailVerified ? 'default' : 'outline'}>
+                  {user?.emailVerified ? 'Verified' : 'Unverified'}
                 </Badge>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  Member Since
-                </span>
+                <span className="text-sm text-muted-foreground">Member Since</span>
                 <span className="text-sm">
                   {user?.createdAt
-                    ? new Date(user.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
+                    ? new Date(user.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
                       })
-                    : "-"}
+                    : '-'}
                 </span>
               </div>
             </>

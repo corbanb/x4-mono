@@ -1,4 +1,4 @@
-import { projects, users, eq, count } from "@x4/database";
+import { projects, users, eq, count } from '@x4/database';
 import {
   CreateProjectSchema,
   UpdateProjectSchema,
@@ -8,14 +8,14 @@ import {
   ProjectWithOwnerSchema,
   ProjectResponseSchema,
   SuccessResponseSchema,
-} from "@x4/shared/utils";
-import { router, protectedProcedure, publicProcedure } from "../trpc";
-import { Errors } from "../lib/errors";
+} from '@x4/shared/utils';
+import { router, protectedProcedure, publicProcedure } from '../trpc';
+import { Errors } from '../lib/errors';
 
 export const projectsRouter = router({
   list: publicProcedure
     .meta({
-      openapi: { method: "GET", path: "/projects", tags: ["Projects"] },
+      openapi: { method: 'GET', path: '/projects', tags: ['Projects'] },
     })
     .input(PaginationSchema)
     .output(ProjectListResponseSchema)
@@ -23,12 +23,7 @@ export const projectsRouter = router({
       const { limit, offset } = input;
 
       const [items, [total]] = await Promise.all([
-        ctx.db
-          .select()
-          .from(projects)
-          .limit(limit)
-          .offset(offset)
-          .orderBy(projects.createdAt),
+        ctx.db.select().from(projects).limit(limit).offset(offset).orderBy(projects.createdAt),
         ctx.db.select({ count: count() }).from(projects),
       ]);
 
@@ -42,7 +37,7 @@ export const projectsRouter = router({
 
   get: protectedProcedure
     .meta({
-      openapi: { method: "GET", path: "/projects/{id}", tags: ["Projects"], protect: true },
+      openapi: { method: 'GET', path: '/projects/{id}', tags: ['Projects'], protect: true },
     })
     .input(IdParamSchema)
     .output(ProjectWithOwnerSchema)
@@ -64,7 +59,7 @@ export const projectsRouter = router({
         .where(eq(projects.id, input.id));
 
       if (!project) {
-        throw Errors.notFound("Project").toTRPCError();
+        throw Errors.notFound('Project').toTRPCError();
       }
 
       return project;
@@ -72,7 +67,7 @@ export const projectsRouter = router({
 
   create: protectedProcedure
     .meta({
-      openapi: { method: "POST", path: "/projects", tags: ["Projects"], protect: true },
+      openapi: { method: 'POST', path: '/projects', tags: ['Projects'], protect: true },
     })
     .input(CreateProjectSchema)
     .output(ProjectResponseSchema)
@@ -91,7 +86,7 @@ export const projectsRouter = router({
 
   update: protectedProcedure
     .meta({
-      openapi: { method: "PATCH", path: "/projects/{id}", tags: ["Projects"], protect: true },
+      openapi: { method: 'PATCH', path: '/projects/{id}', tags: ['Projects'], protect: true },
     })
     .input(UpdateProjectSchema)
     .output(ProjectResponseSchema)
@@ -102,11 +97,11 @@ export const projectsRouter = router({
         .where(eq(projects.id, input.id));
 
       if (!existing) {
-        throw Errors.notFound("Project").toTRPCError();
+        throw Errors.notFound('Project').toTRPCError();
       }
 
-      if (existing.ownerId !== ctx.user.userId && ctx.user.role !== "admin") {
-        throw Errors.forbidden("You can only update your own projects").toTRPCError();
+      if (existing.ownerId !== ctx.user.userId && ctx.user.role !== 'admin') {
+        throw Errors.forbidden('You can only update your own projects').toTRPCError();
       }
 
       const { id, ...updates } = input;
@@ -121,7 +116,7 @@ export const projectsRouter = router({
 
   delete: protectedProcedure
     .meta({
-      openapi: { method: "DELETE", path: "/projects/{id}", tags: ["Projects"], protect: true },
+      openapi: { method: 'DELETE', path: '/projects/{id}', tags: ['Projects'], protect: true },
     })
     .input(IdParamSchema)
     .output(SuccessResponseSchema)
@@ -132,11 +127,11 @@ export const projectsRouter = router({
         .where(eq(projects.id, input.id));
 
       if (!existing) {
-        throw Errors.notFound("Project").toTRPCError();
+        throw Errors.notFound('Project').toTRPCError();
       }
 
-      if (existing.ownerId !== ctx.user.userId && ctx.user.role !== "admin") {
-        throw Errors.forbidden("You can only delete your own projects").toTRPCError();
+      if (existing.ownerId !== ctx.user.userId && ctx.user.role !== 'admin') {
+        throw Errors.forbidden('You can only delete your own projects').toTRPCError();
       }
 
       await ctx.db.delete(projects).where(eq(projects.id, input.id));

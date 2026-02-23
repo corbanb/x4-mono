@@ -1,9 +1,9 @@
-import * as p from "@clack/prompts";
-import pc from "picocolors";
+import * as p from '@clack/prompts';
+import pc from 'picocolors';
 
 export function handleCancel(value: unknown): void {
   if (p.isCancel(value)) {
-    p.cancel("Setup cancelled.");
+    p.cancel('Setup cancelled.');
     process.exit(0);
   }
 }

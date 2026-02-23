@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -9,25 +9,25 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { authClient } from "@x4/auth/client/native";
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { authClient } from '@x4/auth/client/native';
 
 export default function SignupScreen() {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleSignup() {
     if (!name || !email || !password) {
-      Alert.alert("Error", "Please fill in all fields");
+      Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
     if (password.length < 8) {
-      Alert.alert("Error", "Password must be at least 8 characters");
+      Alert.alert('Error', 'Password must be at least 8 characters');
       return;
     }
 
@@ -39,17 +39,14 @@ export default function SignupScreen() {
         name,
       });
       if (result.error) {
-        Alert.alert(
-          "Signup Failed",
-          result.error.message ?? "Could not create account",
-        );
+        Alert.alert('Signup Failed', result.error.message ?? 'Could not create account');
       } else {
-        Alert.alert("Success", "Account created! Please log in.", [
-          { text: "OK", onPress: () => router.replace("/login") },
+        Alert.alert('Success', 'Account created! Please log in.', [
+          { text: 'OK', onPress: () => router.replace('/login') },
         ]);
       }
     } catch {
-      Alert.alert("Error", "Something went wrong. Please try again.");
+      Alert.alert('Error', 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -58,7 +55,7 @@ export default function SignupScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={styles.form}>
         <Text style={styles.title}>Create Account</Text>
@@ -102,7 +99,7 @@ export default function SignupScreen() {
           )}
         </Pressable>
 
-        <Pressable onPress={() => router.push("/login")}>
+        <Pressable onPress={() => router.push('/login')}>
           <Text style={styles.link}>Already have an account? Log in</Text>
         </Pressable>
       </View>
@@ -113,44 +110,44 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   form: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     padding: 24,
     gap: 16,
   },
   title: {
     fontSize: 24,
-    fontWeight: "700",
+    fontWeight: '700',
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
     borderRadius: 8,
     padding: 14,
     fontSize: 16,
   },
   button: {
-    backgroundColor: "#000",
+    backgroundColor: '#000',
     paddingVertical: 14,
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 8,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   link: {
-    color: "#666",
-    textAlign: "center",
+    color: '#666',
+    textAlign: 'center',
     marginTop: 8,
     fontSize: 14,
   },

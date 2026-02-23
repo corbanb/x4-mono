@@ -1,4 +1,4 @@
-import { estimateTokenCost, getModelRates } from "@x4/shared/ai";
+import { estimateTokenCost, getModelRates } from '@x4/shared/ai';
 
 // Re-export from shared for convenience
 export { estimateTokenCost, getModelRates };

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { Login } from "./components/Login";
-import { Dashboard } from "./components/Dashboard";
+import { useState, useEffect } from 'react';
+import { Login } from './components/Login';
+import { Dashboard } from './components/Dashboard';
 
 export function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -16,7 +16,9 @@ export function App() {
 
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <div
+        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+      >
         <p>Loading...</p>
       </div>
     );

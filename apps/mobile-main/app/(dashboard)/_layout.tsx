@@ -1,13 +1,7 @@
-import { useEffect } from "react";
-import { Stack, useRouter } from "expo-router";
-import { useSession, signOutAndClear } from "@x4/auth/client/native";
-import {
-  View,
-  Text,
-  Pressable,
-  ActivityIndicator,
-  StyleSheet,
-} from "react-native";
+import { useEffect } from 'react';
+import { Stack, useRouter } from 'expo-router';
+import { useSession, signOutAndClear } from '@x4/auth/client/native';
+import { View, Text, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
 
 export default function DashboardLayout() {
   const router = useRouter();
@@ -15,7 +9,7 @@ export default function DashboardLayout() {
 
   useEffect(() => {
     if (!isPending && !session) {
-      router.replace("/login");
+      router.replace('/login');
     }
   }, [isPending, session, router]);
 
@@ -38,7 +32,7 @@ export default function DashboardLayout() {
           <Pressable
             onPress={async () => {
               await signOutAndClear();
-              router.replace("/login");
+              router.replace('/login');
             }}
           >
             <Text style={styles.logoutText}>Log Out</Text>
@@ -46,8 +40,8 @@ export default function DashboardLayout() {
         ),
       }}
     >
-      <Stack.Screen name="index" options={{ title: "Dashboard" }} />
-      <Stack.Screen name="new" options={{ title: "New Project" }} />
+      <Stack.Screen name="index" options={{ title: 'Dashboard' }} />
+      <Stack.Screen name="new" options={{ title: 'New Project' }} />
     </Stack>
   );
 }
@@ -55,12 +49,12 @@ export default function DashboardLayout() {
 const styles = StyleSheet.create({
   center: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   logoutText: {
-    color: "#dc2626",
+    color: '#dc2626',
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

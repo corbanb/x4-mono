@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
-import { cn } from "@/lib/utils";
-import { CodeBlock } from "@/components/ui/code-block";
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'motion/react';
+import { cn } from '@/lib/utils';
+import { CodeBlock } from '@/components/ui/code-block';
 
 interface StickyScrollItem {
   title: string;
@@ -27,24 +27,18 @@ export function StickyScroll({ items }: StickyScrollProps) {
   );
 }
 
-function StickyScrollSection({
-  item,
-  index,
-}: {
-  item: StickyScrollItem;
-  index: number;
-}) {
+function StickyScrollSection({ item, index }: { item: StickyScrollItem; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start end", "end start"],
+    offset: ['start end', 'end start'],
   });
 
   const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
   const x = useTransform(
     scrollYProgress,
     [0, 0.3, 0.7, 1],
-    [index % 2 === 0 ? -60 : 60, 0, 0, index % 2 === 0 ? -60 : 60]
+    [index % 2 === 0 ? -60 : 60, 0, 0, index % 2 === 0 ? -60 : 60],
   );
 
   return (
@@ -53,23 +47,21 @@ function StickyScrollSection({
         <motion.div
           style={{ opacity, x }}
           className={cn(
-            "grid items-center gap-12 lg:grid-cols-2",
-            index % 2 === 1 && "lg:grid-flow-dense"
+            'grid items-center gap-12 lg:grid-cols-2',
+            index % 2 === 1 && 'lg:grid-flow-dense',
           )}
         >
           {/* Content */}
-          <div className={cn(index % 2 === 1 && "lg:col-start-2")}>
+          <div className={cn(index % 2 === 1 && 'lg:col-start-2')}>
             <span
               className={cn(
-                "inline-block rounded-full px-3 py-1 text-xs font-semibold",
-                item.color
+                'inline-block rounded-full px-3 py-1 text-xs font-semibold',
+                item.color,
               )}
             >
               {item.badge}
             </span>
-            <h3 className="mt-4 text-3xl font-bold sm:text-4xl">
-              {item.title}
-            </h3>
+            <h3 className="mt-4 text-3xl font-bold sm:text-4xl">{item.title}</h3>
             <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted-foreground">
               {item.description}
             </p>
@@ -78,8 +70,8 @@ function StickyScrollSection({
           {/* Code panel */}
           <div
             className={cn(
-              "overflow-hidden rounded-xl border border-border bg-card",
-              index % 2 === 1 && "lg:col-start-1"
+              'overflow-hidden rounded-xl border border-border bg-card',
+              index % 2 === 1 && 'lg:col-start-1',
             )}
           >
             <div className="flex items-center gap-2 border-b border-border px-4 py-3">

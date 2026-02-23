@@ -1,4 +1,4 @@
-import { mock } from "bun:test";
+import { mock } from 'bun:test';
 
 /**
  * In-memory Redis mock with TTL support.
@@ -24,13 +24,11 @@ export function createMockRedis() {
       }
       return entry.value;
     }),
-    set: mock(
-      async (key: string, value: unknown, opts?: { ex?: number }) => {
-        const expiry = opts?.ex ? Date.now() + opts.ex * 1000 : undefined;
-        store.set(key, { value, expiry });
-        return "OK";
-      },
-    ),
+    set: mock(async (key: string, value: unknown, opts?: { ex?: number }) => {
+      const expiry = opts?.ex ? Date.now() + opts.ex * 1000 : undefined;
+      store.set(key, { value, expiry });
+      return 'OK';
+    }),
     del: mock(async (key: string) => {
       store.delete(key);
       return 1;

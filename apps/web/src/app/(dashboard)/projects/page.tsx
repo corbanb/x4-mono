@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import { trpc } from "@x4/shared/api-client";
-import { Plus, LayoutGrid, List, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { useState } from 'react';
+import Link from 'next/link';
+import { trpc } from '@x4/shared/api-client';
+import { Plus, LayoutGrid, List, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { ProjectTable } from "@/components/project-table";
-import { ProjectGrid } from "@/components/project-grid";
+} from '@/components/ui/select';
+import { ProjectTable } from '@/components/project-table';
+import { ProjectGrid } from '@/components/project-grid';
 
 export default function ProjectsPage() {
-  const [view, setView] = useState<"table" | "grid">("table");
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [view, setView] = useState<'table' | 'grid'>('table');
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const { data, isLoading } = trpc.projects.list.useQuery({
     limit: 50,
@@ -30,11 +30,10 @@ export default function ProjectsPage() {
   const projects = data?.items ?? [];
   const filtered = projects.filter((p) => {
     const matchesSearch =
-      search === "" ||
+      search === '' ||
       p.name.toLowerCase().includes(search.toLowerCase()) ||
       p.description?.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || p.status === statusFilter;
+    const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -44,9 +43,7 @@ export default function ProjectsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
-          {!isLoading && (
-            <Badge variant="secondary">{data?.total ?? 0}</Badge>
-          )}
+          {!isLoading && <Badge variant="secondary">{data?.total ?? 0}</Badge>}
         </div>
         <Button asChild>
           <Link href="/projects/new">
@@ -79,18 +76,18 @@ export default function ProjectsPage() {
         </Select>
         <div className="flex rounded-lg border">
           <Button
-            variant={view === "table" ? "secondary" : "ghost"}
+            variant={view === 'table' ? 'secondary' : 'ghost'}
             size="icon"
             className="h-9 w-9 rounded-r-none"
-            onClick={() => setView("table")}
+            onClick={() => setView('table')}
           >
             <List className="h-4 w-4" />
           </Button>
           <Button
-            variant={view === "grid" ? "secondary" : "ghost"}
+            variant={view === 'grid' ? 'secondary' : 'ghost'}
             size="icon"
             className="h-9 w-9 rounded-l-none"
-            onClick={() => setView("grid")}
+            onClick={() => setView('grid')}
           >
             <LayoutGrid className="h-4 w-4" />
           </Button>
@@ -98,7 +95,7 @@ export default function ProjectsPage() {
       </div>
 
       {/* Content */}
-      {view === "table" ? (
+      {view === 'table' ? (
         <ProjectTable projects={filtered} loading={isLoading} />
       ) : (
         <ProjectGrid projects={filtered} loading={isLoading} />

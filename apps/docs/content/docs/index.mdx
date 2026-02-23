@@ -29,13 +29,13 @@ See the [Authentication](/docs/authentication) guide for details on obtaining to
 The x4 API uses tRPC v11. To set up a client in your TypeScript app:
 
 ```typescript
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import type { AppRouter } from "@x4/api/router";
+import { createTRPCClient, httpBatchLink } from '@trpc/client';
+import type { AppRouter } from '@x4/api/router';
 
 const trpc = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: "http://localhost:3002/trpc",
+      url: 'http://localhost:3002/trpc',
       headers() {
         return {
           Authorization: `Bearer ${token}`,
@@ -67,14 +67,14 @@ Response:
 
 ## Available Endpoints
 
-| Endpoint | Method | Auth | Description |
-|----------|--------|------|-------------|
-| `/users/me` | GET | Yes | Get current user profile |
-| `/projects` | GET | No | List projects (paginated) |
-| `/projects/{id}` | GET | Yes | Get project by ID |
-| `/projects` | POST | Yes | Create a project |
-| `/projects/{id}` | PATCH | Yes | Update a project |
-| `/projects/{id}` | DELETE | Yes | Delete a project |
-| `/ai/generate` | POST | Yes | Generate AI text |
+| Endpoint         | Method | Auth | Description               |
+| ---------------- | ------ | ---- | ------------------------- |
+| `/users/me`      | GET    | Yes  | Get current user profile  |
+| `/projects`      | GET    | No   | List projects (paginated) |
+| `/projects/{id}` | GET    | Yes  | Get project by ID         |
+| `/projects`      | POST   | Yes  | Create a project          |
+| `/projects/{id}` | PATCH  | Yes  | Update a project          |
+| `/projects/{id}` | DELETE | Yes  | Delete a project          |
+| `/ai/generate`   | POST   | Yes  | Generate AI text          |
 
 See the [API Reference](/docs/api-reference) for full details on each endpoint.

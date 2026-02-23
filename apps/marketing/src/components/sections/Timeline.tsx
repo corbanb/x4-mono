@@ -1,55 +1,55 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import { motion, useInView } from "motion/react";
-import { cn } from "@/lib/utils";
+import { useRef } from 'react';
+import { motion, useInView } from 'motion/react';
+import { cn } from '@/lib/utils';
 
 const MILESTONES = [
   {
-    title: "Monorepo Foundation",
-    description: "Bun workspaces, Turborepo, TypeScript config, shared packages.",
-    status: "complete" as const,
+    title: 'Monorepo Foundation',
+    description: 'Bun workspaces, Turborepo, TypeScript config, shared packages.',
+    status: 'complete' as const,
   },
   {
-    title: "Shared Types & Database",
-    description: "Zod schemas, Drizzle ORM, Neon Postgres, migrations, seed data.",
-    status: "complete" as const,
+    title: 'Shared Types & Database',
+    description: 'Zod schemas, Drizzle ORM, Neon Postgres, migrations, seed data.',
+    status: 'complete' as const,
   },
   {
-    title: "API Server",
-    description: "Hono + tRPC v11 with CRUD routers, middleware, and OpenAPI docs.",
-    status: "complete" as const,
+    title: 'API Server',
+    description: 'Hono + tRPC v11 with CRUD routers, middleware, and OpenAPI docs.',
+    status: 'complete' as const,
   },
   {
-    title: "Authentication",
-    description: "Better Auth with sessions, bearer tokens, RBAC, multi-platform clients.",
-    status: "complete" as const,
+    title: 'Authentication',
+    description: 'Better Auth with sessions, bearer tokens, RBAC, multi-platform clients.',
+    status: 'complete' as const,
   },
   {
-    title: "AI Integration",
-    description: "Vercel AI SDK, Claude provider, streaming, cost tracking.",
-    status: "complete" as const,
+    title: 'AI Integration',
+    description: 'Vercel AI SDK, Claude provider, streaming, cost tracking.',
+    status: 'complete' as const,
   },
   {
-    title: "Multi-Platform Clients",
-    description: "Next.js 15 web, Expo mobile, Electron desktop — all sharing the API.",
-    status: "complete" as const,
+    title: 'Multi-Platform Clients',
+    description: 'Next.js 15 web, Expo mobile, Electron desktop — all sharing the API.',
+    status: 'complete' as const,
   },
   {
-    title: "CI/CD & Testing",
-    description: "GitHub Actions, Neon branching, 350+ tests, Playwright E2E.",
-    status: "complete" as const,
+    title: 'CI/CD & Testing',
+    description: 'GitHub Actions, Neon branching, 350+ tests, Playwright E2E.',
+    status: 'complete' as const,
   },
   {
-    title: "Documentation & DX",
-    description: "Fumadocs site, getting started guide, contributing docs, READMEs.",
-    status: "complete" as const,
+    title: 'Documentation & DX',
+    description: 'Fumadocs site, getting started guide, contributing docs, READMEs.',
+    status: 'complete' as const,
   },
 ];
 
 export function Timeline() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
     <section ref={ref} className="py-24">
@@ -79,30 +79,22 @@ export function Timeline() {
                 {/* Dot */}
                 <div
                   className={cn(
-                    "relative z-10 mt-1.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
-                    milestone.status === "complete"
-                      ? "bg-violet-glow/20"
-                      : "bg-muted"
+                    'relative z-10 mt-1.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full',
+                    milestone.status === 'complete' ? 'bg-violet-glow/20' : 'bg-muted',
                   )}
                 >
                   <div
                     className={cn(
-                      "h-2.5 w-2.5 rounded-full",
-                      milestone.status === "complete"
-                        ? "bg-violet-glow"
-                        : "bg-muted-foreground"
+                      'h-2.5 w-2.5 rounded-full',
+                      milestone.status === 'complete' ? 'bg-violet-glow' : 'bg-muted-foreground',
                     )}
                   />
                 </div>
 
                 {/* Content */}
                 <div className="pb-2">
-                  <h3 className="font-semibold text-foreground">
-                    {milestone.title}
-                  </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {milestone.description}
-                  </p>
+                  <h3 className="font-semibold text-foreground">{milestone.title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{milestone.description}</p>
                 </div>
               </motion.div>
             ))}
