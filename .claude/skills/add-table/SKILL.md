@@ -1,10 +1,9 @@
 ---
-name: drizzle-migration
-description: Generate Drizzle schema changes with migration and seed data for x4-mono
-disable-model-invocation: true
+name: add-table
+description: Add a Drizzle database table with migration and seed data for x4-mono
 ---
 
-# Drizzle Migration Skill
+# Add Table Skill
 
 Add or modify database tables in the x4-mono Drizzle ORM setup.
 
