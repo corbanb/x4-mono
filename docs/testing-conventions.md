@@ -25,18 +25,18 @@ bun test --watch
 
 ## Test Pyramid
 
-| Level | Proportion | What to Test | Speed |
-|-------|-----------|--------------|-------|
-| **Unit** | 60-70% | Pure functions, validators, formatters, business logic | < 5ms per test |
-| **Integration** | 20-30% | tRPC routers, DB queries, auth flows, middleware | < 50ms per test |
-| **E2E** | 5-10% | Critical user journeys only (signup, login, core features) | < 5s per test |
+| Level           | Proportion | What to Test                                               | Speed           |
+| --------------- | ---------- | ---------------------------------------------------------- | --------------- |
+| **Unit**        | 60-70%     | Pure functions, validators, formatters, business logic     | < 5ms per test  |
+| **Integration** | 20-30%     | tRPC routers, DB queries, auth flows, middleware           | < 50ms per test |
+| **E2E**         | 5-10%      | Critical user journeys only (signup, login, core features) | < 5s per test   |
 
 ## File Naming
 
-| Convention | Use For | Example |
-|-----------|---------|---------|
+| Convention  | Use For                    | Example            |
+| ----------- | -------------------------- | ------------------ |
 | `*.test.ts` | Unit and integration tests | `projects.test.ts` |
-| `*.spec.ts` | E2E tests (Playwright) | `auth.spec.ts` |
+| `*.spec.ts` | E2E tests (Playwright)     | `auth.spec.ts`     |
 
 ## Test Location
 
@@ -52,17 +52,17 @@ bun test --watch
 The primary pattern for testing tRPC routers. Tests procedures directly without HTTP overhead.
 
 ```typescript
-import { describe, test, expect } from "bun:test";
+import { describe, test, expect } from 'bun:test';
 import {
   createTestContext,
   createCaller,
   createMockDb,
   createTestUser,
   testProject,
-} from "./helpers";
+} from './helpers';
 
-describe("projects.create", () => {
-  test("creates project with user as owner", async () => {
+describe('projects.create', () => {
+  test('creates project with user as owner', async () => {
     const db = createMockDb({ insert: [testProject] });
     const ctx = createTestContext({
       db,
@@ -71,18 +71,18 @@ describe("projects.create", () => {
     const caller = createCaller(ctx);
 
     const result = await caller.projects.create({
-      name: "Test Project",
+      name: 'Test Project',
     });
 
     expect(result).toEqual(testProject);
   });
 
-  test("rejects unauthenticated request", async () => {
+  test('rejects unauthenticated request', async () => {
     const caller = createCaller(createTestContext({ user: null }));
 
-    await expect(
-      caller.projects.create({ name: "Test" }),
-    ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(caller.projects.create({ name: 'Test' })).rejects.toMatchObject({
+      code: 'UNAUTHORIZED',
+    });
   });
 });
 ```
@@ -92,16 +92,16 @@ describe("projects.create", () => {
 Tests HTTP-level behavior without starting a server.
 
 ```typescript
-import { describe, test, expect } from "bun:test";
-import { app } from "../index";
+import { describe, test, expect } from 'bun:test';
+import { app } from '../index';
 
-describe("Health check", () => {
-  test("GET /health returns 200", async () => {
-    const res = await app.request("/health");
+describe('Health check', () => {
+  test('GET /health returns 200', async () => {
+    const res = await app.request('/health');
     expect(res.status).toBe(200);
 
     const body = await res.json();
-    expect(body.status).toBe("ok");
+    expect(body.status).toBe('ok');
   });
 });
 ```
@@ -109,22 +109,22 @@ describe("Health check", () => {
 ### Zod Schema Validation Testing
 
 ```typescript
-import { describe, test, expect } from "bun:test";
-import { CreateUserSchema } from "@x4/shared";
+import { describe, test, expect } from 'bun:test';
+import { CreateUserSchema } from '@x4/shared';
 
-describe("CreateUserSchema", () => {
-  test("accepts valid input", () => {
+describe('CreateUserSchema', () => {
+  test('accepts valid input', () => {
     const result = CreateUserSchema.safeParse({
-      email: "user@test.com",
-      name: "Test User",
+      email: 'user@test.com',
+      name: 'Test User',
     });
     expect(result.success).toBe(true);
   });
 
-  test("rejects invalid email", () => {
+  test('rejects invalid email', () => {
     const result = CreateUserSchema.safeParse({
-      email: "not-an-email",
-      name: "Test User",
+      email: 'not-an-email',
+      name: 'Test User',
     });
     expect(result.success).toBe(false);
   });
@@ -135,24 +135,24 @@ describe("CreateUserSchema", () => {
 
 ### Location: `apps/api/src/__tests__/helpers/`
 
-| Helper | Description |
-|--------|------------|
-| `createTestContext(overrides?)` | Creates a mock tRPC context. Default: anonymous user, mock DB. |
-| `createCaller(ctx)` | Creates a tRPC caller from a context for direct procedure calls. |
-| `createMockDb(config?)` | Proxy-based mock DB with chainable query API. |
-| `createTestUser(overrides?)` | Creates a User object matching the tRPC User type. |
+| Helper                          | Description                                                      |
+| ------------------------------- | ---------------------------------------------------------------- |
+| `createTestContext(overrides?)` | Creates a mock tRPC context. Default: anonymous user, mock DB.   |
+| `createCaller(ctx)`             | Creates a tRPC caller from a context for direct procedure calls. |
+| `createMockDb(config?)`         | Proxy-based mock DB with chainable query API.                    |
+| `createTestUser(overrides?)`    | Creates a User object matching the tRPC User type.               |
 
 ### Fixtures: `apps/api/src/__tests__/helpers/fixtures.ts`
 
-| Fixture | Description |
-|---------|------------|
-| `TEST_USER_ID` | Stable UUID for test user |
-| `TEST_ADMIN_ID` | Stable UUID for test admin |
-| `TEST_PROJECT_ID` | Stable UUID for test project |
-| `testUser` | Full user object (role: "user") |
-| `testAdmin` | Full admin object (role: "admin") |
-| `testProject` | Full project object |
-| `testProjectWithOwner` | Project with joined owner fields |
+| Fixture                | Description                       |
+| ---------------------- | --------------------------------- |
+| `TEST_USER_ID`         | Stable UUID for test user         |
+| `TEST_ADMIN_ID`        | Stable UUID for test admin        |
+| `TEST_PROJECT_ID`      | Stable UUID for test project      |
+| `testUser`             | Full user object (role: "user")   |
+| `testAdmin`            | Full admin object (role: "admin") |
+| `testProject`          | Full project object               |
+| `testProjectWithOwner` | Project with joined owner fields  |
 
 ## Mock Factories
 
@@ -161,37 +161,37 @@ describe("CreateUserSchema", () => {
 ### AI Provider Mock (`mocks/ai.ts`)
 
 ```typescript
-import { createMockAIResponse, createMockAIModule } from "./mocks";
+import { createMockAIResponse, createMockAIModule } from './mocks';
 
 // Mock the entire module
-mock.module("@x4/ai-integrations", () => createMockAIModule());
+mock.module('@x4/ai-integrations', () => createMockAIModule());
 
 // Or customize the response
-const mockGenerate = createMockAIResponse({ text: "Custom response" });
-mock.module("@x4/ai-integrations", () => createMockAIModule(mockGenerate));
+const mockGenerate = createMockAIResponse({ text: 'Custom response' });
+mock.module('@x4/ai-integrations', () => createMockAIModule(mockGenerate));
 ```
 
 ### Redis Mock (`mocks/redis.ts`)
 
 ```typescript
-import { createMockRedis } from "./mocks";
-import { _setRedisForTest } from "../lib/cache";
+import { createMockRedis } from './mocks';
+import { _setRedisForTest } from '../lib/cache';
 
 const redis = createMockRedis();
 _setRedisForTest(redis as never);
 
 // Direct store manipulation for test setup
-redis.store.set("key", { value: "data" });
+redis.store.set('key', { value: 'data' });
 ```
 
 ## Mock Guidelines
 
-| Mock This | Don't Mock This |
-|-----------|----------------|
-| External APIs (AI providers, email, Stripe) | Your own database queries |
-| Redis/cache layer | Auth middleware (test real behavior) |
-| Third-party HTTP services | Zod validation |
-| Time-dependent operations (`Date.now`) | tRPC procedures |
+| Mock This                                   | Don't Mock This                      |
+| ------------------------------------------- | ------------------------------------ |
+| External APIs (AI providers, email, Stripe) | Your own database queries            |
+| Redis/cache layer                           | Auth middleware (test real behavior) |
+| Third-party HTTP services                   | Zod validation                       |
+| Time-dependent operations (`Date.now`)      | tRPC procedures                      |
 
 ## E2E Testing (Playwright)
 

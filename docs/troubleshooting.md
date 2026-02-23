@@ -9,6 +9,7 @@ Common issues and their solutions when working with x4-mono.
 **Error**: `error: Failed to resolve package`
 
 **Solution**: Clear the cache and reinstall:
+
 ```bash
 bun clean
 bun install
@@ -32,6 +33,7 @@ cp .env.example .env.local
 ### `JWT_SECRET must be at least 32 characters`
 
 **Solution**: Generate a proper secret:
+
 ```bash
 openssl rand -base64 32
 ```
@@ -43,6 +45,7 @@ openssl rand -base64 32
 **Error**: `connection refused` or `ENOTFOUND`
 
 **Solution**: Check your `DATABASE_URL` in `.env.local`:
+
 - Must include `?sslmode=require` for Neon
 - Format: `postgresql://user:password@host/dbname?sslmode=require`
 - Verify in [Neon Dashboard](https://console.neon.tech) > Connection Details
@@ -56,6 +59,7 @@ openssl rand -base64 32
 **Error**: Port already in use
 
 **Solution**: Kill existing Drizzle Studio processes or use a different port:
+
 ```bash
 lsof -i :4983 | grep LISTEN  # Find the process
 kill <PID>                     # Kill it
@@ -69,11 +73,13 @@ bun db:studio                  # Restart
 **Error**: `Cannot find module '@x4/shared'`
 
 **Solution**: Build dependent packages first:
+
 ```bash
 bun turbo build
 ```
 
 Or run type-check which handles the dependency order:
+
 ```bash
 bun type-check
 ```
@@ -89,6 +95,7 @@ bun type-check
 **Error**: React 19 types conflict with Expo's React 18
 
 **Solution**: The mobile tsconfig has `paths` overrides to force local React 18 types. If you see errors after updating `@types/react` at the root, check that `apps/mobile/tsconfig.json` still has:
+
 ```json
 {
   "compilerOptions": {
@@ -102,9 +109,10 @@ bun type-check
 ### `createCaller is not a function`
 
 **Solution**: tRPC v11 uses `createCallerFactory`:
+
 ```typescript
-import { createCallerFactory } from "../trpc";
-import { appRouter } from "../routers";
+import { createCallerFactory } from '../trpc';
+import { appRouter } from '../routers';
 
 const createCaller = createCallerFactory(appRouter);
 const caller = createCaller(ctx);
@@ -115,6 +123,7 @@ const caller = createCaller(ctx);
 **Error**: `TRPCError: [BAD_REQUEST]`
 
 **Solution**: Check your input against the Zod schema. Common issues:
+
 - Empty string where `min(1)` is required
 - Missing required fields
 - UUID format mismatch (use `crypto.randomUUID()`)
@@ -126,6 +135,7 @@ const caller = createCaller(ctx);
 **Error**: `relation "user" does not exist`
 
 **Solution**: Auth tables are created by Better Auth's migration, not Drizzle:
+
 ```bash
 bunx @better-auth/cli migrate
 ```
@@ -135,6 +145,7 @@ Or use `bun db:push` which pushes the full schema including auth tables.
 ### Session not persisting
 
 **Solution**: Check that:
+
 1. `BETTER_AUTH_URL` matches your API URL
 2. `BETTER_AUTH_SECRET` is set
 3. Cookies are being sent (check browser DevTools > Application > Cookies)
@@ -145,6 +156,7 @@ Or use `bun db:push` which pushes the full schema including auth tables.
 ### Rate limiting not working (all requests pass through)
 
 **Solution**: This is the expected "fail open" behavior when Redis is not configured. To enable rate limiting:
+
 1. Create a free [Upstash Redis](https://console.upstash.com) database
 2. Set `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` in `.env.local`
 
@@ -157,6 +169,7 @@ Or use `bun db:push` which pushes the full schema including auth tables.
 ### CI failing on `bun.lock` mismatch
 
 **Solution**: Dependabot PRs that update `package.json` need the lockfile regenerated:
+
 ```bash
 git checkout <branch>
 bun install      # Regenerates bun.lock

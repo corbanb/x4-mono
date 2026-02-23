@@ -23,19 +23,19 @@ This PRD sets up the complete auth flow: server configuration, Hono route mounti
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| Email/password signup | POST to `/api/auth/sign-up/email` creates user + session | 200 response with session token |
-| Email/password login | POST to `/api/auth/sign-in/email` returns bearer token | Token in response headers |
-| Bearer auth | `Authorization: Bearer <token>` validates in tRPC context | `ctx.session.user` populated on valid token |
-| Social auth | GitHub and Google OAuth flows work | Redirect → callback → session created |
-| Protected routes | `protectedProcedure` rejects missing/invalid tokens | 401 UNAUTHORIZED |
-| Admin routes | `adminProcedure` rejects non-admin users | 403 FORBIDDEN |
-| Web client | `useSession()` returns typed session in React | Session hook works in Next.js |
-| Mobile client | Token stored in SecureStore, attached to requests | Auth persists across app restarts |
-| Desktop client | Token encrypted via safeStorage | Auth persists across app launches |
-| Session expiry | Sessions expire after 7 days | Expired token returns 401 |
-| Auth tables | Better Auth tables created in Neon | `user`, `session`, `account`, `verification` tables exist |
+| Criteria              | Measurement                                               | Target                                                    |
+| --------------------- | --------------------------------------------------------- | --------------------------------------------------------- |
+| Email/password signup | POST to `/api/auth/sign-up/email` creates user + session  | 200 response with session token                           |
+| Email/password login  | POST to `/api/auth/sign-in/email` returns bearer token    | Token in response headers                                 |
+| Bearer auth           | `Authorization: Bearer <token>` validates in tRPC context | `ctx.session.user` populated on valid token               |
+| Social auth           | GitHub and Google OAuth flows work                        | Redirect → callback → session created                     |
+| Protected routes      | `protectedProcedure` rejects missing/invalid tokens       | 401 UNAUTHORIZED                                          |
+| Admin routes          | `adminProcedure` rejects non-admin users                  | 403 FORBIDDEN                                             |
+| Web client            | `useSession()` returns typed session in React             | Session hook works in Next.js                             |
+| Mobile client         | Token stored in SecureStore, attached to requests         | Auth persists across app restarts                         |
+| Desktop client        | Token encrypted via safeStorage                           | Auth persists across app launches                         |
+| Session expiry        | Sessions expire after 7 days                              | Expired token returns 401                                 |
+| Auth tables           | Better Auth tables created in Neon                        | `user`, `session`, `account`, `verification` tables exist |
 
 ---
 
@@ -96,19 +96,19 @@ packages/auth        ← This PRD (server.ts, client.ts, client.native.ts)
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
-| PRD-003 (Database) | `db` instance for Drizzle adapter, auth tables stored in Neon |
+| Depends On           | What It Provides                                              |
+| -------------------- | ------------------------------------------------------------- |
+| PRD-003 (Database)   | `db` instance for Drizzle adapter, auth tables stored in Neon |
 | PRD-005 (API Server) | Hono app to mount auth routes, tRPC context to inject session |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
-| apps/api (PRD-005) | `auth.handler()` on `/api/auth/**`, `auth.api.getSession()` in tRPC context |
-| apps/web (PRD-010) | `useSession()`, `signIn`, `signUp`, `signOut` React hooks |
-| apps/mobile (PRD-011) | `signInAndStore()`, `signOutAndClear()` with SecureStore |
-| apps/desktop (PRD-012) | `safeStorage` encryption + IPC token retrieval |
+| Consumer               | How It's Used                                                               |
+| ---------------------- | --------------------------------------------------------------------------- |
+| apps/api (PRD-005)     | `auth.handler()` on `/api/auth/**`, `auth.api.getSession()` in tRPC context |
+| apps/web (PRD-010)     | `useSession()`, `signIn`, `signUp`, `signOut` React hooks                   |
+| apps/mobile (PRD-011)  | `signInAndStore()`, `signOutAndClear()` with SecureStore                    |
+| apps/desktop (PRD-012) | `safeStorage` encryption + IPC token retrieval                              |
 
 ---
 
@@ -126,6 +126,7 @@ Better Auth manages its own tables. Running `npx @better-auth/cli migrate` creat
 **Note**: Better Auth's `user` table is separate from our `users` table in the Drizzle schema. Better Auth manages its own user records. We can extend the Better Auth user with additional fields or maintain a separate profile table linked by user ID.
 
 **Session type** exposed to tRPC context:
+
 ```typescript
 type Session = {
   user: {
@@ -167,6 +168,7 @@ type Session = {
 ### 5.3 API Contracts / Interfaces
 
 **Auth Routes** (handled by Better Auth, not tRPC):
+
 ```
 POST /api/auth/sign-up/email     → Create account with email/password
 POST /api/auth/sign-in/email     → Login with email/password
@@ -177,6 +179,7 @@ GET  /api/auth/callback/:provider → OAuth callback
 ```
 
 **tRPC Procedures** (updated from PRD-005):
+
 ```typescript
 // Updated context type
 type Context = {
@@ -194,6 +197,7 @@ type Context = {
 ```
 
 **Client Exports**:
+
 ```typescript
 // packages/auth/client.ts
 export const { signIn, signUp, signOut, useSession } = authClient;
@@ -226,29 +230,31 @@ apps/desktop/src/main/
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Create `packages/auth/package.json` and `tsconfig.json` | 10m | PRD-001 | ✅ Yes | Config files |
-| 2 | Implement `packages/auth/server.ts` — Better Auth server config | 45m | PRD-003 (db) | 🟡 Partial | AI generates from spec, human reviews plugin config and session settings |
-| 3 | Run `npx @better-auth/cli migrate` to create auth tables | 10m | Task 2 | ❌ No | Requires live DB connection |
-| 4 | Mount Better Auth handler in `apps/api/src/index.ts` | 15m | Task 2, PRD-005 | ✅ Yes | Add route handler |
-| 5 | Update `apps/api/src/trpc.ts` — replace placeholder auth with Better Auth session | 30m | Tasks 2, 4 | 🟡 Partial | Core auth flow — human reviews |
-| 6 | Implement `packages/auth/client.ts` — React web client | 20m | Task 2 | ✅ Yes | Straightforward client setup |
-| 7 | Implement `packages/auth/client.native.ts` — React Native client with SecureStore | 30m | Task 2 | 🟡 Partial | SecureStore token flow needs care |
-| 8 | Implement `apps/desktop/src/main/auth.ts` — Electron safeStorage pattern | 20m | Task 2 | 🟡 Partial | Electron IPC pattern |
-| 9 | Test auth flow: signup → login → protected tRPC call | 30m | Tasks 3-5 | ❌ No | Manual end-to-end verification |
-| 10 | Write integration tests for auth middleware | 30m | Task 5 | ✅ Yes | Test authenticated/unauthenticated/admin tRPC calls |
-| 11 | Update projects router auth checks to use real session | 15m | Task 5 | ✅ Yes | Swap ctx.user references |
+| #   | Task                                                                              | Estimate | Dependencies    | Claude Code Candidate? | Notes                                                                    |
+| --- | --------------------------------------------------------------------------------- | -------- | --------------- | ---------------------- | ------------------------------------------------------------------------ |
+| 1   | Create `packages/auth/package.json` and `tsconfig.json`                           | 10m      | PRD-001         | ✅ Yes                 | Config files                                                             |
+| 2   | Implement `packages/auth/server.ts` — Better Auth server config                   | 45m      | PRD-003 (db)    | 🟡 Partial             | AI generates from spec, human reviews plugin config and session settings |
+| 3   | Run `npx @better-auth/cli migrate` to create auth tables                          | 10m      | Task 2          | ❌ No                  | Requires live DB connection                                              |
+| 4   | Mount Better Auth handler in `apps/api/src/index.ts`                              | 15m      | Task 2, PRD-005 | ✅ Yes                 | Add route handler                                                        |
+| 5   | Update `apps/api/src/trpc.ts` — replace placeholder auth with Better Auth session | 30m      | Tasks 2, 4      | 🟡 Partial             | Core auth flow — human reviews                                           |
+| 6   | Implement `packages/auth/client.ts` — React web client                            | 20m      | Task 2          | ✅ Yes                 | Straightforward client setup                                             |
+| 7   | Implement `packages/auth/client.native.ts` — React Native client with SecureStore | 30m      | Task 2          | 🟡 Partial             | SecureStore token flow needs care                                        |
+| 8   | Implement `apps/desktop/src/main/auth.ts` — Electron safeStorage pattern          | 20m      | Task 2          | 🟡 Partial             | Electron IPC pattern                                                     |
+| 9   | Test auth flow: signup → login → protected tRPC call                              | 30m      | Tasks 3-5       | ❌ No                  | Manual end-to-end verification                                           |
+| 10  | Write integration tests for auth middleware                                       | 30m      | Task 5          | ✅ Yes                 | Test authenticated/unauthenticated/admin tRPC calls                      |
+| 11  | Update projects router auth checks to use real session                            | 15m      | Task 5          | ✅ Yes                 | Swap ctx.user references                                                 |
 
 ### Claude Code Task Annotations
 
 **Task 2 (Server Config)**:
+
 - **Context needed**: Better Auth docs for Drizzle adapter, bearer plugin, JWT plugin. Social provider config pattern. Session expiry settings from spec (7 days, 1 day refresh).
 - **Constraints**: Do NOT hard-code client IDs/secrets — read from `process.env`. Include both `bearer()` and `jwt()` plugins. Configure GitHub and Google social providers.
 - **Done state**: `server.ts` exports `auth` instance. Type-checks clean.
 - **Verification command**: `cd packages/auth && bun type-check`
 
 **Task 5 (tRPC Context Update)**:
+
 - **Context needed**: Current `trpc.ts` from PRD-005. Better Auth's `auth.api.getSession()` API. How to extract session from request headers.
 - **Constraints**: `protectedProcedure` MUST throw `TRPCError({ code: "UNAUTHORIZED" })` if no session. `adminProcedure` MUST check `user.role === "admin"`. Context must expose both `session` and convenience `userId`.
 - **Done state**: `protectedProcedure` rejects unauthenticated requests. `adminProcedure` rejects non-admins. Authenticated requests get full session in context.
@@ -260,11 +266,11 @@ apps/desktop/src/main/
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | Auth middleware logic, token extraction | Bun test | 8-10 |
-| Integration | Full auth flow (signup → login → session → protected call) | Bun test + Hono `app.request()` | 6-8 |
-| E2E | Signup → login → dashboard (covered by PRD-010) | Playwright | 1 |
+| Level       | What's Tested                                              | Tool                            | Count (approx) |
+| ----------- | ---------------------------------------------------------- | ------------------------------- | -------------- |
+| Unit        | Auth middleware logic, token extraction                    | Bun test                        | 8-10           |
+| Integration | Full auth flow (signup → login → session → protected call) | Bun test + Hono `app.request()` | 6-8            |
+| E2E         | Signup → login → dashboard (covered by PRD-010)            | Playwright                      | 1              |
 
 ### Key Test Scenarios
 
@@ -281,14 +287,14 @@ apps/desktop/src/main/
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Session lookup latency | `auth.api.getSession()` < 10ms | Measured in integration tests |
-| Token security | Tokens are cryptographically random, >= 32 bytes | Inspect token format |
-| Password hashing | bcrypt or argon2 (Better Auth default) | Verify in Better Auth config |
-| CORS on auth routes | Same origin restrictions as tRPC routes | Test preflight on `/api/auth/*` |
-| Secure storage (mobile) | Token in Expo SecureStore (hardware-backed on iOS) | Code review |
-| Secure storage (desktop) | Token encrypted via Electron safeStorage | Code review |
+| Requirement              | Target                                             | How Verified                    |
+| ------------------------ | -------------------------------------------------- | ------------------------------- |
+| Session lookup latency   | `auth.api.getSession()` < 10ms                     | Measured in integration tests   |
+| Token security           | Tokens are cryptographically random, >= 32 bytes   | Inspect token format            |
+| Password hashing         | bcrypt or argon2 (Better Auth default)             | Verify in Better Auth config    |
+| CORS on auth routes      | Same origin restrictions as tRPC routes            | Test preflight on `/api/auth/*` |
+| Secure storage (mobile)  | Token in Expo SecureStore (hardware-backed on iOS) | Code review                     |
+| Secure storage (desktop) | Token encrypted via Electron safeStorage           | Code review                     |
 
 ---
 
@@ -306,16 +312,16 @@ apps/desktop/src/main/
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should we use Better Auth's user table or map to our own `users` table? | Affects whether we have one or two user representations | Architect | Resolved — use Better Auth's tables. Extend via Better Auth config for custom fields. |
-| 2 | Do we need email verification before allowing login? | Affects signup flow UX | Product | Open — defer to per-project. Better Auth supports it via plugin. |
-| 3 | How do we handle the `role` field in Better Auth's user? | Better Auth doesn't have a built-in role field | Architect | Open — likely need to extend the user schema via Better Auth's `user.additionalFields` config |
+| #   | Question                                                                | Impact                                                  | Owner     | Status                                                                                        |
+| --- | ----------------------------------------------------------------------- | ------------------------------------------------------- | --------- | --------------------------------------------------------------------------------------------- |
+| 1   | Should we use Better Auth's user table or map to our own `users` table? | Affects whether we have one or two user representations | Architect | Resolved — use Better Auth's tables. Extend via Better Auth config for custom fields.         |
+| 2   | Do we need email verification before allowing login?                    | Affects signup flow UX                                  | Product   | Open — defer to per-project. Better Auth supports it via plugin.                              |
+| 3   | How do we handle the `role` field in Better Auth's user?                | Better Auth doesn't have a built-in role field          | Architect | Open — likely need to extend the user schema via Better Auth's `user.additionalFields` config |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

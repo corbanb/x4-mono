@@ -44,6 +44,7 @@ type(scope): description
 **Scopes**: workspace name (`api`, `web`, `shared`, `database`, `auth`) or feature area (`testing`, `e2e`, `deps`)
 
 **Examples**:
+
 - `feat(api): add user preferences router`
 - `fix(auth): handle expired session redirect`
 - `chore(deps): bump @trpc/server to 11.1`
@@ -60,14 +61,14 @@ type(scope): description
 
 ### Naming
 
-| Thing | Convention | Example |
-|-------|-----------|---------|
-| Files | kebab-case | `user-profile.ts` |
-| Components | PascalCase | `UserProfile` |
-| Functions/variables | camelCase | `getUserById` |
-| Constants | SCREAMING_SNAKE_CASE | `MAX_RETRY_COUNT` |
-| Database tables | snake_case | `user_profiles` |
-| tRPC routers | camelCase | `projects.create` |
+| Thing               | Convention           | Example           |
+| ------------------- | -------------------- | ----------------- |
+| Files               | kebab-case           | `user-profile.ts` |
+| Components          | PascalCase           | `UserProfile`     |
+| Functions/variables | camelCase            | `getUserById`     |
+| Constants           | SCREAMING_SNAKE_CASE | `MAX_RETRY_COUNT` |
+| Database tables     | snake_case           | `user_profiles`   |
+| tRPC routers        | camelCase            | `projects.create` |
 
 ### Types
 

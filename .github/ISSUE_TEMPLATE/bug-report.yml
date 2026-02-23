@@ -1,7 +1,7 @@
 name: Bug Report
 description: Report a bug in x4-mono
-title: "[Bug]: "
-labels: ["bug", "triage"]
+title: '[Bug]: '
+labels: ['bug', 'triage']
 body:
   - type: markdown
     attributes:
@@ -14,17 +14,17 @@ body:
       label: Affected Workspace
       description: Which workspace is the bug in?
       options:
-        - "packages/shared"
-        - "packages/database"
-        - "packages/auth"
-        - "packages/ai-integrations"
-        - "apps/api"
-        - "apps/web"
-        - "apps/mobile-main"
-        - "apps/desktop"
-        - "apps/marketing"
-        - "Root / Monorepo tooling"
-        - "Multiple / Unknown"
+        - 'packages/shared'
+        - 'packages/database'
+        - 'packages/auth'
+        - 'packages/ai-integrations'
+        - 'apps/api'
+        - 'apps/web'
+        - 'apps/mobile-main'
+        - 'apps/desktop'
+        - 'apps/marketing'
+        - 'Root / Monorepo tooling'
+        - 'Multiple / Unknown'
     validations:
       required: true
 

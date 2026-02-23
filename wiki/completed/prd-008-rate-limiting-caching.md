@@ -23,17 +23,17 @@ This PRD adds Upstash Redis for both rate limiting and caching. Upstash is HTTP-
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| General rate limit | 100 requests per minute per user/IP | Requests 101+ return 429 |
-| AI rate limit | 10 requests per minute per user | AI request 11+ returns 429 |
-| Auth rate limit | 5 requests per minute per IP | Login attempt 6+ returns 429 |
-| Rate limit headers | `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset` | Present on every response |
-| 429 response shape | Matches `APIErrorResponse` with code `RATE_LIMITED` | Consistent with PRD-007 error format |
-| Cache hit | Cached value returns without hitting origin | Response time < 5ms for cached data |
-| Cache miss + set | First request generates + caches, second request returns cached | TTL-based expiry works |
-| Cache invalidation | `cache.del(key)` removes cached value | Subsequent get returns null |
-| Serverless compat | Upstash works on Vercel serverless and Bun | No TCP connection errors |
+| Criteria           | Measurement                                                       | Target                               |
+| ------------------ | ----------------------------------------------------------------- | ------------------------------------ |
+| General rate limit | 100 requests per minute per user/IP                               | Requests 101+ return 429             |
+| AI rate limit      | 10 requests per minute per user                                   | AI request 11+ returns 429           |
+| Auth rate limit    | 5 requests per minute per IP                                      | Login attempt 6+ returns 429         |
+| Rate limit headers | `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset` | Present on every response            |
+| 429 response shape | Matches `APIErrorResponse` with code `RATE_LIMITED`               | Consistent with PRD-007 error format |
+| Cache hit          | Cached value returns without hitting origin                       | Response time < 5ms for cached data  |
+| Cache miss + set   | First request generates + caches, second request returns cached   | TTL-based expiry works               |
+| Cache invalidation | `cache.del(key)` removes cached value                             | Subsequent get returns null          |
+| Serverless compat  | Upstash works on Vercel serverless and Bun                        | No TCP connection errors             |
 
 ---
 
@@ -42,6 +42,7 @@ This PRD adds Upstash Redis for both rate limiting and caching. Upstash is HTTP-
 ### In Scope
 
 **Rate Limiting**:
+
 - Upstash Redis client setup (`Redis.fromEnv()` — HTTP-based)
 - Three rate limiter tiers with `@upstash/ratelimit`:
   - `general`: 100 requests / 60s sliding window
@@ -57,6 +58,7 @@ This PRD adds Upstash Redis for both rate limiting and caching. Upstash is HTTP-
 - Identifier strategy: authenticated userId, fallback to `x-forwarded-for`, fallback to `"anonymous"`
 
 **Caching**:
+
 - Generic cache interface using Upstash Redis:
   - `cache.get<T>(key)` → `T | null`
   - `cache.set<T>(key, value, ttlSeconds)` → void
@@ -100,18 +102,18 @@ apps/api/src/lib/cache.ts             ← This PRD
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
-| PRD-005 (API Server) | Hono app to attach rate limiting middleware |
+| Depends On               | What It Provides                                                                   |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| PRD-005 (API Server)     | Hono app to attach rate limiting middleware                                        |
 | PRD-007 (Error Handling) | `RATE_LIMITED` error code and response format (soft dependency — works without it) |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
+| Consumer                 | How It's Used                                                         |
+| ------------------------ | --------------------------------------------------------------------- |
 | PRD-009 (AI Integration) | AI-specific rate limit tier; `cache.getOrGenerate()` for AI responses |
-| Any tRPC router | `cache.get/set` for expensive queries |
-| Auth routes | Rate limiting on login/signup to prevent brute force |
+| Any tRPC router          | `cache.get/set` for expensive queries                                 |
+| Auth routes              | Rate limiting on login/signup to prevent brute force                  |
 
 ---
 
@@ -122,6 +124,7 @@ apps/api/src/lib/cache.ts             ← This PRD
 No database tables. Redis is the data store.
 
 **Rate limit key patterns**:
+
 ```
 rl:general:{userId|ip}   → sliding window counter
 rl:ai:{userId|ip}        → sliding window counter
@@ -129,6 +132,7 @@ rl:auth:{ip}             → sliding window counter (always IP, not userId)
 ```
 
 **Cache key patterns**:
+
 ```
 ai:{sha256(prompt+model)}   → cached AI response (1 hour TTL)
 user:{userId}               → cached user profile (5 min TTL)
@@ -159,17 +163,19 @@ flags:{key}                 → cached feature flags (30 sec TTL)
 ### 5.3 API Contracts / Interfaces
 
 **Rate Limit Middleware**:
+
 ```typescript
 // apps/api/src/middleware/rateLimit.ts
-export function rateLimit(type: "general" | "ai" | "auth"): MiddlewareHandler;
+export function rateLimit(type: 'general' | 'ai' | 'auth'): MiddlewareHandler;
 
 // Usage in Hono app:
-app.use("/api/auth/*", rateLimit("auth"));
-app.use("/trpc/ai.*", rateLimit("ai"));
-app.use("/trpc/*", rateLimit("general"));
+app.use('/api/auth/*', rateLimit('auth'));
+app.use('/trpc/ai.*', rateLimit('ai'));
+app.use('/trpc/*', rateLimit('general'));
 ```
 
 **Response headers** (always present):
+
 ```
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 87
@@ -177,6 +183,7 @@ X-RateLimit-Reset: 1707321600
 ```
 
 **429 Response**:
+
 ```json
 {
   "code": "RATE_LIMITED",
@@ -185,6 +192,7 @@ X-RateLimit-Reset: 1707321600
 ```
 
 **Cache Interface**:
+
 ```typescript
 // apps/api/src/lib/cache.ts
 export const cache = {
@@ -212,27 +220,29 @@ apps/api/src/
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Install `@upstash/redis` and `@upstash/ratelimit` | 5m | PRD-005 | ✅ Yes | `bun add` |
-| 2 | Implement `apps/api/src/middleware/rateLimit.ts` — three tiers + middleware factory | 30m | Task 1 | ✅ Yes | Well-specified in tech spec |
-| 3 | Implement `apps/api/src/lib/cache.ts` — generic cache interface | 25m | Task 1 | ✅ Yes | Straightforward Redis wrapper |
-| 4 | Wire rate limit middleware into Hono app routes | 15m | Task 2 | ✅ Yes | Three `app.use()` calls |
-| 5 | Add `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` to env validation | 5m | Task 1 | ✅ Yes | Update Zod env schema |
-| 6 | Write unit tests for rate limiter (mock Redis) | 25m | Task 2 | ✅ Yes | Test limit enforcement, header values |
-| 7 | Write unit tests for cache interface (mock Redis) | 20m | Task 3 | ✅ Yes | Test get/set/del/getOrGenerate |
-| 8 | Integration test: hit general limit → 429 | 15m | Task 4 | 🟡 Partial | Requires Upstash connection or mock |
-| 9 | Document cache key patterns and TTL strategy | 10m | Task 3 | ✅ Yes | Table in README or code comments |
+| #   | Task                                                                                | Estimate | Dependencies | Claude Code Candidate? | Notes                                 |
+| --- | ----------------------------------------------------------------------------------- | -------- | ------------ | ---------------------- | ------------------------------------- |
+| 1   | Install `@upstash/redis` and `@upstash/ratelimit`                                   | 5m       | PRD-005      | ✅ Yes                 | `bun add`                             |
+| 2   | Implement `apps/api/src/middleware/rateLimit.ts` — three tiers + middleware factory | 30m      | Task 1       | ✅ Yes                 | Well-specified in tech spec           |
+| 3   | Implement `apps/api/src/lib/cache.ts` — generic cache interface                     | 25m      | Task 1       | ✅ Yes                 | Straightforward Redis wrapper         |
+| 4   | Wire rate limit middleware into Hono app routes                                     | 15m      | Task 2       | ✅ Yes                 | Three `app.use()` calls               |
+| 5   | Add `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` to env validation       | 5m       | Task 1       | ✅ Yes                 | Update Zod env schema                 |
+| 6   | Write unit tests for rate limiter (mock Redis)                                      | 25m      | Task 2       | ✅ Yes                 | Test limit enforcement, header values |
+| 7   | Write unit tests for cache interface (mock Redis)                                   | 20m      | Task 3       | ✅ Yes                 | Test get/set/del/getOrGenerate        |
+| 8   | Integration test: hit general limit → 429                                           | 15m      | Task 4       | 🟡 Partial             | Requires Upstash connection or mock   |
+| 9   | Document cache key patterns and TTL strategy                                        | 10m      | Task 3       | ✅ Yes                 | Table in README or code comments      |
 
 ### Claude Code Task Annotations
 
 **Task 2 (Rate Limit Middleware)**:
+
 - **Context needed**: Upstash `@upstash/ratelimit` API. Hono `createMiddleware` pattern. Three tiers from spec (general: 100/60s, ai: 10/60s, auth: 5/60s). Identifier strategy (userId → x-forwarded-for → "anonymous").
 - **Constraints**: Use `Ratelimit.slidingWindow()`. Set `analytics: true` and unique `prefix` per tier. Always set rate limit headers even on successful requests. Return 429 with JSON body on limit exceeded.
 - **Done state**: All three tiers configured. Middleware factory returns Hono middleware. Rate limit headers present.
 - **Verification command**: `cd apps/api && bun type-check`
 
 **Task 3 (Cache Interface)**:
+
 - **Context needed**: Upstash `@upstash/redis` API (`get`, `set` with `ex`, `del`). The `getOrGenerate` pattern from spec.
 - **Constraints**: `getOrGenerate` must check cache first, call generator only on miss, set cache after generation. Generic types on all methods. Handle Redis errors gracefully (log and fall through to origin).
 - **Done state**: All four methods work. Cache miss calls generator. Cache hit skips generator.
@@ -244,11 +254,11 @@ apps/api/src/
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | Rate limit tier config, cache get/set/del/getOrGenerate logic | Bun test (mocked Redis) | 12-15 |
-| Integration | Rate limit enforcement against real Upstash | Bun test (requires env) | 3-5 |
-| E2E | N/A | — | 0 |
+| Level       | What's Tested                                                 | Tool                    | Count (approx) |
+| ----------- | ------------------------------------------------------------- | ----------------------- | -------------- |
+| Unit        | Rate limit tier config, cache get/set/del/getOrGenerate logic | Bun test (mocked Redis) | 12-15          |
+| Integration | Rate limit enforcement against real Upstash                   | Bun test (requires env) | 3-5            |
+| E2E         | N/A                                                           | —                       | 0              |
 
 ### Key Test Scenarios
 
@@ -268,12 +278,12 @@ apps/api/src/
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Rate limit check latency | < 5ms per request | Upstash regional deployment |
-| Cache read latency | < 5ms for cached values | Benchmark |
-| Fail-open behavior | If Redis is down, rate limiter ALLOWS requests through | Integration test with mock failure |
-| No persistent connections | All Redis calls via HTTP REST API | Code review — no `ioredis` or `redis` TCP clients |
+| Requirement               | Target                                                 | How Verified                                      |
+| ------------------------- | ------------------------------------------------------ | ------------------------------------------------- |
+| Rate limit check latency  | < 5ms per request                                      | Upstash regional deployment                       |
+| Cache read latency        | < 5ms for cached values                                | Benchmark                                         |
+| Fail-open behavior        | If Redis is down, rate limiter ALLOWS requests through | Integration test with mock failure                |
+| No persistent connections | All Redis calls via HTTP REST API                      | Code review — no `ioredis` or `redis` TCP clients |
 
 ---
 
@@ -292,16 +302,16 @@ apps/api/src/
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should rate limiting be optional (env var toggle) for local dev? | Dev experience — hitting rate limits locally is annoying | DX | Open — consider `RATE_LIMIT_ENABLED=false` in dev |
-| 2 | Should the auth tier use IP only, or also userId if available? | Affects whether authenticated brute-force is limited per-user | Security | Resolved — IP only for auth tier (brute force is pre-authentication) |
-| 3 | Should cache errors be logged at warn or error level? | Affects log noise | Ops | Resolved — warn level. Cache failures are degraded but not broken. |
+| #   | Question                                                         | Impact                                                        | Owner    | Status                                                               |
+| --- | ---------------------------------------------------------------- | ------------------------------------------------------------- | -------- | -------------------------------------------------------------------- |
+| 1   | Should rate limiting be optional (env var toggle) for local dev? | Dev experience — hitting rate limits locally is annoying      | DX       | Open — consider `RATE_LIMIT_ENABLED=false` in dev                    |
+| 2   | Should the auth tier use IP only, or also userId if available?   | Affects whether authenticated brute-force is limited per-user | Security | Resolved — IP only for auth tier (brute force is pre-authentication) |
+| 3   | Should cache errors be logged at warn or error level?            | Affects log noise                                             | Ops      | Resolved — warn level. Cache failures are degraded but not broken.   |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

@@ -19,8 +19,8 @@
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
+| Criteria                       | Measurement              | Target                     |
+| ------------------------------ | ------------------------ | -------------------------- |
 | [What does success look like?] | [How do you measure it?] | [What's the target value?] |
 
 ---
@@ -49,14 +49,14 @@
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
+| Depends On       | What It Provides           |
+| ---------------- | -------------------------- |
 | [PRD-NNN (Name)] | [What you consume from it] |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
+| Consumer         | How It's Used                         |
+| ---------------- | ------------------------------------- |
 | [PRD-NNN (Name)] | [How consumers use this PRD's output] |
 
 ---
@@ -95,13 +95,14 @@
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | [Task description] | [Time] | [Task dependencies] | [Yes/Partial/No] | [Context] |
+| #   | Task               | Estimate | Dependencies        | Claude Code Candidate? | Notes     |
+| --- | ------------------ | -------- | ------------------- | ---------------------- | --------- |
+| 1   | [Task description] | [Time]   | [Task dependencies] | [Yes/Partial/No]       | [Context] |
 
 ### Claude Code Task Annotations
 
 **Task [N] ([Name])**:
+
 - **Context needed**: [What files/knowledge Claude Code needs to read before starting]
 - **Constraints**: [What Claude Code must NOT do]
 - **Done state**: [How to verify the task is complete]
@@ -113,11 +114,11 @@
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | [What] | [Tool] | [Count] |
-| Integration | [What] | [Tool] | [Count] |
-| E2E | [What] | [Tool] | [Count] |
+| Level       | What's Tested | Tool   | Count (approx) |
+| ----------- | ------------- | ------ | -------------- |
+| Unit        | [What]        | [Tool] | [Count]        |
+| Integration | [What]        | [Tool] | [Count]        |
+| E2E         | [What]        | [Tool] | [Count]        |
 
 ### Key Test Scenarios
 
@@ -127,8 +128,8 @@
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
+| Requirement   | Target         | How Verified          |
+| ------------- | -------------- | --------------------- |
 | [Requirement] | [Target value] | [Verification method] |
 
 ---
@@ -141,14 +142,14 @@
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | [Question] | [Impact if unresolved] | [Who decides] | [Open/Resolved — answer] |
+| #   | Question   | Impact                 | Owner         | Status                   |
+| --- | ---------- | ---------------------- | ------------- | ------------------------ |
+| 1   | [Question] | [Impact if unresolved] | [Who decides] | [Open/Resolved — answer] |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | [YYYY-MM-DD] | [Author] | Initial draft |
+| Version | Date         | Author   | Changes       |
+| ------- | ------------ | -------- | ------------- |
+| 1.0     | [YYYY-MM-DD] | [Author] | Initial draft |

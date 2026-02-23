@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "create-x4/src/**"
-      - "create-x4/package.json"
+      - 'create-x4/src/**'
+      - 'create-x4/package.json'
 
 jobs:
   release:

@@ -23,14 +23,14 @@ This PRD creates the shared layer between the API (PRD-005) and the app workspac
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| tRPC client setup | `createTRPCClient(baseUrl)` works in web, mobile, and desktop | Single function, three platforms |
-| Type safety | `trpc.projects.list.useQuery()` is fully typed from `AppRouter` | Zero `any` types in client hooks |
-| Shared hooks | `useUser()`, `useCreateProject()` available in all React workspaces | Import from `@packages/shared/api-client` |
-| Auth hooks | `useAuth` integrates with Better Auth client | Session state accessible via hook |
-| UI scaffolding | Button, Input components demonstrate the sharing pattern | Components render in web and mobile |
-| Native divergence | `.native.ts` pattern works for platform-specific code | Expo/RN resolves `.native.ts` files |
+| Criteria          | Measurement                                                         | Target                                    |
+| ----------------- | ------------------------------------------------------------------- | ----------------------------------------- |
+| tRPC client setup | `createTRPCClient(baseUrl)` works in web, mobile, and desktop       | Single function, three platforms          |
+| Type safety       | `trpc.projects.list.useQuery()` is fully typed from `AppRouter`     | Zero `any` types in client hooks          |
+| Shared hooks      | `useUser()`, `useCreateProject()` available in all React workspaces | Import from `@packages/shared/api-client` |
+| Auth hooks        | `useAuth` integrates with Better Auth client                        | Session state accessible via hook         |
+| UI scaffolding    | Button, Input components demonstrate the sharing pattern            | Components render in web and mobile       |
+| Native divergence | `.native.ts` pattern works for platform-specific code               | Expo/RN resolves `.native.ts` files       |
 
 ---
 
@@ -88,19 +88,19 @@ packages/shared/ui               ← This PRD (Button, Input scaffolding)
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
-| PRD-001 (Monorepo Foundation) | Workspace structure, TypeScript config |
-| PRD-002 (Shared Types) | Domain types used in hook return types |
-| PRD-005 (API Server) | `AppRouter` type for tRPC client (type-only import) |
+| Depends On                    | What It Provides                                    |
+| ----------------------------- | --------------------------------------------------- |
+| PRD-001 (Monorepo Foundation) | Workspace structure, TypeScript config              |
+| PRD-002 (Shared Types)        | Domain types used in hook return types              |
+| PRD-005 (API Server)          | `AppRouter` type for tRPC client (type-only import) |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
-| apps/web (PRD-010) | `TRPCProvider`, `trpc.*.useQuery()`, `useAuth()`, UI components |
-| apps/mobile (PRD-011) | Same tRPC hooks, `useAuth()`, UI components (or `.native.ts` variants) |
-| apps/desktop (PRD-012) | Same tRPC hooks in Electron renderer |
+| Consumer               | How It's Used                                                          |
+| ---------------------- | ---------------------------------------------------------------------- |
+| apps/web (PRD-010)     | `TRPCProvider`, `trpc.*.useQuery()`, `useAuth()`, UI components        |
+| apps/mobile (PRD-011)  | Same tRPC hooks, `useAuth()`, UI components (or `.native.ts` variants) |
+| apps/desktop (PRD-012) | Same tRPC hooks in Electron renderer                                   |
 
 ---
 
@@ -111,9 +111,10 @@ packages/shared/ui               ← This PRD (Button, Input scaffolding)
 No new domain types. This PRD creates **client infrastructure** that consumes types from PRD-002 and PRD-005.
 
 Key type dependency:
+
 ```typescript
 // This import is what makes end-to-end type safety work
-import type { AppRouter } from "../../apps/api/src/routers";
+import type { AppRouter } from '../../apps/api/src/routers';
 ```
 
 ### 5.2 Architecture Decisions
@@ -139,11 +140,12 @@ import type { AppRouter } from "../../apps/api/src/routers";
 ### 5.3 API Contracts / Interfaces
 
 **tRPC Client**:
+
 ```typescript
 // packages/shared/api-client/client.ts
-import { createTRPCReact } from "@trpc/react-query";
-import { httpBatchLink } from "@trpc/client";
-import type { AppRouter } from "../../apps/api/src/routers";
+import { createTRPCReact } from '@trpc/react-query';
+import { httpBatchLink } from '@trpc/client';
+import type { AppRouter } from '../../apps/api/src/routers';
 
 export const trpc = createTRPCReact<AppRouter>();
 
@@ -162,6 +164,7 @@ export const createTRPCClient = (baseUrl: string, getToken?: () => Promise<strin
 ```
 
 **Convenience Hooks**:
+
 ```typescript
 // packages/shared/api-client/hooks.ts
 export function useUser(userId: string) {
@@ -186,9 +189,10 @@ export function useDeleteProject() {
 ```
 
 **Auth Hooks**:
+
 ```typescript
 // packages/shared/hooks/useAuth.ts
-import { useSession, signIn, signOut } from "@packages/auth/client";
+import { useSession, signIn, signOut } from '@packages/auth/client';
 
 export function useAuth() {
   const session = useSession();
@@ -229,28 +233,30 @@ packages/shared/
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Update `packages/shared/package.json` with tRPC + React Query deps | 10m | PRD-001 | ✅ Yes | Add dependencies |
-| 2 | Implement `api-client/client.ts` — tRPC React client + factory | 30m | Task 1, PRD-005 (AppRouter type) | 🟡 Partial | AI generates from spec, human reviews auth header pattern |
-| 3 | Implement `api-client/hooks.ts` — convenience query/mutation hooks | 20m | Task 2 | ✅ Yes | Mechanical — wrap tRPC procedures in hooks |
-| 4 | Implement `api-client/utils.ts` — token getter, error extraction | 15m | Task 2 | ✅ Yes | Utility functions |
-| 5 | Implement `hooks/useAuth.ts` and `hooks/useAuth.native.ts` | 25m | PRD-006 (auth client) | 🟡 Partial | Human reviews platform divergence pattern |
-| 6 | Implement `hooks/useUser.ts` | 10m | Task 5 | ✅ Yes | Simple wrapper |
-| 7 | Implement `ui/Button.tsx` and `ui/Input.tsx` scaffolding | 20m | Task 1 | ✅ Yes | Minimal components |
-| 8 | Create index files and re-exports | 10m | Tasks 2-7 | ✅ Yes | Re-exports |
-| 9 | Write unit tests for hooks and utilities | 30m | Tasks 3-6 | ✅ Yes | Test hook return types, error extraction |
-| 10 | Verify cross-workspace import in apps/web | 15m | Task 8 | ❌ No | Manual — import in web, type-check |
+| #   | Task                                                               | Estimate | Dependencies                     | Claude Code Candidate? | Notes                                                     |
+| --- | ------------------------------------------------------------------ | -------- | -------------------------------- | ---------------------- | --------------------------------------------------------- |
+| 1   | Update `packages/shared/package.json` with tRPC + React Query deps | 10m      | PRD-001                          | ✅ Yes                 | Add dependencies                                          |
+| 2   | Implement `api-client/client.ts` — tRPC React client + factory     | 30m      | Task 1, PRD-005 (AppRouter type) | 🟡 Partial             | AI generates from spec, human reviews auth header pattern |
+| 3   | Implement `api-client/hooks.ts` — convenience query/mutation hooks | 20m      | Task 2                           | ✅ Yes                 | Mechanical — wrap tRPC procedures in hooks                |
+| 4   | Implement `api-client/utils.ts` — token getter, error extraction   | 15m      | Task 2                           | ✅ Yes                 | Utility functions                                         |
+| 5   | Implement `hooks/useAuth.ts` and `hooks/useAuth.native.ts`         | 25m      | PRD-006 (auth client)            | 🟡 Partial             | Human reviews platform divergence pattern                 |
+| 6   | Implement `hooks/useUser.ts`                                       | 10m      | Task 5                           | ✅ Yes                 | Simple wrapper                                            |
+| 7   | Implement `ui/Button.tsx` and `ui/Input.tsx` scaffolding           | 20m      | Task 1                           | ✅ Yes                 | Minimal components                                        |
+| 8   | Create index files and re-exports                                  | 10m      | Tasks 2-7                        | ✅ Yes                 | Re-exports                                                |
+| 9   | Write unit tests for hooks and utilities                           | 30m      | Tasks 3-6                        | ✅ Yes                 | Test hook return types, error extraction                  |
+| 10  | Verify cross-workspace import in apps/web                          | 15m      | Task 8                           | ❌ No                  | Manual — import in web, type-check                        |
 
 ### Claude Code Task Annotations
 
 **Task 2 (tRPC Client)**:
+
 - **Context needed**: tRPC v11 React client API. `AppRouter` type location. `httpBatchLink` config. Auth header pattern from spec.
 - **Constraints**: The `getToken` parameter must be optional (not all calls require auth). Do NOT hard-code the base URL — it's passed as a parameter. Export both `trpc` (for direct use) and `createTRPCClient` (factory).
 - **Done state**: Type-checks clean. `trpc.projects.list.useQuery()` infers correct return type.
 - **Verification command**: `cd packages/shared && bun type-check`
 
 **Task 7 (UI Components)**:
+
 - **Context needed**: These are scaffolding, not a design system. Keep minimal — demonstrate the pattern, not production styling.
 - **Constraints**: Use plain React (no Tailwind, no styled-components). Components should accept standard HTML props via `ComponentPropsWithoutRef`. Include `isLoading` prop on Button. Include `error` prop on Input.
 - **Done state**: Components render without errors. Type-checks clean.
@@ -262,11 +268,11 @@ packages/shared/
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | Hook return types, error extraction utils, component rendering | Bun test | 10-15 |
-| Integration | tRPC client connects to running API | Manual | 1-2 |
-| E2E | N/A (covered by PRD-010 E2E) | — | 0 |
+| Level       | What's Tested                                                  | Tool     | Count (approx) |
+| ----------- | -------------------------------------------------------------- | -------- | -------------- |
+| Unit        | Hook return types, error extraction utils, component rendering | Bun test | 10-15          |
+| Integration | tRPC client connects to running API                            | Manual   | 1-2            |
+| E2E         | N/A (covered by PRD-010 E2E)                                   | —        | 0              |
 
 ### Key Test Scenarios
 
@@ -281,12 +287,12 @@ packages/shared/
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Bundle size | api-client package < 10KB (excluding React Query) | Build output size |
-| Type inference speed | tRPC autocompletion in VS Code < 2s | Manual DX check |
-| Tree-shaking | Unused hooks don't end up in app bundles | Build analysis |
-| Platform compat | Hooks work in React 19 (web) and React Native (Expo) | Type-check in both contexts |
+| Requirement          | Target                                               | How Verified                |
+| -------------------- | ---------------------------------------------------- | --------------------------- |
+| Bundle size          | api-client package < 10KB (excluding React Query)    | Build output size           |
+| Type inference speed | tRPC autocompletion in VS Code < 2s                  | Manual DX check             |
+| Tree-shaking         | Unused hooks don't end up in app bundles             | Build analysis              |
+| Platform compat      | Hooks work in React 19 (web) and React Native (Expo) | Type-check in both contexts |
 
 ---
 
@@ -304,16 +310,16 @@ packages/shared/
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should `getToken` be part of `createTRPCClient` or set via a React context? | Affects how mobile/desktop inject their token getters | Frontend lead | Resolved — parameter on factory. Each platform passes its own getter. |
-| 2 | Do we need React Query `defaultOptions` in the shared package or per-app? | Affects retry behavior, stale time defaults | Frontend lead | Open — start with defaults, let apps override. |
-| 3 | Should UI components use Tailwind or be unstyled? | Affects cross-platform compat (RN doesn't use Tailwind natively) | Design/Frontend | Resolved — unstyled scaffolding. Apps style them per-platform. |
+| #   | Question                                                                    | Impact                                                           | Owner           | Status                                                                |
+| --- | --------------------------------------------------------------------------- | ---------------------------------------------------------------- | --------------- | --------------------------------------------------------------------- |
+| 1   | Should `getToken` be part of `createTRPCClient` or set via a React context? | Affects how mobile/desktop inject their token getters            | Frontend lead   | Resolved — parameter on factory. Each platform passes its own getter. |
+| 2   | Do we need React Query `defaultOptions` in the shared package or per-app?   | Affects retry behavior, stale time defaults                      | Frontend lead   | Open — start with defaults, let apps override.                        |
+| 3   | Should UI components use Tailwind or be unstyled?                           | Affects cross-platform compat (RN doesn't use Tailwind natively) | Design/Frontend | Resolved — unstyled scaffolding. Apps style them per-platform.        |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

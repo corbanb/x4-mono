@@ -23,18 +23,18 @@ This PRD establishes the testing infrastructure, patterns, and conventions that 
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| Test runner works | `bun test` runs across all workspaces via Turbo | Zero configuration issues |
-| Test pyramid enforced | Unit 60-70%, Integration 20-30%, E2E 5-10% | Proportions documented and reviewed |
-| tRPC test pattern | `createCaller` + `createTestContext` pattern works | Example test passes |
-| Hono test pattern | `app.request()` integration tests work | Example test passes |
-| Playwright setup | E2E tests run against local dev server | Auth flow test passes |
-| Test isolation | Tests don't share state or interfere with each other | Parallel test execution works |
-| Coverage | Coverage reports generated and accessible | `bun test --coverage` works |
-| Neon branch tests | Integration tests run against Neon branch DB | CI uses branch URL |
-| Mock patterns | AI providers, external services have mock examples | Mock factory exists |
-| CI integration | `bun turbo test` passes in CI pipeline | Green CI on clean code |
+| Criteria              | Measurement                                          | Target                              |
+| --------------------- | ---------------------------------------------------- | ----------------------------------- |
+| Test runner works     | `bun test` runs across all workspaces via Turbo      | Zero configuration issues           |
+| Test pyramid enforced | Unit 60-70%, Integration 20-30%, E2E 5-10%           | Proportions documented and reviewed |
+| tRPC test pattern     | `createCaller` + `createTestContext` pattern works   | Example test passes                 |
+| Hono test pattern     | `app.request()` integration tests work               | Example test passes                 |
+| Playwright setup      | E2E tests run against local dev server               | Auth flow test passes               |
+| Test isolation        | Tests don't share state or interfere with each other | Parallel test execution works       |
+| Coverage              | Coverage reports generated and accessible            | `bun test --coverage` works         |
+| Neon branch tests     | Integration tests run against Neon branch DB         | CI uses branch URL                  |
+| Mock patterns         | AI providers, external services have mock examples   | Mock factory exists                 |
+| CI integration        | `bun turbo test` passes in CI pipeline               | Green CI on clean code              |
 
 ---
 
@@ -100,18 +100,18 @@ Every other PRD's "Testing Strategy" section references the patterns established
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
-| PRD-001 (Monorepo Foundation) | Turbo test task, bunfig.toml |
-| PRD-003 (Database) | Neon branching for test database isolation |
+| Depends On                    | What It Provides                           |
+| ----------------------------- | ------------------------------------------ |
+| PRD-001 (Monorepo Foundation) | Turbo test task, bunfig.toml               |
+| PRD-003 (Database)            | Neon branching for test database isolation |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
-| Every PRD (002-013) | Test patterns, helpers, mock factories |
-| PRD-014 (CI/CD) | `bun turbo test` in CI pipeline, Playwright in E2E job |
-| Developers | Day-to-day test writing following established patterns |
+| Consumer            | How It's Used                                          |
+| ------------------- | ------------------------------------------------------ |
+| Every PRD (002-013) | Test patterns, helpers, mock factories                 |
+| PRD-014 (CI/CD)     | `bun turbo test` in CI pipeline, Playwright in E2E job |
+| Developers          | Day-to-day test writing following established patterns |
 
 ---
 
@@ -140,6 +140,7 @@ Every other PRD's "Testing Strategy" section references the patterns established
 ### 5.3 API Contracts / Interfaces
 
 **Test Helpers**:
+
 ```typescript
 // apps/api/test/helpers.ts
 
@@ -165,12 +166,13 @@ export function createTestCaller(ctx: Context) {
 ```
 
 **Mock Factories**:
+
 ```typescript
 // apps/api/test/mocks/ai.ts
 export function mockAIProvider() {
   return {
     generateText: async () => ({
-      text: "Mock AI response",
+      text: 'Mock AI response',
       usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30 },
     }),
   };
@@ -188,32 +190,34 @@ export function mockRedis() {
 ```
 
 **Test Fixtures**:
+
 ```typescript
 // apps/api/test/fixtures.ts
 export const testUser = {
-  id: "test-user-1",
-  email: "test@example.com",
-  name: "Test User",
-  role: "user" as const,
+  id: 'test-user-1',
+  email: 'test@example.com',
+  name: 'Test User',
+  role: 'user' as const,
 };
 
 export const testAdmin = {
-  id: "test-admin-1",
-  email: "admin@example.com",
-  name: "Test Admin",
-  role: "admin" as const,
+  id: 'test-admin-1',
+  email: 'admin@example.com',
+  name: 'Test Admin',
+  role: 'admin' as const,
 };
 
 export const testProject = {
-  id: "test-project-1",
-  name: "Test Project",
-  description: "A test project",
-  ownerId: "test-user-1",
-  status: "active",
+  id: 'test-project-1',
+  name: 'Test Project',
+  description: 'A test project',
+  ownerId: 'test-user-1',
+  status: 'active',
 };
 ```
 
 **React Testing Library Pattern**:
+
 ```typescript
 // apps/web/test/helpers.tsx — renderWithProviders helper
 import { render } from "@testing-library/react";
@@ -230,47 +234,52 @@ export function renderWithProviders(ui: React.ReactElement) {
 ```
 
 **Playwright Auth Bypass**:
+
 ```typescript
 // apps/web/e2e/fixtures/auth.ts — fixture that injects auth token, skips login UI
-import { test as base } from "@playwright/test";
+import { test as base } from '@playwright/test';
 
 export const test = base.extend({
   authenticatedPage: async ({ page }, use) => {
     // Set auth cookie/token before navigating — bypasses login UI for non-auth tests
-    await page.context().addCookies([{
-      name: "session_token",
-      value: "test-session-token",
-      domain: "localhost",
-      path: "/",
-    }]);
+    await page.context().addCookies([
+      {
+        name: 'session_token',
+        value: 'test-session-token',
+        domain: 'localhost',
+        path: '/',
+      },
+    ]);
     await use(page);
   },
 });
 ```
 
 **Mobile/Desktop Mock Cross-References**:
+
 - **Mobile (Expo) mocks**: See PRD-011 Section 7 "Mock Patterns" for `expo-secure-store` in-memory mock
 - **Desktop (Electron) mocks**: See PRD-012 Section 7 "Mock Patterns" for `safeStorage` and `ipcMain` mocks
 
 **Playwright Config**:
+
 ```typescript
 // apps/web/playwright.config.ts
-import { defineConfig } from "@playwright/test";
+import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  testDir: "./e2e",
+  testDir: './e2e',
   use: {
-    baseURL: "http://localhost:3000",
-    trace: "on-first-retry",
+    baseURL: 'http://localhost:3000',
+    trace: 'on-first-retry',
   },
   webServer: [
     {
-      command: "bun turbo dev --filter=api",
+      command: 'bun turbo dev --filter=api',
       port: 3002,
       reuseExistingServer: true,
     },
     {
-      command: "bun turbo dev --filter=web",
+      command: 'bun turbo dev --filter=web',
       port: 3000,
       reuseExistingServer: true,
     },
@@ -308,32 +317,34 @@ turbo.json                    # Test task outputs: coverage/**
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Configure `bunfig.toml` test settings (coverage dir, options) | 10m | PRD-001 | ✅ Yes | Config |
-| 2 | Verify Turbo `test` task runs across all workspaces | 10m | Task 1 | ❌ No | Manual verification |
-| 3 | Create `apps/api/test/helpers.ts` — createTestContext, createTestCaller | 25m | PRD-005 (trpc, context type) | 🟡 Partial | Core pattern — human reviews context mock |
-| 4 | Create `apps/api/test/fixtures.ts` — test data | 15m | PRD-002 (types) | ✅ Yes | Static data objects |
-| 5 | Create `apps/api/test/mocks/ai.ts` — mock AI provider | 15m | PRD-009 (AI types) | ✅ Yes | Simple mock |
-| 6 | Create `apps/api/test/mocks/redis.ts` — mock Redis | 15m | PRD-008 (cache interface) | ✅ Yes | In-memory Map-based mock |
-| 7 | Create `apps/api/test/setup.ts` — global test setup | 10m | Tasks 3-6 | ✅ Yes | Env vars, DB setup |
-| 8 | Write example tRPC router test using createCaller pattern | 20m | Task 3 | ✅ Yes | Demonstrates the pattern |
-| 9 | Write example Hono integration test using `app.request()` | 15m | PRD-005 | ✅ Yes | Demonstrates the pattern |
-| 10 | Install Playwright and create `playwright.config.ts` | 15m | PRD-010 | ✅ Yes | Config + install |
-| 11 | Write Playwright E2E spec: auth flow | 25m | Task 10, PRD-010 | 🟡 Partial | AI generates, human verifies selectors and flow |
-| 12 | Write Playwright E2E spec: project CRUD | 20m | Task 11 | 🟡 Partial | Same |
-| 13 | Document test conventions in CONTRIBUTING.md or dedicated doc | 20m | All above | ✅ Yes | Patterns, when to use each level, naming conventions |
-| 14 | Verify `bun turbo test` runs all tests green | 15m | All above | ❌ No | Manual verification |
+| #   | Task                                                                    | Estimate | Dependencies                 | Claude Code Candidate? | Notes                                                |
+| --- | ----------------------------------------------------------------------- | -------- | ---------------------------- | ---------------------- | ---------------------------------------------------- |
+| 1   | Configure `bunfig.toml` test settings (coverage dir, options)           | 10m      | PRD-001                      | ✅ Yes                 | Config                                               |
+| 2   | Verify Turbo `test` task runs across all workspaces                     | 10m      | Task 1                       | ❌ No                  | Manual verification                                  |
+| 3   | Create `apps/api/test/helpers.ts` — createTestContext, createTestCaller | 25m      | PRD-005 (trpc, context type) | 🟡 Partial             | Core pattern — human reviews context mock            |
+| 4   | Create `apps/api/test/fixtures.ts` — test data                          | 15m      | PRD-002 (types)              | ✅ Yes                 | Static data objects                                  |
+| 5   | Create `apps/api/test/mocks/ai.ts` — mock AI provider                   | 15m      | PRD-009 (AI types)           | ✅ Yes                 | Simple mock                                          |
+| 6   | Create `apps/api/test/mocks/redis.ts` — mock Redis                      | 15m      | PRD-008 (cache interface)    | ✅ Yes                 | In-memory Map-based mock                             |
+| 7   | Create `apps/api/test/setup.ts` — global test setup                     | 10m      | Tasks 3-6                    | ✅ Yes                 | Env vars, DB setup                                   |
+| 8   | Write example tRPC router test using createCaller pattern               | 20m      | Task 3                       | ✅ Yes                 | Demonstrates the pattern                             |
+| 9   | Write example Hono integration test using `app.request()`               | 15m      | PRD-005                      | ✅ Yes                 | Demonstrates the pattern                             |
+| 10  | Install Playwright and create `playwright.config.ts`                    | 15m      | PRD-010                      | ✅ Yes                 | Config + install                                     |
+| 11  | Write Playwright E2E spec: auth flow                                    | 25m      | Task 10, PRD-010             | 🟡 Partial             | AI generates, human verifies selectors and flow      |
+| 12  | Write Playwright E2E spec: project CRUD                                 | 20m      | Task 11                      | 🟡 Partial             | Same                                                 |
+| 13  | Document test conventions in CONTRIBUTING.md or dedicated doc           | 20m      | All above                    | ✅ Yes                 | Patterns, when to use each level, naming conventions |
+| 14  | Verify `bun turbo test` runs all tests green                            | 15m      | All above                    | ❌ No                  | Manual verification                                  |
 
 ### Claude Code Task Annotations
 
 **Task 3 (Test Helpers)**:
+
 - **Context needed**: tRPC context type from PRD-005. `appRouter` for `createCaller`. Better Auth session shape. Database client.
 - **Constraints**: `createTestContext` must support: no auth (anonymous), user auth, admin auth. Must use the real `Context` type from tRPC. `createTestCaller` wraps `appRouter.createCaller` — don't reinvent it.
 - **Done state**: Can write `const caller = createTestCaller(await createTestContext({ userId: "1", role: "admin" }))` and call any router procedure.
 - **Verification command**: `cd apps/api && bun test`
 
 **Task 8 (Example Router Test)**:
+
 - **Context needed**: `createTestCaller`, `createTestContext` from Task 3. Projects router from PRD-005. Bun test syntax (`import { describe, test, expect } from "bun:test"`).
 - **Constraints**: Test at minimum: create project (valid input), create project (unauthorized), get project (not found). Use `beforeAll`/`afterAll` for setup/teardown. Do NOT depend on seed data — create what you need in setup.
 - **Done state**: Example test demonstrates the full pattern. Other PRDs can copy this pattern.
@@ -352,6 +363,7 @@ This PRD IS the testing strategy — it's self-referential. The deliverable is t
 **Test location**: Co-located with source code for unit tests (`__tests__/` directory or adjacent `.test.ts` files). E2E tests in `e2e/` directory.
 
 **When to use each level**:
+
 - **Unit test**: Pure functions, validators, formatters, business logic with no I/O
 - **Integration test**: Database queries, tRPC procedures with real/branched DB, auth flows
 - **E2E test**: Critical user journeys only (signup, login, core feature). Max 5-10 per app.
@@ -364,13 +376,13 @@ This PRD IS the testing strategy — it's self-referential. The deliverable is t
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Unit test speed | < 5s for all unit tests in a workspace | `time bun test` |
-| Integration test speed | < 30s with Neon branch | CI timing |
-| E2E test speed | < 60s for full auth + CRUD flow | Playwright timing |
-| Coverage threshold | > 80% line coverage for packages/* | `bun test --coverage` |
-| Test isolation | Tests pass in any order, parallel execution works | `bun test` (parallel by default) |
+| Requirement            | Target                                            | How Verified                     |
+| ---------------------- | ------------------------------------------------- | -------------------------------- |
+| Unit test speed        | < 5s for all unit tests in a workspace            | `time bun test`                  |
+| Integration test speed | < 30s with Neon branch                            | CI timing                        |
+| E2E test speed         | < 60s for full auth + CRUD flow                   | Playwright timing                |
+| Coverage threshold     | > 80% line coverage for packages/\*               | `bun test --coverage`            |
+| Test isolation         | Tests pass in any order, parallel execution works | `bun test` (parallel by default) |
 
 ---
 
@@ -391,16 +403,16 @@ This PRD IS the testing strategy — it's self-referential. The deliverable is t
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should we enforce minimum coverage thresholds in CI? | Fails CI if coverage drops | QA/Arch | Open — consider 80% for `packages/*`, no threshold for `apps/*` initially |
-| 2 | Do we need snapshot testing for any components? | Maintenance overhead vs. regression safety | Frontend | Resolved — no snapshots in boilerplate. Fragile with UI changes. |
-| 3 | Should integration tests use a shared Neon branch or create per-test-run branches? | Isolation vs. branch limit | Architect | Resolved — shared branch per PR (from PRD-014 CI). Per-test-run is overkill. |
+| #   | Question                                                                           | Impact                                     | Owner     | Status                                                                       |
+| --- | ---------------------------------------------------------------------------------- | ------------------------------------------ | --------- | ---------------------------------------------------------------------------- |
+| 1   | Should we enforce minimum coverage thresholds in CI?                               | Fails CI if coverage drops                 | QA/Arch   | Open — consider 80% for `packages/*`, no threshold for `apps/*` initially    |
+| 2   | Do we need snapshot testing for any components?                                    | Maintenance overhead vs. regression safety | Frontend  | Resolved — no snapshots in boilerplate. Fragile with UI changes.             |
+| 3   | Should integration tests use a shared Neon branch or create per-test-run branches? | Isolation vs. branch limit                 | Architect | Resolved — shared branch per PR (from PRD-014 CI). Per-test-run is overkill. |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

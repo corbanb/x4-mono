@@ -23,18 +23,18 @@ This PRD establishes two interlocking systems: (1) `AppError` — a single error
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| Consistent error shape | All API errors return `{ code, message, details?, requestId? }` | Zero unstructured error responses |
-| Error mapping | Every `AppError` code maps to correct tRPC code | Mapping table is complete and tested |
-| Convenience constructors | `Errors.notFound("Project")` produces correct AppError | All common error cases have constructors |
-| Global error handler | Uncaught exceptions return 500 with requestId (not stack traces) | No raw stack traces in production responses |
-| Zod error surfacing | Invalid tRPC input returns flattened Zod errors | Client can display per-field validation errors |
-| Structured logs | All logs are JSON with timestamp, level, message | `pino-pretty` in dev, raw JSON in prod |
-| Request tracing | Every request has a unique `requestId` in logs and error responses | requestId appears in both log output and HTTP response |
-| Request logging | Every request logs: method, path, status, duration, userId | Middleware captures all fields |
-| Child loggers | `aiLogger`, `dbLogger`, `authLogger` available for domain-specific logging | Logs include `module` field |
-| Client error boundary | React ErrorBoundary catches rendering errors | Fallback UI renders on error |
+| Criteria                 | Measurement                                                                | Target                                                 |
+| ------------------------ | -------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Consistent error shape   | All API errors return `{ code, message, details?, requestId? }`            | Zero unstructured error responses                      |
+| Error mapping            | Every `AppError` code maps to correct tRPC code                            | Mapping table is complete and tested                   |
+| Convenience constructors | `Errors.notFound("Project")` produces correct AppError                     | All common error cases have constructors               |
+| Global error handler     | Uncaught exceptions return 500 with requestId (not stack traces)           | No raw stack traces in production responses            |
+| Zod error surfacing      | Invalid tRPC input returns flattened Zod errors                            | Client can display per-field validation errors         |
+| Structured logs          | All logs are JSON with timestamp, level, message                           | `pino-pretty` in dev, raw JSON in prod                 |
+| Request tracing          | Every request has a unique `requestId` in logs and error responses         | requestId appears in both log output and HTTP response |
+| Request logging          | Every request logs: method, path, status, duration, userId                 | Middleware captures all fields                         |
+| Child loggers            | `aiLogger`, `dbLogger`, `authLogger` available for domain-specific logging | Logs include `module` field                            |
+| Client error boundary    | React ErrorBoundary catches rendering errors                               | Fallback UI renders on error                           |
 
 ---
 
@@ -43,6 +43,7 @@ This PRD establishes two interlocking systems: (1) `AppError` — a single error
 ### In Scope
 
 **Error Handling**:
+
 - `apps/api/src/lib/errors.ts` — `AppError` class with:
   - Constructor: `code: ErrorCode`, `message: string`, `details?: Record<string, unknown>`
   - `.toTRPCError()` method mapping to tRPC error codes
@@ -56,6 +57,7 @@ This PRD establishes two interlocking systems: (1) `AppError` — a single error
 - `apps/web/src/lib/error-boundary.tsx` — React ErrorBoundary component pattern
 
 **Logging**:
+
 - `apps/api/src/lib/logger.ts` — Pino setup
   - JSON output in production, `pino-pretty` in development
   - Child loggers: `aiLogger`, `dbLogger`, `authLogger`
@@ -98,19 +100,19 @@ apps/api/src/middleware/logger.ts   ← This PRD (request logging)
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
-| PRD-002 (Shared Types) | `ErrorCodes`, `ErrorCode`, `APIErrorResponse` types |
-| PRD-005 (API Server) | Hono app to attach `onError` handler and middleware; tRPC to update error formatter |
+| Depends On             | What It Provides                                                                    |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| PRD-002 (Shared Types) | `ErrorCodes`, `ErrorCode`, `APIErrorResponse` types                                 |
+| PRD-005 (API Server)   | Hono app to attach `onError` handler and middleware; tRPC to update error formatter |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
-| All tRPC routers | `throw Errors.notFound("Project")` instead of raw `TRPCError` |
+| Consumer                 | How It's Used                                                 |
+| ------------------------ | ------------------------------------------------------------- |
+| All tRPC routers         | `throw Errors.notFound("Project")` instead of raw `TRPCError` |
 | PRD-009 (AI Integration) | `aiLogger.info({ model, tokens, cost })` for AI call tracking |
-| PRD-014 (CI/CD) | Log format determines what's queryable in log aggregation |
-| PRD-010 (Web App) | `ErrorBoundary` component pattern for React error handling |
+| PRD-014 (CI/CD)          | Log format determines what's queryable in log aggregation     |
+| PRD-010 (Web App)        | `ErrorBoundary` component pattern for React error handling    |
 
 ---
 
@@ -119,6 +121,7 @@ apps/api/src/middleware/logger.ts   ← This PRD (request logging)
 ### 5.1 Data Model / Types
 
 Uses types from PRD-002:
+
 ```typescript
 // Already defined in packages/shared/types/errors.ts
 export const ErrorCodes = { ... } as const;
@@ -149,6 +152,7 @@ export type APIErrorResponse = { code: ErrorCode; message: string; details?; req
 ### 5.3 API Contracts / Interfaces
 
 **AppError class**:
+
 ```typescript
 // apps/api/src/lib/errors.ts
 export class AppError extends Error {
@@ -174,43 +178,53 @@ export const Errors = {
 ```
 
 **Error code to tRPC code mapping**:
+
 ```typescript
-const trpcCodeMap: Record<ErrorCode, TRPCError["code"]> = {
-  UNAUTHORIZED: "UNAUTHORIZED",
-  FORBIDDEN: "FORBIDDEN",
-  NOT_FOUND: "NOT_FOUND",
-  CONFLICT: "CONFLICT",
-  VALIDATION_ERROR: "BAD_REQUEST",
-  BAD_REQUEST: "BAD_REQUEST",
-  INTERNAL_ERROR: "INTERNAL_SERVER_ERROR",
-  SERVICE_UNAVAILABLE: "INTERNAL_SERVER_ERROR",
-  RATE_LIMITED: "TOO_MANY_REQUESTS",
+const trpcCodeMap: Record<ErrorCode, TRPCError['code']> = {
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  FORBIDDEN: 'FORBIDDEN',
+  NOT_FOUND: 'NOT_FOUND',
+  CONFLICT: 'CONFLICT',
+  VALIDATION_ERROR: 'BAD_REQUEST',
+  BAD_REQUEST: 'BAD_REQUEST',
+  INTERNAL_ERROR: 'INTERNAL_SERVER_ERROR',
+  SERVICE_UNAVAILABLE: 'INTERNAL_SERVER_ERROR',
+  RATE_LIMITED: 'TOO_MANY_REQUESTS',
 };
 ```
 
 **Hono global error handler**:
+
 ```typescript
 app.onError((err, c) => {
-  const requestId = c.get("requestId") || crypto.randomUUID();
+  const requestId = c.get('requestId') || crypto.randomUUID();
   if (err instanceof AppError) {
     logger.warn({ err, requestId }, `AppError: ${err.code}`);
-    return c.json({ code: err.code, message: err.message, details: err.details, requestId }, httpStatus);
+    return c.json(
+      { code: err.code, message: err.message, details: err.details, requestId },
+      httpStatus,
+    );
   }
-  logger.error({ err, requestId }, "Unhandled error");
-  return c.json({ code: "INTERNAL_ERROR", message: "An unexpected error occurred", requestId }, 500);
+  logger.error({ err, requestId }, 'Unhandled error');
+  return c.json(
+    { code: 'INTERNAL_ERROR', message: 'An unexpected error occurred', requestId },
+    500,
+  );
 });
 ```
 
 **Logger exports**:
+
 ```typescript
 // apps/api/src/lib/logger.ts
-export const logger: pino.Logger;      // Root logger
-export const aiLogger: pino.Logger;    // logger.child({ module: "ai" })
-export const dbLogger: pino.Logger;    // logger.child({ module: "database" })
-export const authLogger: pino.Logger;  // logger.child({ module: "auth" })
+export const logger: pino.Logger; // Root logger
+export const aiLogger: pino.Logger; // logger.child({ module: "ai" })
+export const dbLogger: pino.Logger; // logger.child({ module: "database" })
+export const authLogger: pino.Logger; // logger.child({ module: "auth" })
 ```
 
 **Request log shape** (JSON in production):
+
 ```json
 {
   "level": "info",
@@ -247,30 +261,32 @@ apps/web/src/lib/
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Implement `apps/api/src/lib/errors.ts` — AppError class + Errors constructors | 30m | PRD-002 (error types) | ✅ Yes | Well-specified, mechanical implementation |
-| 2 | Implement tRPC code mapping table and `toTRPCError()` method | 15m | Task 1 | ✅ Yes | Mapping is fully specified |
-| 3 | Implement `apps/api/src/lib/logger.ts` — Pino setup + child loggers | 20m | PRD-005 | ✅ Yes | Standard Pino config |
-| 4 | Implement `apps/api/src/middleware/logger.ts` — request logging middleware | 30m | Task 3 | 🟡 Partial | AI generates, human reviews what gets logged and at what level |
-| 5 | Add `app.onError()` to `apps/api/src/index.ts` | 15m | Tasks 1, 3 | ✅ Yes | Plug into existing Hono app |
-| 6 | Update `apps/api/src/trpc.ts` error formatter | 15m | Task 1 | ✅ Yes | Add AppError + Zod flattening to existing formatter |
-| 7 | Wire requestLogger middleware into Hono app | 10m | Task 4 | ✅ Yes | Add `app.use("*", requestLogger)` |
-| 8 | Implement `apps/web/src/lib/error-boundary.tsx` | 15m | None | ✅ Yes | Standard React ErrorBoundary |
-| 9 | Refactor existing routers to use `Errors.*` instead of raw `TRPCError` | 20m | Task 1 | ✅ Yes | Find-and-replace pattern |
-| 10 | Write unit tests for AppError, error mapping, Errors constructors | 30m | Tasks 1-2 | ✅ Yes | Strong AI candidate — test every code mapping |
-| 11 | Write integration test for global error handler | 20m | Tasks 5, 7 | ✅ Yes | Throw AppError in handler, verify JSON response |
-| 12 | Verify Pino works with Bun bundler (external or bun-plugin-pino) | 15m | Task 3 | ❌ No | Manual — build and verify log output |
+| #   | Task                                                                          | Estimate | Dependencies          | Claude Code Candidate? | Notes                                                          |
+| --- | ----------------------------------------------------------------------------- | -------- | --------------------- | ---------------------- | -------------------------------------------------------------- |
+| 1   | Implement `apps/api/src/lib/errors.ts` — AppError class + Errors constructors | 30m      | PRD-002 (error types) | ✅ Yes                 | Well-specified, mechanical implementation                      |
+| 2   | Implement tRPC code mapping table and `toTRPCError()` method                  | 15m      | Task 1                | ✅ Yes                 | Mapping is fully specified                                     |
+| 3   | Implement `apps/api/src/lib/logger.ts` — Pino setup + child loggers           | 20m      | PRD-005               | ✅ Yes                 | Standard Pino config                                           |
+| 4   | Implement `apps/api/src/middleware/logger.ts` — request logging middleware    | 30m      | Task 3                | 🟡 Partial             | AI generates, human reviews what gets logged and at what level |
+| 5   | Add `app.onError()` to `apps/api/src/index.ts`                                | 15m      | Tasks 1, 3            | ✅ Yes                 | Plug into existing Hono app                                    |
+| 6   | Update `apps/api/src/trpc.ts` error formatter                                 | 15m      | Task 1                | ✅ Yes                 | Add AppError + Zod flattening to existing formatter            |
+| 7   | Wire requestLogger middleware into Hono app                                   | 10m      | Task 4                | ✅ Yes                 | Add `app.use("*", requestLogger)`                              |
+| 8   | Implement `apps/web/src/lib/error-boundary.tsx`                               | 15m      | None                  | ✅ Yes                 | Standard React ErrorBoundary                                   |
+| 9   | Refactor existing routers to use `Errors.*` instead of raw `TRPCError`        | 20m      | Task 1                | ✅ Yes                 | Find-and-replace pattern                                       |
+| 10  | Write unit tests for AppError, error mapping, Errors constructors             | 30m      | Tasks 1-2             | ✅ Yes                 | Strong AI candidate — test every code mapping                  |
+| 11  | Write integration test for global error handler                               | 20m      | Tasks 5, 7            | ✅ Yes                 | Throw AppError in handler, verify JSON response                |
+| 12  | Verify Pino works with Bun bundler (external or bun-plugin-pino)              | 15m      | Task 3                | ❌ No                  | Manual — build and verify log output                           |
 
 ### Claude Code Task Annotations
 
 **Task 1 (AppError)**:
+
 - **Context needed**: `ErrorCode` type from PRD-002. tRPC error codes. The full Errors convenience object from the spec.
 - **Constraints**: `AppError` must extend `Error`. `toTRPCError()` must be an instance method. `Errors` object must be a plain object with factory functions (not a class). Do NOT catch errors silently — always re-throw or log.
 - **Done state**: `AppError` constructible with all error codes. `toTRPCError()` returns correct tRPC code for every mapping. All `Errors.*` constructors produce valid AppErrors.
 - **Verification command**: `cd apps/api && bun test`
 
 **Task 10 (Tests)**:
+
 - **Context needed**: All error codes from PRD-002. The mapping table. Every `Errors.*` constructor.
 - **Constraints**: Test EVERY entry in the tRPC code mapping table. Test that `Errors.notFound("Project")` produces `{ code: "NOT_FOUND", message: "Project not found" }`. Test that `toTRPCError()` maps correctly. Test that unknown error codes fall back to `INTERNAL_SERVER_ERROR`.
 - **Done state**: 100% coverage of AppError class and Errors object.
@@ -282,11 +298,11 @@ apps/web/src/lib/
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | AppError construction, code mapping, Errors constructors, Pino child loggers | Bun test | 20-25 |
-| Integration | Global error handler response shape, request logging output | Bun test + Hono `app.request()` | 5-8 |
-| E2E | N/A | — | 0 |
+| Level       | What's Tested                                                                | Tool                            | Count (approx) |
+| ----------- | ---------------------------------------------------------------------------- | ------------------------------- | -------------- |
+| Unit        | AppError construction, code mapping, Errors constructors, Pino child loggers | Bun test                        | 20-25          |
+| Integration | Global error handler response shape, request logging output                  | Bun test + Hono `app.request()` | 5-8            |
+| E2E         | N/A                                                                          | —                               | 0              |
 
 ### Key Test Scenarios
 
@@ -303,13 +319,13 @@ apps/web/src/lib/
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Logging latency | Pino logging adds < 1ms per request | Benchmark with and without middleware |
-| No stack traces in prod | 500 responses never include stack traces | Integration test checks response body |
-| RequestId in all errors | Every error response includes `requestId` | Integration tests verify field exists |
-| Log format | JSON in production, pretty-printed in development | Check `NODE_ENV` toggle |
-| Pino bundle compat | Pino works in Bun production build | Manual build verification |
+| Requirement             | Target                                            | How Verified                          |
+| ----------------------- | ------------------------------------------------- | ------------------------------------- |
+| Logging latency         | Pino logging adds < 1ms per request               | Benchmark with and without middleware |
+| No stack traces in prod | 500 responses never include stack traces          | Integration test checks response body |
+| RequestId in all errors | Every error response includes `requestId`         | Integration tests verify field exists |
+| Log format              | JSON in production, pretty-printed in development | Check `NODE_ENV` toggle               |
+| Pino bundle compat      | Pino works in Bun production build                | Manual build verification             |
 
 ---
 
@@ -329,16 +345,16 @@ apps/web/src/lib/
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should we use `x-request-id` from load balancer or always generate our own? | Affects request tracing in distributed systems | Infra | Resolved — generate our own, prefer header if present |
-| 2 | Should error `details` be stripped in production for security? | Some details might expose internal state | Security | Open — default to including details, strip sensitive fields in onError handler |
-| 3 | Do we need log sampling for high-traffic endpoints? | Cost of log aggregation at scale | Infra | Open — defer to per-project. Pino supports sampling via custom levels. |
+| #   | Question                                                                    | Impact                                         | Owner    | Status                                                                         |
+| --- | --------------------------------------------------------------------------- | ---------------------------------------------- | -------- | ------------------------------------------------------------------------------ |
+| 1   | Should we use `x-request-id` from load balancer or always generate our own? | Affects request tracing in distributed systems | Infra    | Resolved — generate our own, prefer header if present                          |
+| 2   | Should error `details` be stripped in production for security?              | Some details might expose internal state       | Security | Open — default to including details, strip sensitive fields in onError handler |
+| 3   | Do we need log sampling for high-traffic endpoints?                         | Cost of log aggregation at scale               | Infra    | Open — defer to per-project. Pino supports sampling via custom levels.         |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

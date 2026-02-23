@@ -24,12 +24,15 @@ What is the change that we're proposing and/or doing?
 What becomes easier or more difficult to do because of this change?
 
 ### Positive
+
 - ...
 
 ### Negative
+
 - ...
 
 ### Neutral
+
 - ...
 ```
 
@@ -63,15 +66,18 @@ Use Node.js where required (Expo, Electron).
 ## Consequences
 
 ### Positive
+
 - Faster installs, builds, and test runs
 - Built-in TypeScript support (no transpilation)
 - Built-in test runner (no Jest/Vitest dependency)
 
 ### Negative
+
 - Smaller ecosystem than Node.js
 - Some npm packages may have compatibility issues
 - Team needs to learn Bun-specific APIs
 
 ### Neutral
+
 - Still need Node.js for Expo and Electron
 ```

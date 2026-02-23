@@ -62,40 +62,40 @@ railway service create docs
 
 **API service** — set build and start commands, plus environment variables:
 
-| Setting | Value |
-|---------|-------|
-| Build command | `bun install` |
+| Setting       | Value                                 |
+| ------------- | ------------------------------------- |
+| Build command | `bun install`                         |
 | Start command | `cd apps/api && bun run src/index.ts` |
-| Watch paths | `apps/api/**`, `packages/**` |
+| Watch paths   | `apps/api/**`, `packages/**`          |
 
-| Variable | Value |
-|----------|-------|
-| `DATABASE_URL` | Your Neon connection string |
-| `JWT_SECRET` | `openssl rand -base64 48` |
-| `BETTER_AUTH_SECRET` | `openssl rand -base64 48` |
-| `BETTER_AUTH_URL` | Your production API URL (e.g., `https://api.yourdomain.com`) |
-| `ANTHROPIC_API_KEY` | Your Claude API key |
-| `WEB_URL` | Your production web URL (e.g., `https://app.yourdomain.com`) |
-| `MARKETING_URL` | Your production marketing URL (e.g., `https://yourdomain.com`) |
-| `DOCS_URL` | Your production docs URL (e.g., `https://docs.yourdomain.com`) |
-| `NODE_ENV` | `production` |
-| `PORT` | `3002` (Railway sets `PORT` automatically, but explicit is safer) |
+| Variable             | Value                                                             |
+| -------------------- | ----------------------------------------------------------------- |
+| `DATABASE_URL`       | Your Neon connection string                                       |
+| `JWT_SECRET`         | `openssl rand -base64 48`                                         |
+| `BETTER_AUTH_SECRET` | `openssl rand -base64 48`                                         |
+| `BETTER_AUTH_URL`    | Your production API URL (e.g., `https://api.yourdomain.com`)      |
+| `ANTHROPIC_API_KEY`  | Your Claude API key                                               |
+| `WEB_URL`            | Your production web URL (e.g., `https://app.yourdomain.com`)      |
+| `MARKETING_URL`      | Your production marketing URL (e.g., `https://yourdomain.com`)    |
+| `DOCS_URL`           | Your production docs URL (e.g., `https://docs.yourdomain.com`)    |
+| `NODE_ENV`           | `production`                                                      |
+| `PORT`               | `3002` (Railway sets `PORT` automatically, but explicit is safer) |
 
 **Marketing service:**
 
-| Setting | Value |
-|---------|-------|
-| Build command | `bun install && cd apps/marketing && bun run build` |
+| Setting       | Value                                                      |
+| ------------- | ---------------------------------------------------------- |
+| Build command | `bun install && cd apps/marketing && bun run build`        |
 | Start command | `cd apps/marketing && npx next start --port ${PORT:-3001}` |
-| Watch paths | `apps/marketing/**`, `packages/**` |
+| Watch paths   | `apps/marketing/**`, `packages/**`                         |
 
 **Docs service:**
 
-| Setting | Value |
-|---------|-------|
-| Build command | `bun install && cd apps/docs && bun run build` |
+| Setting       | Value                                                 |
+| ------------- | ----------------------------------------------------- |
+| Build command | `bun install && cd apps/docs && bun run build`        |
 | Start command | `cd apps/docs && npx next start --port ${PORT:-3003}` |
-| Watch paths | `apps/docs/**`, `packages/**` |
+| Watch paths   | `apps/docs/**`, `packages/**`                         |
 
 ### Connect GitHub Repo
 
@@ -117,50 +117,50 @@ cd apps/web && vercel link
 
 ### Collect IDs
 
-| Value | Where to find it |
-|-------|------------------|
-| `VERCEL_TOKEN` | [vercel.com/account/tokens](https://vercel.com/account/tokens) — create a new token |
-| `VERCEL_ORG_ID` | Vercel dashboard > Settings > General > "Your ID" |
-| `VERCEL_PROJECT_ID_WEB` | `apps/web/.vercel/project.json` → `projectId` |
+| Value                   | Where to find it                                                                    |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| `VERCEL_TOKEN`          | [vercel.com/account/tokens](https://vercel.com/account/tokens) — create a new token |
+| `VERCEL_ORG_ID`         | Vercel dashboard > Settings > General > "Your ID"                                   |
+| `VERCEL_PROJECT_ID_WEB` | `apps/web/.vercel/project.json` → `projectId`                                       |
 
 ### Set Environment Variables in Vercel
 
 In the Vercel project, go to **Settings > Environment Variables** and add:
 
-| Variable | Value |
-|----------|-------|
+| Variable              | Value                                                        |
+| --------------------- | ------------------------------------------------------------ |
 | `NEXT_PUBLIC_API_URL` | Your production API URL (e.g., `https://api.yourdomain.com`) |
 
 ## 4. GitHub Actions Secrets
 
 Go to your GitHub repo > **Settings > Secrets and variables > Actions** and add:
 
-| Secret | Description |
-|--------|-------------|
-| `VERCEL_TOKEN` | Vercel personal access token (web deploys only) |
-| `VERCEL_ORG_ID` | Vercel team/org ID |
-| `VERCEL_PROJECT_ID_WEB` | Vercel project ID for `apps/web` |
+| Secret                  | Description                                     |
+| ----------------------- | ----------------------------------------------- |
+| `VERCEL_TOKEN`          | Vercel personal access token (web deploys only) |
+| `VERCEL_ORG_ID`         | Vercel team/org ID                              |
+| `VERCEL_PROJECT_ID_WEB` | Vercel project ID for `apps/web`                |
 
 Railway deploys are triggered automatically via GitHub integration — no Railway secrets needed in GitHub Actions.
 
 ### Optional Secrets
 
-| Secret | Description |
-|--------|-------------|
-| `EXPO_TOKEN` | EAS token for mobile builds |
-| `NEON_API_KEY` | Neon API key for CI branch previews |
+| Secret            | Description                            |
+| ----------------- | -------------------------------------- |
+| `EXPO_TOKEN`      | EAS token for mobile builds            |
+| `NEON_API_KEY`    | Neon API key for CI branch previews    |
 | `NEON_PROJECT_ID` | Neon project ID for CI branch previews |
 
 ## 5. Domain Configuration
 
 ### Recommended Domain Setup
 
-| App | Subdomain | Platform |
-|-----|-----------|----------|
-| Marketing | `yourdomain.com` | Railway |
-| Web | `app.yourdomain.com` | Vercel |
-| API | `api.yourdomain.com` | Railway |
-| Docs | `docs.yourdomain.com` | Railway |
+| App       | Subdomain             | Platform |
+| --------- | --------------------- | -------- |
+| Marketing | `yourdomain.com`      | Railway  |
+| Web       | `app.yourdomain.com`  | Vercel   |
+| API       | `api.yourdomain.com`  | Railway  |
+| Docs      | `docs.yourdomain.com` | Railway  |
 
 **Vercel domains:** In the Vercel project for web, go to **Settings > Domains** and add your custom domain. Vercel handles SSL automatically.
 
@@ -273,12 +273,12 @@ open https://docs.yourdomain.com
 
 ## 10. Scaling
 
-| Service | Current Tier | Scaling Option |
-|---------|-------------|----------------|
-| Railway | Trial ($5/mo) | Pro ($20/mo) — more RAM, CPU, replicas |
-| Vercel | Hobby (100 GB bandwidth) | Pro ($20/mo) for team features |
-| Neon | 0.5 GB storage, autosuspend | Launch ($19/mo) for always-on compute |
-| EAS Build | 30 builds/month | Production plan ($99/mo) |
-| Upstash Redis | 10K commands/day | Pay-as-you-go ($0.2/100K commands) |
+| Service       | Current Tier                | Scaling Option                         |
+| ------------- | --------------------------- | -------------------------------------- |
+| Railway       | Trial ($5/mo)               | Pro ($20/mo) — more RAM, CPU, replicas |
+| Vercel        | Hobby (100 GB bandwidth)    | Pro ($20/mo) for team features         |
+| Neon          | 0.5 GB storage, autosuspend | Launch ($19/mo) for always-on compute  |
+| EAS Build     | 30 builds/month             | Production plan ($99/mo)               |
+| Upstash Redis | 10K commands/day            | Pay-as-you-go ($0.2/100K commands)     |
 
 The API runs as a persistent Bun process on Railway. To scale, adjust Railway service replicas in the dashboard or CLI. No code changes needed.

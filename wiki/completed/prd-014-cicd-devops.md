@@ -23,17 +23,17 @@ This PRD sets up the full CI/CD system: a main CI pipeline with Turbo-filtered s
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| CI on PR | Lint, type-check, test, build run on every PR | Pipeline completes < 5 minutes |
-| Selective CI | Only affected packages are tested/built | Turbo `--filter=[HEAD^]` skips unchanged packages |
-| Neon branching | PR gets its own database branch | Branch created on PR open, deleted on PR close |
-| Migration safety | Schema/migration drift caught in CI | `drizzle-kit generate --check` fails if out of sync |
-| Auto-deploy API | Push to main → API deployed to Vercel | Deploy completes < 3 minutes |
-| Auto-deploy web | Push to main → web app deployed to Vercel | Deploy completes < 3 minutes |
-| AI code review | PR gets Claude-powered review comment | Review posted within 2 minutes of PR |
-| Dependency audit | Known vulnerabilities flagged | `bun pm audit` runs in CI |
-| Branch cleanup | Neon branch deleted when PR closes | No orphaned branches |
+| Criteria         | Measurement                                   | Target                                              |
+| ---------------- | --------------------------------------------- | --------------------------------------------------- |
+| CI on PR         | Lint, type-check, test, build run on every PR | Pipeline completes < 5 minutes                      |
+| Selective CI     | Only affected packages are tested/built       | Turbo `--filter=[HEAD^]` skips unchanged packages   |
+| Neon branching   | PR gets its own database branch               | Branch created on PR open, deleted on PR close      |
+| Migration safety | Schema/migration drift caught in CI           | `drizzle-kit generate --check` fails if out of sync |
+| Auto-deploy API  | Push to main → API deployed to Vercel         | Deploy completes < 3 minutes                        |
+| Auto-deploy web  | Push to main → web app deployed to Vercel     | Deploy completes < 3 minutes                        |
+| AI code review   | PR gets Claude-powered review comment         | Review posted within 2 minutes of PR                |
+| Dependency audit | Known vulnerabilities flagged                 | `bun pm audit` runs in CI                           |
+| Branch cleanup   | Neon branch deleted when PR closes            | No orphaned branches                                |
 
 ---
 
@@ -42,6 +42,7 @@ This PRD sets up the full CI/CD system: a main CI pipeline with Turbo-filtered s
 ### In Scope
 
 **GitHub Actions Workflows**:
+
 - `ci.yml` — main CI pipeline:
   - Bun setup, `bun install --frozen-lockfile`
   - Turbo-filtered: `lint`, `type-check`, `test`, `build` (only affected packages)
@@ -55,16 +56,19 @@ This PRD sets up the full CI/CD system: a main CI pipeline with Turbo-filtered s
 - `neon-cleanup.yml` — delete Neon branch on PR close
 
 **Neon Branching**:
+
 - `neon-branch` job in CI: create branch `pr-{number}` from main
 - `migration-check` job: verify `drizzle-kit generate --check` passes, run migrations on branch
 - Branch cleanup on PR close/merge
 
 **Deployment Configuration**:
+
 - API: Vercel serverless (primary), Cloudflare Workers entry (alternative), long-running Bun entry (alternative)
 - Web: Vercel with `vercel.json`
 - Domain setup: `example.com`, `app.example.com`, `api.example.com`
 
 **Other**:
+
 - `.github/CODEOWNERS` with ownership rules
 - API versioning strategy documentation (no prefix by default)
 
@@ -109,20 +113,20 @@ Developer pushes code
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
+| Depends On              | What It Provides                           |
+| ----------------------- | ------------------------------------------ |
 | All PRDs (001-013, 015) | Complete system to test, build, and deploy |
-| Neon (PRD-003) | Database branching API |
-| Vercel | Deployment platform |
-| EAS | Mobile build service |
+| Neon (PRD-003)          | Database branching API                     |
+| Vercel                  | Deployment platform                        |
+| EAS                     | Mobile build service                       |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
-| Every developer | CI validates their PRs |
-| Every merge to main | Triggers automated deployment |
-| PRD-016 (Getting Started) | Documents the CI/CD setup |
+| Consumer                  | How It's Used                 |
+| ------------------------- | ----------------------------- |
+| Every developer           | CI validates their PRs        |
+| Every merge to main       | Triggers automated deployment |
+| PRD-016 (Getting Started) | Documents the CI/CD setup     |
 
 ---
 
@@ -172,6 +176,7 @@ on:
 ```
 
 **Required GitHub Secrets**:
+
 ```
 ANTHROPIC_API_KEY       — for AI code review
 NEON_PROJECT_ID         — for database branching
@@ -204,32 +209,34 @@ EXPO_TOKEN              — for EAS builds (optional)
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Create `ci.yml` — main CI pipeline with Bun + Turbo | 30m | PRD-001 (turbo.json) | ✅ Yes | Well-specified in tech spec |
-| 2 | Add Neon branching jobs to `ci.yml` | 20m | PRD-003 (Neon project) | ✅ Yes | Use `neondatabase/create-branch-action` |
-| 3 | Add migration safety check job | 15m | Task 2 | ✅ Yes | `drizzle-kit generate --check` + `drizzle-kit migrate` |
-| 4 | Create `ai-code-review.yml` | 10m | None | ✅ Yes | Short workflow using Claude action |
-| 5 | Create `deploy-api.yml` with path filter | 15m | PRD-005 | ✅ Yes | Vercel action with correct project ID |
-| 6 | Create `deploy-web.yml` with path filter | 10m | PRD-010 | ✅ Yes | Same pattern as API deploy |
-| 7 | Create `deploy-mobile.yml` (EAS trigger) | 15m | PRD-011 | 🟡 Partial | EAS CLI in CI needs human review |
-| 8 | Create `deploy-desktop.yml` (electron-builder) | 15m | PRD-012 | 🟡 Partial | Cross-platform build matrix |
-| 9 | Create `neon-cleanup.yml` — branch deletion on PR close | 10m | Task 2 | ✅ Yes | Short workflow |
-| 10 | Create `.github/CODEOWNERS` | 10m | None | ✅ Yes | Template with placeholder teams |
-| 11 | Create Vercel adapter entries for API (`vercel.ts`, `vercel.json`) | 15m | PRD-005 | ✅ Yes | Hono Vercel adapter |
-| 12 | Document domain setup (example.com, app.example.com, api.example.com) | 10m | None | ✅ Yes | README section |
-| 13 | Test full CI pipeline on a PR | 20m | All above | ❌ No | Manual — create test PR |
-| 14 | Test deployment to Vercel | 15m | Tasks 5-6, 11 | ❌ No | Manual — push to main |
+| #   | Task                                                                  | Estimate | Dependencies           | Claude Code Candidate? | Notes                                                  |
+| --- | --------------------------------------------------------------------- | -------- | ---------------------- | ---------------------- | ------------------------------------------------------ |
+| 1   | Create `ci.yml` — main CI pipeline with Bun + Turbo                   | 30m      | PRD-001 (turbo.json)   | ✅ Yes                 | Well-specified in tech spec                            |
+| 2   | Add Neon branching jobs to `ci.yml`                                   | 20m      | PRD-003 (Neon project) | ✅ Yes                 | Use `neondatabase/create-branch-action`                |
+| 3   | Add migration safety check job                                        | 15m      | Task 2                 | ✅ Yes                 | `drizzle-kit generate --check` + `drizzle-kit migrate` |
+| 4   | Create `ai-code-review.yml`                                           | 10m      | None                   | ✅ Yes                 | Short workflow using Claude action                     |
+| 5   | Create `deploy-api.yml` with path filter                              | 15m      | PRD-005                | ✅ Yes                 | Vercel action with correct project ID                  |
+| 6   | Create `deploy-web.yml` with path filter                              | 10m      | PRD-010                | ✅ Yes                 | Same pattern as API deploy                             |
+| 7   | Create `deploy-mobile.yml` (EAS trigger)                              | 15m      | PRD-011                | 🟡 Partial             | EAS CLI in CI needs human review                       |
+| 8   | Create `deploy-desktop.yml` (electron-builder)                        | 15m      | PRD-012                | 🟡 Partial             | Cross-platform build matrix                            |
+| 9   | Create `neon-cleanup.yml` — branch deletion on PR close               | 10m      | Task 2                 | ✅ Yes                 | Short workflow                                         |
+| 10  | Create `.github/CODEOWNERS`                                           | 10m      | None                   | ✅ Yes                 | Template with placeholder teams                        |
+| 11  | Create Vercel adapter entries for API (`vercel.ts`, `vercel.json`)    | 15m      | PRD-005                | ✅ Yes                 | Hono Vercel adapter                                    |
+| 12  | Document domain setup (example.com, app.example.com, api.example.com) | 10m      | None                   | ✅ Yes                 | README section                                         |
+| 13  | Test full CI pipeline on a PR                                         | 20m      | All above              | ❌ No                  | Manual — create test PR                                |
+| 14  | Test deployment to Vercel                                             | 15m      | Tasks 5-6, 11          | ❌ No                  | Manual — push to main                                  |
 
 ### Claude Code Task Annotations
 
 **Task 1 (ci.yml)**:
+
 - **Context needed**: Full CI workflow from spec. Bun setup action (`oven-sh/setup-bun@v2`). Turbo filter syntax. `actions/checkout@v4` with `fetch-depth: 0` for Turbo filtering.
 - **Constraints**: Use `--frozen-lockfile` for `bun install`. Use Turbo `--filter=[HEAD^]` for selective CI. Include lint, type-check, test, build as separate steps. Add dependency audit step.
 - **Done state**: Workflow file valid YAML. All steps reference correct actions and commands.
 - **Verification command**: `act -j test` (local GitHub Actions runner) or push to test branch
 
 **Task 2 (Neon Branching)**:
+
 - **Context needed**: `neondatabase/create-branch-action@v5` usage. Branch naming: `pr-{number}`. Output: `db_url` for downstream jobs.
 - **Constraints**: Only run on `pull_request` events. Branch name must be deterministic (same PR always gets same branch). Output `db-url` for migration-check job.
 - **Done state**: Neon branch created on PR open, URL available to downstream jobs.
@@ -241,11 +248,11 @@ EXPO_TOKEN              — for EAS builds (optional)
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | N/A (infrastructure, not code) | — | 0 |
-| Integration | CI pipeline runs successfully on test PR | GitHub Actions | 1 |
-| E2E | Full deploy pipeline: push to main → live deployment | GitHub Actions + Vercel | 1 |
+| Level       | What's Tested                                        | Tool                    | Count (approx) |
+| ----------- | ---------------------------------------------------- | ----------------------- | -------------- |
+| Unit        | N/A (infrastructure, not code)                       | —                       | 0              |
+| Integration | CI pipeline runs successfully on test PR             | GitHub Actions          | 1              |
+| E2E         | Full deploy pipeline: push to main → live deployment | GitHub Actions + Vercel | 1              |
 
 ### Key Test Scenarios
 
@@ -263,13 +270,13 @@ EXPO_TOKEN              — for EAS builds (optional)
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| CI duration | < 5 minutes for typical PR | GitHub Actions timing |
-| Deploy duration | < 3 minutes per workspace | Vercel deploy logs |
-| Neon branch creation | < 10 seconds | GitHub Actions step timing |
-| Cache hit rate | > 80% on incremental builds | Turbo cache output |
-| Secret security | No secrets exposed in logs | GitHub Actions masking |
+| Requirement          | Target                      | How Verified               |
+| -------------------- | --------------------------- | -------------------------- |
+| CI duration          | < 5 minutes for typical PR  | GitHub Actions timing      |
+| Deploy duration      | < 3 minutes per workspace   | Vercel deploy logs         |
+| Neon branch creation | < 10 seconds                | GitHub Actions step timing |
+| Cache hit rate       | > 80% on incremental builds | Turbo cache output         |
+| Secret security      | No secrets exposed in logs  | GitHub Actions masking     |
 
 ---
 
@@ -288,16 +295,16 @@ EXPO_TOKEN              — for EAS builds (optional)
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should we enable Vercel Remote Caching for Turbo? | Speeds up CI significantly but requires Vercel team plan | Infra | Open — evaluate cost vs. benefit per-project |
-| 2 | Should deploy workflows require manual approval for production? | Adds safety but slows deployment | Architect | Resolved — no approval gate for boilerplate. Add per-project if needed. |
-| 3 | Should we use GitHub Environments for staging vs. production? | Enables environment-specific secrets and protection rules | Infra | Open — useful for teams with staging environments. Boilerplate deploys direct to prod. |
+| #   | Question                                                        | Impact                                                    | Owner     | Status                                                                                 |
+| --- | --------------------------------------------------------------- | --------------------------------------------------------- | --------- | -------------------------------------------------------------------------------------- |
+| 1   | Should we enable Vercel Remote Caching for Turbo?               | Speeds up CI significantly but requires Vercel team plan  | Infra     | Open — evaluate cost vs. benefit per-project                                           |
+| 2   | Should deploy workflows require manual approval for production? | Adds safety but slows deployment                          | Architect | Resolved — no approval gate for boilerplate. Add per-project if needed.                |
+| 3   | Should we use GitHub Environments for staging vs. production?   | Enables environment-specific secrets and protection rules | Infra     | Open — useful for teams with staging environments. Boilerplate deploys direct to prod. |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

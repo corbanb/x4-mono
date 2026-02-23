@@ -23,17 +23,17 @@ The web app demonstrates the core patterns that every project will extend: TRPCP
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| tRPC integration | `trpc.projects.list.useQuery()` returns typed data in React component | Zero `any` types, autocomplete works |
-| Auth flow | Login → redirect to dashboard → session persists on refresh | Full auth lifecycle works |
-| Auth gate | Unauthenticated users hitting `/dashboard` redirect to `/login` | Server-side redirect, no flash |
-| Form validation | Client-side Zod validation matches server-side | Same `CreateProjectSchema` used in both |
-| Cache invalidation | Creating a project refreshes the project list | `utils.projects.list.invalidate()` works |
-| Server components | Auth checks run in server components (no client-side session flash) | `await auth()` in RSC |
-| Build | `next build` produces zero errors | Clean production build |
-| Deploy | Vercel deployment works with `vercel.json` | Accessible at `app.example.com` |
-| Dev | `bun turbo dev --filter=web` starts Next.js on port 3000 | Hot reload works |
+| Criteria           | Measurement                                                           | Target                                   |
+| ------------------ | --------------------------------------------------------------------- | ---------------------------------------- |
+| tRPC integration   | `trpc.projects.list.useQuery()` returns typed data in React component | Zero `any` types, autocomplete works     |
+| Auth flow          | Login → redirect to dashboard → session persists on refresh           | Full auth lifecycle works                |
+| Auth gate          | Unauthenticated users hitting `/dashboard` redirect to `/login`       | Server-side redirect, no flash           |
+| Form validation    | Client-side Zod validation matches server-side                        | Same `CreateProjectSchema` used in both  |
+| Cache invalidation | Creating a project refreshes the project list                         | `utils.projects.list.invalidate()` works |
+| Server components  | Auth checks run in server components (no client-side session flash)   | `await auth()` in RSC                    |
+| Build              | `next build` produces zero errors                                     | Clean production build                   |
+| Deploy             | Vercel deployment works with `vercel.json`                            | Accessible at `app.example.com`          |
+| Dev                | `bun turbo dev --filter=web` starts Next.js on port 3000              | Hot reload works                         |
 
 ---
 
@@ -98,19 +98,19 @@ packages/database            (PRD-003)
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
+| Depends On                  | What It Provides                                                         |
+| --------------------------- | ------------------------------------------------------------------------ |
 | PRD-004 (Shared UI & Hooks) | `trpc`, `createTRPCClient`, `useProjects`, `useCreateProject`, `useAuth` |
-| PRD-005 (API Server) | tRPC endpoints to consume (`/trpc/projects.*`, `/trpc/users.*`) |
-| PRD-006 (Auth) | `signIn`, `signUp`, `signOut`, `useSession` from Better Auth client |
+| PRD-005 (API Server)        | tRPC endpoints to consume (`/trpc/projects.*`, `/trpc/users.*`)          |
+| PRD-006 (Auth)              | `signIn`, `signUp`, `signOut`, `useSession` from Better Auth client      |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
+| Consumer                 | How It's Used                                             |
+| ------------------------ | --------------------------------------------------------- |
 | PRD-013 (Marketing Site) | Follows same Next.js patterns, links to `app.example.com` |
-| PRD-014 (CI/CD) | `deploy-web.yml` deploys this workspace to Vercel |
-| PRD-015 (Testing) | Playwright E2E tests run against this app |
+| PRD-014 (CI/CD)          | `deploy-web.yml` deploys this workspace to Vercel         |
+| PRD-015 (Testing)        | Playwright E2E tests run against this app                 |
 
 ---
 
@@ -145,6 +145,7 @@ No new types. Consumes types from PRD-002 via tRPC.
 No new APIs. This workspace **consumes** the tRPC API via shared hooks.
 
 **Key integration points**:
+
 ```typescript
 // TRPCProvider wraps the app — provides trpc client + React Query
 <TRPCProvider>
@@ -208,32 +209,34 @@ apps/web/
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Create `apps/web/package.json`, `tsconfig.json`, config files | 15m | PRD-001 | ✅ Yes | Next.js + Tailwind config |
-| 2 | Implement `src/lib/trpc-provider.tsx` — TRPCProvider component | 20m | PRD-004 (trpc client) | ✅ Yes | Well-specified in spec |
-| 3 | Implement `src/app/layout.tsx` — root layout with providers | 15m | Task 2 | ✅ Yes | Standard layout |
-| 4 | Implement `src/app/page.tsx` — public landing page | 10m | Task 3 | ✅ Yes | Simple page |
-| 5 | Implement `src/app/login/page.tsx` and `signup/page.tsx` | 30m | PRD-006 (auth client) | 🟡 Partial | Auth form UX needs human review |
-| 6 | Implement `src/middleware.ts` — auth redirect middleware | 15m | PRD-006 | 🟡 Partial | Review redirect logic |
-| 7 | Implement `src/app/dashboard/page.tsx` — auth-gated with ProjectList | 20m | Tasks 2, 6 | ✅ Yes | Server component + client child |
-| 8 | Implement `src/components/ProjectList.tsx` — tRPC query component | 15m | Task 2, PRD-004 | ✅ Yes | Standard tRPC query pattern |
-| 9 | Implement `src/components/CreateProjectForm.tsx` — form + mutation | 30m | Task 2, PRD-002 (Zod schemas) | 🟡 Partial | Form handling needs human review for UX |
-| 10 | Implement `src/components/Navigation.tsx` | 15m | Task 5 | ✅ Yes | Auth-aware nav |
-| 11 | Configure `tailwind.config.ts`, `postcss.config.js`, `globals.css` | 10m | Task 1 | ✅ Yes | Standard Tailwind setup |
-| 12 | Create `vercel.json` and `.env.example` | 5m | Task 1 | ✅ Yes | Deployment config |
-| 13 | Verify end-to-end: login → dashboard → create project | 20m | All above | ❌ No | Manual — requires API running |
-| 14 | Write Playwright E2E spec for auth + project CRUD | 30m | Task 13 | 🟡 Partial | AI generates spec, human verifies selectors |
+| #   | Task                                                                 | Estimate | Dependencies                  | Claude Code Candidate? | Notes                                       |
+| --- | -------------------------------------------------------------------- | -------- | ----------------------------- | ---------------------- | ------------------------------------------- |
+| 1   | Create `apps/web/package.json`, `tsconfig.json`, config files        | 15m      | PRD-001                       | ✅ Yes                 | Next.js + Tailwind config                   |
+| 2   | Implement `src/lib/trpc-provider.tsx` — TRPCProvider component       | 20m      | PRD-004 (trpc client)         | ✅ Yes                 | Well-specified in spec                      |
+| 3   | Implement `src/app/layout.tsx` — root layout with providers          | 15m      | Task 2                        | ✅ Yes                 | Standard layout                             |
+| 4   | Implement `src/app/page.tsx` — public landing page                   | 10m      | Task 3                        | ✅ Yes                 | Simple page                                 |
+| 5   | Implement `src/app/login/page.tsx` and `signup/page.tsx`             | 30m      | PRD-006 (auth client)         | 🟡 Partial             | Auth form UX needs human review             |
+| 6   | Implement `src/middleware.ts` — auth redirect middleware             | 15m      | PRD-006                       | 🟡 Partial             | Review redirect logic                       |
+| 7   | Implement `src/app/dashboard/page.tsx` — auth-gated with ProjectList | 20m      | Tasks 2, 6                    | ✅ Yes                 | Server component + client child             |
+| 8   | Implement `src/components/ProjectList.tsx` — tRPC query component    | 15m      | Task 2, PRD-004               | ✅ Yes                 | Standard tRPC query pattern                 |
+| 9   | Implement `src/components/CreateProjectForm.tsx` — form + mutation   | 30m      | Task 2, PRD-002 (Zod schemas) | 🟡 Partial             | Form handling needs human review for UX     |
+| 10  | Implement `src/components/Navigation.tsx`                            | 15m      | Task 5                        | ✅ Yes                 | Auth-aware nav                              |
+| 11  | Configure `tailwind.config.ts`, `postcss.config.js`, `globals.css`   | 10m      | Task 1                        | ✅ Yes                 | Standard Tailwind setup                     |
+| 12  | Create `vercel.json` and `.env.example`                              | 5m       | Task 1                        | ✅ Yes                 | Deployment config                           |
+| 13  | Verify end-to-end: login → dashboard → create project                | 20m      | All above                     | ❌ No                  | Manual — requires API running               |
+| 14  | Write Playwright E2E spec for auth + project CRUD                    | 30m      | Task 13                       | 🟡 Partial             | AI generates spec, human verifies selectors |
 
 ### Claude Code Task Annotations
 
 **Task 2 (TRPCProvider)**:
+
 - **Context needed**: `trpc` and `createTRPCClient` from `@packages/shared/api-client`. React Query `QueryClient`. `NEXT_PUBLIC_API_URL` env var. The "use client" directive is required.
 - **Constraints**: Use `useState` for both `queryClient` and `trpcClient` (prevents re-creation on re-render). Read API URL from `process.env.NEXT_PUBLIC_API_URL`.
 - **Done state**: Wrapping a component in `<TRPCProvider>` gives child components access to tRPC hooks.
 - **Verification command**: `cd apps/web && bun type-check`
 
 **Task 9 (CreateProjectForm)**:
+
 - **Context needed**: `CreateProjectSchema` from `@packages/shared/utils`. `trpc.projects.create.useMutation()`. `trpc.useUtils()` for cache invalidation. react-hook-form with `@hookform/resolvers/zod`.
 - **Constraints**: "use client" directive. Form MUST use `zodResolver(CreateProjectSchema)` — same schema the API validates against. On success, invalidate `projects.list` query. Show loading state during submission. Show Zod validation errors per-field.
 - **Done state**: Form submits, project appears in list without page refresh.
@@ -245,11 +248,11 @@ apps/web/
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | Component rendering, form validation | Bun test + Testing Library | 10-15 |
-| Integration | TRPCProvider setup, auth redirect | Bun test | 3-5 |
-| E2E | Signup → login → dashboard → create project | Playwright | 2-3 |
+| Level       | What's Tested                               | Tool                       | Count (approx) |
+| ----------- | ------------------------------------------- | -------------------------- | -------------- |
+| Unit        | Component rendering, form validation        | Bun test + Testing Library | 10-15          |
+| Integration | TRPCProvider setup, auth redirect           | Bun test                   | 3-5            |
+| E2E         | Signup → login → dashboard → create project | Playwright                 | 2-3            |
 
 ### Key Test Scenarios
 
@@ -298,14 +301,14 @@ export function renderWithProviders(ui: React.ReactElement) {
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Build time | `next build` < 30s | CI timing |
-| First paint | LCP < 2s on production | Lighthouse |
-| Bundle size | Main JS bundle < 200KB gzipped | `next build` output |
-| Type safety | Zero `any` types in components | `bun type-check` |
-| Accessibility | Lighthouse accessibility score > 90 | Lighthouse audit |
-| Mobile responsive | All pages usable on 375px width | Manual or Playwright viewport test |
+| Requirement       | Target                              | How Verified                       |
+| ----------------- | ----------------------------------- | ---------------------------------- |
+| Build time        | `next build` < 30s                  | CI timing                          |
+| First paint       | LCP < 2s on production              | Lighthouse                         |
+| Bundle size       | Main JS bundle < 200KB gzipped      | `next build` output                |
+| Type safety       | Zero `any` types in components      | `bun type-check`                   |
+| Accessibility     | Lighthouse accessibility score > 90 | Lighthouse audit                   |
+| Mobile responsive | All pages usable on 375px width     | Manual or Playwright viewport test |
 
 ---
 
@@ -326,16 +329,16 @@ export function renderWithProviders(ui: React.ReactElement) {
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should we use Next.js middleware or Better Auth's built-in redirect for auth gates? | Affects auth check location | Frontend | Resolved — Next.js middleware for route-level redirects, Better Auth for session state |
-| 2 | Do we need SSR for the dashboard or is CSR sufficient? | Affects SEO (irrelevant for dashboard) and initial load | Frontend | Resolved — CSR via tRPC hooks. Dashboard isn't SEO-critical. |
-| 3 | Tailwind v4 or v3? | v4 is newer but less ecosystem support | Frontend | Open — default to whatever Next.js 15 ships with. |
+| #   | Question                                                                            | Impact                                                  | Owner    | Status                                                                                 |
+| --- | ----------------------------------------------------------------------------------- | ------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------- |
+| 1   | Should we use Next.js middleware or Better Auth's built-in redirect for auth gates? | Affects auth check location                             | Frontend | Resolved — Next.js middleware for route-level redirects, Better Auth for session state |
+| 2   | Do we need SSR for the dashboard or is CSR sufficient?                              | Affects SEO (irrelevant for dashboard) and initial load | Frontend | Resolved — CSR via tRPC hooks. Dashboard isn't SEO-critical.                           |
+| 3   | Tailwind v4 or v3?                                                                  | v4 is newer but less ecosystem support                  | Frontend | Open — default to whatever Next.js 15 ships with.                                      |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

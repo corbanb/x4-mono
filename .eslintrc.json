@@ -91,19 +91,9 @@
         ]
       }
     ],
-    "@typescript-eslint/no-unused-vars": [
-      "warn",
-      { "argsIgnorePattern": "^_" }
-    ],
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/no-explicit-any": "error",
     "no-console": "warn"
   },
-  "ignorePatterns": [
-    "node_modules",
-    "dist",
-    ".next",
-    ".turbo",
-    "*.config.js",
-    "*.config.mjs"
-  ]
+  "ignorePatterns": ["node_modules", "dist", ".next", ".turbo", "*.config.js", "*.config.mjs"]
 }

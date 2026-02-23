@@ -21,14 +21,14 @@ Keeping the marketing site as a separate workspace in the monorepo gives it its 
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| Static generation | All marketing pages statically generated at build time | Zero server-side rendering at runtime |
-| Build speed | `next build` for marketing site < 15s | Independent of web app build |
-| Lighthouse perf | Performance score on landing page | > 95 |
-| Independent deploy | Marketing deploys without touching web app | Separate Vercel project |
-| Domain config | `example.com` → marketing, `app.example.com` → web app | DNS routing correct |
-| SEO basics | Meta tags, OG tags, sitemap present | Lighthouse SEO > 90 |
+| Criteria           | Measurement                                            | Target                                |
+| ------------------ | ------------------------------------------------------ | ------------------------------------- |
+| Static generation  | All marketing pages statically generated at build time | Zero server-side rendering at runtime |
+| Build speed        | `next build` for marketing site < 15s                  | Independent of web app build          |
+| Lighthouse perf    | Performance score on landing page                      | > 95                                  |
+| Independent deploy | Marketing deploys without touching web app             | Separate Vercel project               |
+| Domain config      | `example.com` → marketing, `app.example.com` → web app | DNS routing correct                   |
+| SEO basics         | Meta tags, OG tags, sitemap present                    | Lighthouse SEO > 90                   |
 
 ---
 
@@ -82,17 +82,17 @@ Uses only: TypeScript config, ESLint, Prettier from PRD-001.
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
-| PRD-001 (Monorepo Foundation) | Workspace structure, TypeScript config, linting |
-| PRD-010 (Web App) | Next.js patterns to follow (not a code dependency) |
+| Depends On                    | What It Provides                                   |
+| ----------------------------- | -------------------------------------------------- |
+| PRD-001 (Monorepo Foundation) | Workspace structure, TypeScript config, linting    |
+| PRD-010 (Web App)             | Next.js patterns to follow (not a code dependency) |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
+| Consumer        | How It's Used                                      |
+| --------------- | -------------------------------------------------- |
 | PRD-014 (CI/CD) | Separate deploy workflow or filtered Vercel deploy |
-| Users | Public-facing marketing presence at `example.com` |
+| Users           | Public-facing marketing presence at `example.com`  |
 
 ---
 
@@ -150,16 +150,16 @@ apps/marketing/
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Create `apps/marketing/` workspace with Next.js config | 15m | PRD-001 | ✅ Yes | Config scaffolding |
-| 2 | Implement root layout with Header and Footer | 15m | Task 1 | ✅ Yes | Static components |
-| 3 | Implement landing page with Hero and CTA sections | 20m | Task 2 | ✅ Yes | Static page |
-| 4 | Implement pricing and about page placeholders | 10m | Task 2 | ✅ Yes | Placeholder content |
-| 5 | Configure Tailwind + static generation settings | 10m | Task 1 | ✅ Yes | Config files |
-| 6 | Create `vercel.json` for separate deployment | 5m | Task 1 | ✅ Yes | Deployment config |
-| 7 | Verify `next build` produces static output | 10m | All above | ❌ No | Manual — check build output |
-| 8 | Lighthouse audit | 10m | Task 7 | ❌ No | Manual — run Lighthouse |
+| #   | Task                                                   | Estimate | Dependencies | Claude Code Candidate? | Notes                       |
+| --- | ------------------------------------------------------ | -------- | ------------ | ---------------------- | --------------------------- |
+| 1   | Create `apps/marketing/` workspace with Next.js config | 15m      | PRD-001      | ✅ Yes                 | Config scaffolding          |
+| 2   | Implement root layout with Header and Footer           | 15m      | Task 1       | ✅ Yes                 | Static components           |
+| 3   | Implement landing page with Hero and CTA sections      | 20m      | Task 2       | ✅ Yes                 | Static page                 |
+| 4   | Implement pricing and about page placeholders          | 10m      | Task 2       | ✅ Yes                 | Placeholder content         |
+| 5   | Configure Tailwind + static generation settings        | 10m      | Task 1       | ✅ Yes                 | Config files                |
+| 6   | Create `vercel.json` for separate deployment           | 5m       | Task 1       | ✅ Yes                 | Deployment config           |
+| 7   | Verify `next build` produces static output             | 10m      | All above    | ❌ No                  | Manual — check build output |
+| 8   | Lighthouse audit                                       | 10m      | Task 7       | ❌ No                  | Manual — run Lighthouse     |
 
 ---
 
@@ -167,11 +167,11 @@ apps/marketing/
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | Component rendering, meta tags, semantic HTML | Bun test | 5-8 |
-| Integration | N/A (static site) | — | 0 |
-| E2E | Pages load, links work, CTA links to app.example.com | Playwright | 1-2 |
+| Level       | What's Tested                                        | Tool       | Count (approx) |
+| ----------- | ---------------------------------------------------- | ---------- | -------------- |
+| Unit        | Component rendering, meta tags, semantic HTML        | Bun test   | 5-8            |
+| Integration | N/A (static site)                                    | —          | 0              |
+| E2E         | Pages load, links work, CTA links to app.example.com | Playwright | 1-2            |
 
 ### Key Test Scenarios
 
@@ -188,13 +188,13 @@ apps/marketing/
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Lighthouse Performance | > 95 | Lighthouse audit |
-| Lighthouse SEO | > 90 | Lighthouse audit |
-| Build time | < 15s | CI timing |
-| TTFB | < 100ms (CDN-served static) | WebPageTest |
-| Zero JS (optional) | Marketing pages work without JavaScript | Manual test with JS disabled |
+| Requirement            | Target                                  | How Verified                 |
+| ---------------------- | --------------------------------------- | ---------------------------- |
+| Lighthouse Performance | > 95                                    | Lighthouse audit             |
+| Lighthouse SEO         | > 90                                    | Lighthouse audit             |
+| Build time             | < 15s                                   | CI timing                    |
+| TTFB                   | < 100ms (CDN-served static)             | WebPageTest                  |
+| Zero JS (optional)     | Marketing pages work without JavaScript | Manual test with JS disabled |
 
 ---
 
@@ -212,15 +212,15 @@ apps/marketing/
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Full static export (`output: 'export'`) or standard Next.js with static pages? | Full export can't use any server features (middleware, rewrites) | Frontend | Open — start with standard Next.js, pages are static by default |
-| 2 | Shared Tailwind theme with web app or independent? | Affects brand consistency | Design | Resolved — independent config, same brand colors as constants |
+| #   | Question                                                                       | Impact                                                           | Owner    | Status                                                          |
+| --- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------- | -------- | --------------------------------------------------------------- |
+| 1   | Full static export (`output: 'export'`) or standard Next.js with static pages? | Full export can't use any server features (middleware, rewrites) | Frontend | Open — start with standard Next.js, pages are static by default |
+| 2   | Shared Tailwind theme with web app or independent?                             | Affects brand consistency                                        | Design   | Resolved — independent config, same brand colors as constants   |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

@@ -23,12 +23,12 @@ x4-mono is a production-ready monorepo boilerplate built with:
 
 The project is defined by 16 PRDs that specify every subsystem from monorepo tooling to developer experience. Each PRD follows an [11-section template](_templates/prd-template.md) with structured implementation plans and Claude Code task annotations.
 
-| Directory | Contents |
-|-----------|----------|
-| [`inbox/`](inbox/) | Unstarted PRDs — all 16 initial PRDs live here |
-| [`active/`](active/) | PRDs currently being implemented |
-| [`completed/`](completed/) | PRDs verified against success criteria |
-| [`archived/`](archived/) | Superseded or abandoned PRDs |
+| Directory                  | Contents                                       |
+| -------------------------- | ---------------------------------------------- |
+| [`inbox/`](inbox/)         | Unstarted PRDs — all 16 initial PRDs live here |
+| [`active/`](active/)       | PRDs currently being implemented               |
+| [`completed/`](completed/) | PRDs verified against success criteria         |
+| [`archived/`](archived/)   | Superseded or abandoned PRDs                   |
 
 See **[status.md](status.md)** for the full PRD inventory, dependency graph, and progress log.
 

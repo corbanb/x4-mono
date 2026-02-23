@@ -21,14 +21,14 @@ This PRD sets up the Expo + React Native mobile app as a first-class consumer of
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| tRPC integration | `trpc.projects.list.useQuery()` works in React Native | Same typed hooks as web |
-| Auth flow | Login → SecureStore token → protected API calls | Token persists across app restarts |
-| Expo Router | File-based routing works with auth guards | Navigation between screens |
-| EAS Build | `eas build` produces installable iOS/Android builds | Successful build on EAS |
-| Shared code | Types, validators, hooks imported from `@packages/shared` | No duplicated type definitions |
-| Dev workflow | `bun turbo dev --filter=mobile` starts Expo dev server | Hot reload on device/simulator |
+| Criteria         | Measurement                                               | Target                             |
+| ---------------- | --------------------------------------------------------- | ---------------------------------- |
+| tRPC integration | `trpc.projects.list.useQuery()` works in React Native     | Same typed hooks as web            |
+| Auth flow        | Login → SecureStore token → protected API calls           | Token persists across app restarts |
+| Expo Router      | File-based routing works with auth guards                 | Navigation between screens         |
+| EAS Build        | `eas build` produces installable iOS/Android builds       | Successful build on EAS            |
+| Shared code      | Types, validators, hooks imported from `@packages/shared` | No duplicated type definitions     |
+| Dev workflow     | `bun turbo dev --filter=mobile` starts Expo dev server    | Hot reload on device/simulator     |
 
 ---
 
@@ -86,16 +86,16 @@ apps/api                     (PRD-005) ← /trpc/* endpoints
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
-| PRD-004 (Shared UI & Hooks) | tRPC client, shared hooks |
-| PRD-005 (API Server) | tRPC endpoints to consume |
-| PRD-006 (Auth) | Native auth client with SecureStore token management |
+| Depends On                  | What It Provides                                     |
+| --------------------------- | ---------------------------------------------------- |
+| PRD-004 (Shared UI & Hooks) | tRPC client, shared hooks                            |
+| PRD-005 (API Server)        | tRPC endpoints to consume                            |
+| PRD-006 (Auth)              | Native auth client with SecureStore token management |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
+| Consumer        | How It's Used                           |
+| --------------- | --------------------------------------- |
 | PRD-014 (CI/CD) | `deploy-mobile.yml` triggers EAS builds |
 
 ---
@@ -126,13 +126,13 @@ Same tRPC contract as web. The only difference is the client configuration:
 
 ```typescript
 // apps/mobile/src/lib/api.ts
-import { createTRPCClient } from "@packages/shared/api-client";
-import * as SecureStore from "expo-secure-store";
+import { createTRPCClient } from '@packages/shared/api-client';
+import * as SecureStore from 'expo-secure-store';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3002";
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3002';
 
 export const apiClient = createTRPCClient(API_URL, async () => {
-  return (await SecureStore.getItemAsync("bearer_token")) || "";
+  return (await SecureStore.getItemAsync('bearer_token')) || '';
 });
 ```
 
@@ -171,22 +171,23 @@ apps/mobile/
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Create `apps/mobile/` workspace with Expo template | 20m | PRD-001 | 🟡 Partial | `npx create-expo-app` then customize |
-| 2 | Configure `app.json`, `eas.json`, `tsconfig.json` | 15m | Task 1 | ✅ Yes | Config files |
-| 3 | Implement `src/lib/api.ts` — tRPC client with SecureStore token | 20m | PRD-004, PRD-006 | ✅ Yes | Same pattern as web, different token source |
-| 4 | Implement `src/lib/trpc-provider.tsx` for React Native | 15m | Task 3 | ✅ Yes | Same as web provider |
-| 5 | Implement `app/_layout.tsx` — root layout with providers | 15m | Task 4 | ✅ Yes | Standard Expo Router layout |
-| 6 | Implement login/signup screens | 30m | PRD-006 (native client) | 🟡 Partial | Auth UX needs human review |
-| 7 | Implement dashboard screens (project list, create) | 30m | Task 4, PRD-004 | 🟡 Partial | RN component patterns differ from web |
-| 8 | Implement auth-gated layout (`(dashboard)/_layout.tsx`) | 15m | Task 6 | ✅ Yes | Check auth, redirect to login |
-| 9 | Verify on iOS Simulator or Android Emulator | 20m | All above | ❌ No | Manual testing |
-| 10 | Test EAS build configuration | 15m | Task 2 | ❌ No | Requires EAS account |
+| #   | Task                                                            | Estimate | Dependencies            | Claude Code Candidate? | Notes                                       |
+| --- | --------------------------------------------------------------- | -------- | ----------------------- | ---------------------- | ------------------------------------------- |
+| 1   | Create `apps/mobile/` workspace with Expo template              | 20m      | PRD-001                 | 🟡 Partial             | `npx create-expo-app` then customize        |
+| 2   | Configure `app.json`, `eas.json`, `tsconfig.json`               | 15m      | Task 1                  | ✅ Yes                 | Config files                                |
+| 3   | Implement `src/lib/api.ts` — tRPC client with SecureStore token | 20m      | PRD-004, PRD-006        | ✅ Yes                 | Same pattern as web, different token source |
+| 4   | Implement `src/lib/trpc-provider.tsx` for React Native          | 15m      | Task 3                  | ✅ Yes                 | Same as web provider                        |
+| 5   | Implement `app/_layout.tsx` — root layout with providers        | 15m      | Task 4                  | ✅ Yes                 | Standard Expo Router layout                 |
+| 6   | Implement login/signup screens                                  | 30m      | PRD-006 (native client) | 🟡 Partial             | Auth UX needs human review                  |
+| 7   | Implement dashboard screens (project list, create)              | 30m      | Task 4, PRD-004         | 🟡 Partial             | RN component patterns differ from web       |
+| 8   | Implement auth-gated layout (`(dashboard)/_layout.tsx`)         | 15m      | Task 6                  | ✅ Yes                 | Check auth, redirect to login               |
+| 9   | Verify on iOS Simulator or Android Emulator                     | 20m      | All above               | ❌ No                  | Manual testing                              |
+| 10  | Test EAS build configuration                                    | 15m      | Task 2                  | ❌ No                  | Requires EAS account                        |
 
 ### Claude Code Task Annotations
 
 **Task 3 (tRPC Client)**:
+
 - **Context needed**: `createTRPCClient` from PRD-004. SecureStore API from expo-secure-store. `EXPO_PUBLIC_API_URL` env var.
 - **Constraints**: Token getter must be `async` (SecureStore is async). Handle case where no token exists (return empty string, not null). Do NOT use localStorage — this is React Native.
 - **Done state**: Client created, type-checks clean.
@@ -198,11 +199,11 @@ apps/mobile/
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | Token storage/retrieval, component rendering | Bun test + RN Testing Library | 8-12 |
-| Integration | Auth flow against running API | Manual on device/simulator | 2-3 |
-| E2E | Full login → CRUD flow | Detox (optional, per-project) | 0 (boilerplate) |
+| Level       | What's Tested                                | Tool                          | Count (approx)  |
+| ----------- | -------------------------------------------- | ----------------------------- | --------------- |
+| Unit        | Token storage/retrieval, component rendering | Bun test + RN Testing Library | 8-12            |
+| Integration | Auth flow against running API                | Manual on device/simulator    | 2-3             |
+| E2E         | Full login → CRUD flow                       | Detox (optional, per-project) | 0 (boilerplate) |
 
 ### Key Test Scenarios
 
@@ -221,14 +222,18 @@ apps/mobile/
 
 ```typescript
 // Mock expo-secure-store with in-memory Map for unit tests
-import { mock } from "bun:test";
+import { mock } from 'bun:test';
 
 const store = new Map<string, string>();
 
-mock.module("expo-secure-store", () => ({
+mock.module('expo-secure-store', () => ({
   getItemAsync: async (key: string) => store.get(key) ?? null,
-  setItemAsync: async (key: string, value: string) => { store.set(key, value); },
-  deleteItemAsync: async (key: string) => { store.delete(key); },
+  setItemAsync: async (key: string, value: string) => {
+    store.set(key, value);
+  },
+  deleteItemAsync: async (key: string) => {
+    store.delete(key);
+  },
 }));
 ```
 
@@ -236,12 +241,12 @@ mock.module("expo-secure-store", () => ({
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Cold start | App usable within 2s of launch | Manual timing |
-| Token security | Bearer token in SecureStore (hardware-backed) | Code review |
-| Offline resilience | App shows cached data or clear offline message | Manual test |
-| Bundle size | JS bundle < 5MB | EAS build output |
+| Requirement        | Target                                         | How Verified     |
+| ------------------ | ---------------------------------------------- | ---------------- |
+| Cold start         | App usable within 2s of launch                 | Manual timing    |
+| Token security     | Bearer token in SecureStore (hardware-backed)  | Code review      |
+| Offline resilience | App shows cached data or clear offline message | Manual test      |
+| Bundle size        | JS bundle < 5MB                                | EAS build output |
 
 ---
 
@@ -259,15 +264,15 @@ mock.module("expo-secure-store", () => ({
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should we use Expo Router's `(auth)` group pattern for auth flow? | Affects navigation architecture | Mobile lead | Open — evaluate with Expo Router v4 patterns |
-| 2 | Do we need a custom dev client for any native modules? | Affects dev workflow complexity | Mobile lead | Resolved — start with Expo Go, add dev client when needed |
+| #   | Question                                                          | Impact                          | Owner       | Status                                                    |
+| --- | ----------------------------------------------------------------- | ------------------------------- | ----------- | --------------------------------------------------------- |
+| 1   | Should we use Expo Router's `(auth)` group pattern for auth flow? | Affects navigation architecture | Mobile lead | Open — evaluate with Expo Router v4 patterns              |
+| 2   | Do we need a custom dev client for any native modules?            | Affects dev workflow complexity | Mobile lead | Resolved — start with Expo Go, add dev client when needed |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

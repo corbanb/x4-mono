@@ -21,20 +21,20 @@ packages/
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Runtime | Bun >= 1.1 |
-| Monorepo | Bun workspaces + Turborepo |
-| API | Hono + tRPC v11 |
-| Web | Next.js 15, React 19, Tailwind v4 |
-| Mobile | Expo 52, React Native |
-| Desktop | Electron 33, electron-vite |
-| Database | Neon Postgres + Drizzle ORM |
-| Auth | Better Auth with bearer tokens |
-| AI | Vercel AI SDK + Claude |
+| Layer      | Technology                          |
+| ---------- | ----------------------------------- |
+| Runtime    | Bun >= 1.1                          |
+| Monorepo   | Bun workspaces + Turborepo          |
+| API        | Hono + tRPC v11                     |
+| Web        | Next.js 15, React 19, Tailwind v4   |
+| Mobile     | Expo 52, React Native               |
+| Desktop    | Electron 33, electron-vite          |
+| Database   | Neon Postgres + Drizzle ORM         |
+| Auth       | Better Auth with bearer tokens      |
+| AI         | Vercel AI SDK + Claude              |
 | Validation | Zod (source of truth for all types) |
-| Testing | Bun test runner + Playwright E2E |
-| CI/CD | GitHub Actions + Vercel |
+| Testing    | Bun test runner + Playwright E2E    |
+| CI/CD      | GitHub Actions + Vercel             |
 
 ## Quick Start
 
@@ -80,19 +80,19 @@ The API runs on `http://localhost:3002`, web on `http://localhost:3000`, and mar
 
 ## Key Commands
 
-| Command | Description |
-|---------|-------------|
-| `bun dev` | Start all workspaces in dev mode |
-| `bun build` | Build all workspaces |
-| `bun test` | Run tests across all workspaces |
-| `bun type-check` | TypeScript type checking |
-| `bun lint` | ESLint across all workspaces |
-| `bun db:generate` | Generate Drizzle migration |
-| `bun db:push` | Push schema to dev database |
-| `bun db:migrate` | Run migrations (production) |
-| `bun db:seed` | Seed database with test data |
-| `bun db:studio` | Open Drizzle Studio GUI |
-| `bun clean` | Remove build artifacts and node_modules |
+| Command           | Description                             |
+| ----------------- | --------------------------------------- |
+| `bun dev`         | Start all workspaces in dev mode        |
+| `bun build`       | Build all workspaces                    |
+| `bun test`        | Run tests across all workspaces         |
+| `bun type-check`  | TypeScript type checking                |
+| `bun lint`        | ESLint across all workspaces            |
+| `bun db:generate` | Generate Drizzle migration              |
+| `bun db:push`     | Push schema to dev database             |
+| `bun db:migrate`  | Run migrations (production)             |
+| `bun db:seed`     | Seed database with test data            |
+| `bun db:studio`   | Open Drizzle Studio GUI                 |
+| `bun clean`       | Remove build artifacts and node_modules |
 
 See [docs/commands.md](docs/commands.md) for the full reference.
 
@@ -126,15 +126,15 @@ The project includes 24 custom Claude commands in `.claude/commands/` for scaffo
 
 ## Documentation
 
-| Document | Description |
-|----------|-------------|
-| [Getting Started](docs/getting-started.md) | Step-by-step setup checklist |
-| [Commands Reference](docs/commands.md) | All available commands |
-| [Environment Variables](docs/environment.md) | Every env var documented |
-| [Testing Conventions](docs/testing-conventions.md) | Test patterns, helpers, mocks |
-| [Troubleshooting](docs/troubleshooting.md) | Common issues and solutions |
-| [Contributing](CONTRIBUTING.md) | Development workflow and conventions |
-| [ADR Template](docs/adr-template.md) | Architecture Decision Record format |
+| Document                                           | Description                          |
+| -------------------------------------------------- | ------------------------------------ |
+| [Getting Started](docs/getting-started.md)         | Step-by-step setup checklist         |
+| [Commands Reference](docs/commands.md)             | All available commands               |
+| [Environment Variables](docs/environment.md)       | Every env var documented             |
+| [Testing Conventions](docs/testing-conventions.md) | Test patterns, helpers, mocks        |
+| [Troubleshooting](docs/troubleshooting.md)         | Common issues and solutions          |
+| [Contributing](CONTRIBUTING.md)                    | Development workflow and conventions |
+| [ADR Template](docs/adr-template.md)               | Architecture Decision Record format  |
 
 ## Dependency Boundaries
 

@@ -23,18 +23,18 @@ This PRD builds that standalone API using Hono (lightweight, edge-compatible) an
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| Server starts | `bun dev` in apps/api starts Hono server | Running on port 3002 within 1s |
-| Health check | `GET /health` returns JSON status | 200 with `{ status: "ok", timestamp, version }` |
-| tRPC endpoint | `POST /trpc/*` handles tRPC requests | Correct routing to procedure handlers |
-| Type export | `AppRouter` type is importable by client packages | `import type { AppRouter } from "@[project-name]/api"` compiles |
-| CORS | Web and mobile origins are allowed | Preflight OPTIONS returns correct headers |
-| Auth middleware | `protectedProcedure` rejects unauthenticated requests | 401 UNAUTHORIZED for missing/invalid tokens |
-| Zod validation | Invalid tRPC inputs return structured Zod errors | Flattened Zod error in response body |
-| Environment validation | Missing required env vars fail at startup | Zod parse throws before server starts |
-| CRUD operations | Projects router: list, get, create, update, delete | All 5 operations work with correct auth checks |
-| Hot reload | File changes restart server automatically | `bun --watch` detects changes |
+| Criteria               | Measurement                                           | Target                                                          |
+| ---------------------- | ----------------------------------------------------- | --------------------------------------------------------------- |
+| Server starts          | `bun dev` in apps/api starts Hono server              | Running on port 3002 within 1s                                  |
+| Health check           | `GET /health` returns JSON status                     | 200 with `{ status: "ok", timestamp, version }`                 |
+| tRPC endpoint          | `POST /trpc/*` handles tRPC requests                  | Correct routing to procedure handlers                           |
+| Type export            | `AppRouter` type is importable by client packages     | `import type { AppRouter } from "@[project-name]/api"` compiles |
+| CORS                   | Web and mobile origins are allowed                    | Preflight OPTIONS returns correct headers                       |
+| Auth middleware        | `protectedProcedure` rejects unauthenticated requests | 401 UNAUTHORIZED for missing/invalid tokens                     |
+| Zod validation         | Invalid tRPC inputs return structured Zod errors      | Flattened Zod error in response body                            |
+| Environment validation | Missing required env vars fail at startup             | Zod parse throws before server starts                           |
+| CRUD operations        | Projects router: list, get, create, update, delete    | All 5 operations work with correct auth checks                  |
+| Hot reload             | File changes restart server automatically             | `bun --watch` detects changes                                   |
 
 ---
 
@@ -99,21 +99,21 @@ packages/database        (PRD-003) ← db client, schema for queries
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
+| Depends On                    | What It Provides                                       |
+| ----------------------------- | ------------------------------------------------------ |
 | PRD-001 (Monorepo Foundation) | Workspace structure, Turbo dev task, TypeScript config |
-| PRD-002 (Shared Types) | Zod schemas for `.input()` validation, error types |
-| PRD-003 (Database) | `db` instance, schema tables, Drizzle query builders |
+| PRD-002 (Shared Types)        | Zod schemas for `.input()` validation, error types     |
+| PRD-003 (Database)            | `db` instance, schema tables, Drizzle query builders   |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
-| PRD-006 (Auth) | Mounts Better Auth handler on Hono app, provides session to tRPC context |
-| PRD-007 (Error Handling) | Adds `AppError` handling + Pino logging to this server |
-| PRD-008 (Rate Limiting) | Adds Upstash rate limiting middleware to this server |
-| PRD-009 (AI Integration) | Adds `ai` router to the `appRouter` |
-| PRD-010/011/012 (Apps) | Import `AppRouter` type for tRPC client |
+| Consumer                 | How It's Used                                                            |
+| ------------------------ | ------------------------------------------------------------------------ |
+| PRD-006 (Auth)           | Mounts Better Auth handler on Hono app, provides session to tRPC context |
+| PRD-007 (Error Handling) | Adds `AppError` handling + Pino logging to this server                   |
+| PRD-008 (Rate Limiting)  | Adds Upstash rate limiting middleware to this server                     |
+| PRD-009 (AI Integration) | Adds `ai` router to the `appRouter`                                      |
+| PRD-010/011/012 (Apps)   | Import `AppRouter` type for tRPC client                                  |
 
 ---
 
@@ -124,6 +124,7 @@ packages/database        (PRD-003) ← db client, schema for queries
 No new types — this PRD consumes types from PRD-002 and PRD-003.
 
 **Key type export**:
+
 ```typescript
 // apps/api/src/routers/index.ts
 export type AppRouter = typeof appRouter;
@@ -131,6 +132,7 @@ export type AppRouter = typeof appRouter;
 ```
 
 **Context type**:
+
 ```typescript
 // apps/api/src/trpc.ts
 export type Context = {
@@ -167,7 +169,7 @@ export type Context = {
 ```typescript
 // apps/api/src/routers/index.ts
 export const appRouter = router({
-  users: usersRouter,      // Stub: users.me query
+  users: usersRouter, // Stub: users.me query
   projects: projectsRouter, // Full CRUD: list, get, create, update, delete
   // ai: aiRouter,          // Added by PRD-009
 });
@@ -178,19 +180,21 @@ export type AppRouter = typeof appRouter;
 **Projects Router — full contract**:
 
 ```typescript
-projects.list    // publicProcedure, input: { limit?, offset? }, returns: Project[]
-projects.get     // protectedProcedure, input: { projectId: uuid }, returns: Project + owner
-projects.create  // protectedProcedure, input: CreateProjectSchema, returns: Project
-projects.update  // protectedProcedure, input: UpdateProjectSchema, returns: Project
-projects.delete  // protectedProcedure, input: { id: uuid }, returns: { success: true }
+projects.list; // publicProcedure, input: { limit?, offset? }, returns: Project[]
+projects.get; // protectedProcedure, input: { projectId: uuid }, returns: Project + owner
+projects.create; // protectedProcedure, input: CreateProjectSchema, returns: Project
+projects.update; // protectedProcedure, input: UpdateProjectSchema, returns: Project
+projects.delete; // protectedProcedure, input: { id: uuid }, returns: { success: true }
 ```
 
 **Health Check**:
+
 ```
 GET /health → { status: "ok", timestamp: string, version: string }
 ```
 
 **Environment Contract**:
+
 ```typescript
 // apps/api/src/lib/env.ts
 {
@@ -235,29 +239,31 @@ apps/api/
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Create `apps/api/package.json`, `tsconfig.json`, `.env.example` | 15m | PRD-001 | ✅ Yes | Config boilerplate |
-| 2 | Implement `src/lib/env.ts` — Zod environment validation | 20m | Task 1 | ✅ Yes | Well-specified schema |
-| 3 | Implement `src/trpc.ts` — tRPC init, context, procedures | 45m | Task 2 | 🟡 Partial | Core architecture — AI generates, human reviews middleware chain |
-| 4 | Implement `src/routers/index.ts` — root appRouter | 10m | Task 3 | ✅ Yes | Simple composition |
-| 5 | Implement `src/routers/projects.ts` — full CRUD | 60m | Tasks 3-4 | 🟡 Partial | AI generates from spec, human reviews auth checks and query patterns |
-| 6 | Implement `src/routers/users.ts` — stub router | 10m | Task 3 | ✅ Yes | Minimal stub |
-| 7 | Implement `src/index.ts` — Hono app, middleware, server entry | 30m | Tasks 3-6 | 🟡 Partial | AI generates, human reviews CORS config and middleware order |
-| 8 | Verify server starts and health check works | 10m | Task 7 | ❌ No | Manual: `bun dev` → `curl localhost:3002/health` |
-| 9 | Test tRPC endpoints with curl/Hoppscotch | 20m | Task 8 | ❌ No | Manual: POST to `/trpc/projects.list`, verify JSON response |
-| 10 | Write integration tests (health check, auth rejection, CRUD) | 45m | Task 7 | ✅ Yes | Hono's `app.request()` test pattern |
-| 11 | Verify `AppRouter` type exports correctly for client consumption | 10m | Task 4 | ❌ No | Manual: create test import in packages/shared/api-client |
+| #   | Task                                                             | Estimate | Dependencies | Claude Code Candidate? | Notes                                                                |
+| --- | ---------------------------------------------------------------- | -------- | ------------ | ---------------------- | -------------------------------------------------------------------- |
+| 1   | Create `apps/api/package.json`, `tsconfig.json`, `.env.example`  | 15m      | PRD-001      | ✅ Yes                 | Config boilerplate                                                   |
+| 2   | Implement `src/lib/env.ts` — Zod environment validation          | 20m      | Task 1       | ✅ Yes                 | Well-specified schema                                                |
+| 3   | Implement `src/trpc.ts` — tRPC init, context, procedures         | 45m      | Task 2       | 🟡 Partial             | Core architecture — AI generates, human reviews middleware chain     |
+| 4   | Implement `src/routers/index.ts` — root appRouter                | 10m      | Task 3       | ✅ Yes                 | Simple composition                                                   |
+| 5   | Implement `src/routers/projects.ts` — full CRUD                  | 60m      | Tasks 3-4    | 🟡 Partial             | AI generates from spec, human reviews auth checks and query patterns |
+| 6   | Implement `src/routers/users.ts` — stub router                   | 10m      | Task 3       | ✅ Yes                 | Minimal stub                                                         |
+| 7   | Implement `src/index.ts` — Hono app, middleware, server entry    | 30m      | Tasks 3-6    | 🟡 Partial             | AI generates, human reviews CORS config and middleware order         |
+| 8   | Verify server starts and health check works                      | 10m      | Task 7       | ❌ No                  | Manual: `bun dev` → `curl localhost:3002/health`                     |
+| 9   | Test tRPC endpoints with curl/Hoppscotch                         | 20m      | Task 8       | ❌ No                  | Manual: POST to `/trpc/projects.list`, verify JSON response          |
+| 10  | Write integration tests (health check, auth rejection, CRUD)     | 45m      | Task 7       | ✅ Yes                 | Hono's `app.request()` test pattern                                  |
+| 11  | Verify `AppRouter` type exports correctly for client consumption | 10m      | Task 4       | ❌ No                  | Manual: create test import in packages/shared/api-client             |
 
 ### Claude Code Task Annotations
 
 **Task 5 (Projects Router)**:
+
 - **Context needed**: Full projects router code from tech spec. `CreateProjectSchema` and `UpdateProjectSchema` from PRD-002. Schema imports from PRD-003. tRPC procedure types from Task 3.
 - **Constraints**: Every mutation must check resource ownership (ownerId === ctx.userId OR admin). Use `.returning()` on all inserts/updates. Use `TRPCError` for error responses. Keep business logic in the router for now (no service layer extraction yet).
 - **Done state**: All 5 CRUD operations compile. Auth checks on get/update/delete.
 - **Verification command**: `cd apps/api && bun type-check`
 
 **Task 10 (Integration Tests)**:
+
 - **Context needed**: Hono's `app.request()` testing pattern. tRPC's `createCaller` pattern. Test contexts with mock auth.
 - **Constraints**: Use `bun:test`. Test: health check returns 200, unauthenticated tRPC call returns 401, authenticated project CRUD works end-to-end. Do NOT require a live database for unit-level tests (mock db for those).
 - **Done state**: `bun test` passes in `apps/api/`.
@@ -269,11 +275,11 @@ apps/api/
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | Environment validation, auth middleware, procedure logic | Bun test | 15-20 |
-| Integration | Health check, tRPC routing, CRUD against test DB | Bun test + Hono `app.request()` | 8-12 |
-| E2E | N/A (covered by PRD-010 E2E) | — | 0 |
+| Level       | What's Tested                                            | Tool                            | Count (approx) |
+| ----------- | -------------------------------------------------------- | ------------------------------- | -------------- |
+| Unit        | Environment validation, auth middleware, procedure logic | Bun test                        | 15-20          |
+| Integration | Health check, tRPC routing, CRUD against test DB         | Bun test + Hono `app.request()` | 8-12           |
+| E2E         | N/A (covered by PRD-010 E2E)                             | —                               | 0              |
 
 ### Key Test Scenarios
 
@@ -290,13 +296,13 @@ apps/api/
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Cold start | Server starts in < 500ms | `time bun src/index.ts` |
-| Request latency | Simple query < 50ms (excluding DB) | Measured in tests |
-| Bundle size | Production build < 1MB | `ls -la dist/index.js` |
-| Type safety | Zero `any` in router code | `grep -r "any" src/routers/` returns 0 |
-| Hot reload | File change detected in < 1s | Manual observation with `bun --watch` |
+| Requirement     | Target                             | How Verified                           |
+| --------------- | ---------------------------------- | -------------------------------------- |
+| Cold start      | Server starts in < 500ms           | `time bun src/index.ts`                |
+| Request latency | Simple query < 50ms (excluding DB) | Measured in tests                      |
+| Bundle size     | Production build < 1MB             | `ls -la dist/index.js`                 |
+| Type safety     | Zero `any` in router code          | `grep -r "any" src/routers/` returns 0 |
+| Hot reload      | File change detected in < 1s       | Manual observation with `bun --watch`  |
 
 ---
 
@@ -316,16 +322,16 @@ apps/api/
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should `projects.list` be `publicProcedure` or `protectedProcedure`? | Affects whether anonymous users can browse projects | Product | Resolved — public for list (matches spec), protected for everything else |
-| 2 | Do we need request body size limits on tRPC? | Security concern for large payloads | Security | Open — Hono has a `bodyLimit()` middleware, consider adding |
-| 3 | Should we add `onError` logging to tRPC adapter now or wait for PRD-007? | Affects initial observability | Architect | Resolved — add basic `console.error` now, PRD-007 replaces with Pino |
+| #   | Question                                                                 | Impact                                              | Owner     | Status                                                                   |
+| --- | ------------------------------------------------------------------------ | --------------------------------------------------- | --------- | ------------------------------------------------------------------------ |
+| 1   | Should `projects.list` be `publicProcedure` or `protectedProcedure`?     | Affects whether anonymous users can browse projects | Product   | Resolved — public for list (matches spec), protected for everything else |
+| 2   | Do we need request body size limits on tRPC?                             | Security concern for large payloads                 | Security  | Open — Hono has a `bodyLimit()` middleware, consider adding              |
+| 3   | Should we add `onError` logging to tRPC adapter now or wait for PRD-007? | Affects initial observability                       | Architect | Resolved — add basic `console.error` now, PRD-007 replaces with Pino     |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

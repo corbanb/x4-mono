@@ -23,14 +23,14 @@ Without this foundation, every subsequent PRD (database schema, API routers, cli
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| Single source of truth | All domain types are inferred from Zod schemas | Zero hand-written type duplicates of Zod schemas |
-| Cross-workspace imports | Types import cleanly in API, web, mobile, desktop | `import { User } from "@packages/shared/types"` works in all workspaces |
-| Validation consistency | Same Zod schema validates on both client and server | `CreateProjectSchema.parse()` identical behavior everywhere |
-| Type inference | `z.infer<typeof Schema>` produces correct TypeScript types | `bun turbo type-check` passes |
-| Error type coverage | All API error codes have corresponding types | Every error code in `ErrorCodes` maps to an HTTP status concept |
-| Utility completeness | Common formatters and helpers are available without per-workspace duplication | Date, currency, string helpers exported from single location |
+| Criteria                | Measurement                                                                   | Target                                                                  |
+| ----------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Single source of truth  | All domain types are inferred from Zod schemas                                | Zero hand-written type duplicates of Zod schemas                        |
+| Cross-workspace imports | Types import cleanly in API, web, mobile, desktop                             | `import { User } from "@packages/shared/types"` works in all workspaces |
+| Validation consistency  | Same Zod schema validates on both client and server                           | `CreateProjectSchema.parse()` identical behavior everywhere             |
+| Type inference          | `z.infer<typeof Schema>` produces correct TypeScript types                    | `bun turbo type-check` passes                                           |
+| Error type coverage     | All API error codes have corresponding types                                  | Every error code in `ErrorCodes` maps to an HTTP status concept         |
+| Utility completeness    | Common formatters and helpers are available without per-workspace duplication | Date, currency, string helpers exported from single location            |
 
 ---
 
@@ -85,19 +85,19 @@ packages/shared/utils   ← This PRD (imports types only)
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
+| Depends On                    | What It Provides                                     |
+| ----------------------------- | ---------------------------------------------------- |
 | PRD-001 (Monorepo Foundation) | Workspace structure, TypeScript config, path aliases |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
-| PRD-003 (Database) | Domain types inform Drizzle schema column definitions |
-| PRD-005 (API Server) | Zod schemas used as tRPC `.input()` validators; error types in responses |
-| PRD-007 (Error Handling) | `ErrorCodes` and `APIErrorResponse` are the foundation of `AppError` |
-| PRD-009 (AI Integration) | AI-specific types extend base types |
-| PRD-010/011/012 (Apps) | Form validation, display logic, error handling in UI |
+| Consumer                 | How It's Used                                                            |
+| ------------------------ | ------------------------------------------------------------------------ |
+| PRD-003 (Database)       | Domain types inform Drizzle schema column definitions                    |
+| PRD-005 (API Server)     | Zod schemas used as tRPC `.input()` validators; error types in responses |
+| PRD-007 (Error Handling) | `ErrorCodes` and `APIErrorResponse` are the foundation of `AppError`     |
+| PRD-009 (AI Integration) | AI-specific types extend base types                                      |
+| PRD-010/011/012 (Apps)   | Form validation, display logic, error handling in UI                     |
 
 ---
 
@@ -113,7 +113,7 @@ export type User = {
   id: string;
   email: string;
   name: string;
-  role: "user" | "admin";
+  role: 'user' | 'admin';
   createdAt: Date;
   updatedAt: Date;
 };
@@ -123,7 +123,7 @@ export type Project = {
   ownerId: string;
   name: string;
   description?: string;
-  status: "active" | "archived";
+  status: 'active' | 'archived';
   createdAt: Date;
   updatedAt: Date;
 };
@@ -133,7 +133,7 @@ export type Project = {
 
 ```typescript
 // packages/shared/types/api.ts
-import type { User, Project } from "./domain";
+import type { User, Project } from './domain';
 
 export type GetUserRequest = { userId: string };
 export type GetUserResponse = User;
@@ -159,23 +159,23 @@ export type PaginatedResponse<T> = {
 // packages/shared/types/errors.ts
 export const ErrorCodes = {
   // Auth
-  UNAUTHORIZED: "UNAUTHORIZED",
-  FORBIDDEN: "FORBIDDEN",
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  FORBIDDEN: 'FORBIDDEN',
 
   // Resources
-  NOT_FOUND: "NOT_FOUND",
-  CONFLICT: "CONFLICT",
+  NOT_FOUND: 'NOT_FOUND',
+  CONFLICT: 'CONFLICT',
 
   // Validation
-  VALIDATION_ERROR: "VALIDATION_ERROR",
-  BAD_REQUEST: "BAD_REQUEST",
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  BAD_REQUEST: 'BAD_REQUEST',
 
   // Server
-  INTERNAL_ERROR: "INTERNAL_ERROR",
-  SERVICE_UNAVAILABLE: "SERVICE_UNAVAILABLE",
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+  SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
 
   // Rate limiting
-  RATE_LIMITED: "RATE_LIMITED",
+  RATE_LIMITED: 'RATE_LIMITED',
 } as const;
 
 export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes];
@@ -192,14 +192,14 @@ export type APIErrorResponse = {
 
 ```typescript
 // packages/shared/utils/validators.ts
-import { z } from "zod";
+import { z } from 'zod';
 
 // --- User Schemas ---
 export const UserSchema = z.object({
   id: z.string().uuid(),
   email: z.string().email(),
   name: z.string().min(1).max(255),
-  role: z.enum(["user", "admin"]),
+  role: z.enum(['user', 'admin']),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -214,7 +214,7 @@ export const UpdateProjectSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(255).optional(),
   description: z.string().max(1000).optional(),
-  status: z.enum(["active", "archived"]).optional(),
+  status: z.enum(['active', 'archived']).optional(),
 });
 
 // --- Pagination ---
@@ -234,31 +234,31 @@ export type PaginationInput = z.infer<typeof PaginationSchema>;
 
 ```typescript
 // packages/shared/utils/formatting.ts
-export function formatDate(date: Date, locale = "en-US"): string {
+export function formatDate(date: Date, locale = 'en-US'): string {
   return new Intl.DateTimeFormat(locale, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
   }).format(date);
 }
 
-export function formatCurrency(amount: number, currency = "USD"): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
+export function formatCurrency(amount: number, currency = 'USD'): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
     currency,
   }).format(amount);
 }
 
 export function truncate(str: string, maxLength: number): string {
   if (str.length <= maxLength) return str;
-  return str.slice(0, maxLength - 3) + "...";
+  return str.slice(0, maxLength - 3) + '...';
 }
 
 export function slugify(str: string): string {
   return str
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
 }
 ```
 
@@ -282,11 +282,14 @@ export function isNonNullable<T>(value: T): value is NonNullable<T> {
 }
 
 export function groupBy<T>(items: T[], key: keyof T): Record<string, T[]> {
-  return items.reduce((acc, item) => {
-    const group = String(item[key]);
-    (acc[group] ??= []).push(item);
-    return acc;
-  }, {} as Record<string, T[]>);
+  return items.reduce(
+    (acc, item) => {
+      const group = String(item[key]);
+      (acc[group] ??= []).push(item);
+      return acc;
+    },
+    {} as Record<string, T[]>,
+  );
 }
 
 export function sleep(ms: number): Promise<void> {
@@ -314,15 +317,15 @@ This PRD exports **types and functions**, not API endpoints:
 
 ```typescript
 // packages/shared/types/index.ts — public surface
-export * from "./domain";
-export * from "./api";
-export * from "./errors";
+export * from './domain';
+export * from './api';
+export * from './errors';
 
 // packages/shared/utils/index.ts — public surface
-export * from "./validators";
-export * from "./formatting";
-export * from "./helpers";
-export * from "./constants";
+export * from './validators';
+export * from './formatting';
+export * from './helpers';
+export * from './constants';
 ```
 
 **Contract**: Any workspace can import from `@packages/shared/types` or `@packages/shared/utils`. The types package must remain a leaf node (no runtime dependencies). The utils package may depend on Zod.
@@ -354,27 +357,29 @@ packages/shared/
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Create `packages/shared/package.json` and `tsconfig.json` | 15m | PRD-001 | ✅ Yes | Config files only |
-| 2 | Define domain types (`types/domain.ts`, `types/api.ts`) | 30m | Task 1 | 🟡 Partial | Human reviews entity design, AI generates boilerplate |
-| 3 | Define error types (`types/errors.ts`) | 20m | Task 1 | ✅ Yes | Well-specified in tech spec |
-| 4 | Create Zod validators (`utils/validators.ts`) | 30m | Task 2 | ✅ Yes | Mechanical translation of types to Zod schemas |
-| 5 | Create formatting utilities (`utils/formatting.ts`) | 20m | Task 1 | ✅ Yes | Standard formatting functions |
-| 6 | Create helpers and constants (`utils/helpers.ts`, `utils/constants.ts`) | 20m | Task 1 | ✅ Yes | Utility functions |
-| 7 | Create index files and re-exports | 10m | Tasks 2-6 | ✅ Yes | Simple re-exports |
-| 8 | Write unit tests for validators and formatting | 45m | Tasks 4-5 | ✅ Yes | Strong AI candidate — test Zod schema validation, format outputs |
-| 9 | Verify cross-workspace import | 15m | Task 7 | ❌ No | Manual — create test import in apps/api, run type-check |
+| #   | Task                                                                    | Estimate | Dependencies | Claude Code Candidate? | Notes                                                            |
+| --- | ----------------------------------------------------------------------- | -------- | ------------ | ---------------------- | ---------------------------------------------------------------- |
+| 1   | Create `packages/shared/package.json` and `tsconfig.json`               | 15m      | PRD-001      | ✅ Yes                 | Config files only                                                |
+| 2   | Define domain types (`types/domain.ts`, `types/api.ts`)                 | 30m      | Task 1       | 🟡 Partial             | Human reviews entity design, AI generates boilerplate            |
+| 3   | Define error types (`types/errors.ts`)                                  | 20m      | Task 1       | ✅ Yes                 | Well-specified in tech spec                                      |
+| 4   | Create Zod validators (`utils/validators.ts`)                           | 30m      | Task 2       | ✅ Yes                 | Mechanical translation of types to Zod schemas                   |
+| 5   | Create formatting utilities (`utils/formatting.ts`)                     | 20m      | Task 1       | ✅ Yes                 | Standard formatting functions                                    |
+| 6   | Create helpers and constants (`utils/helpers.ts`, `utils/constants.ts`) | 20m      | Task 1       | ✅ Yes                 | Utility functions                                                |
+| 7   | Create index files and re-exports                                       | 10m      | Tasks 2-6    | ✅ Yes                 | Simple re-exports                                                |
+| 8   | Write unit tests for validators and formatting                          | 45m      | Tasks 4-5    | ✅ Yes                 | Strong AI candidate — test Zod schema validation, format outputs |
+| 9   | Verify cross-workspace import                                           | 15m      | Task 7       | ❌ No                  | Manual — create test import in apps/api, run type-check          |
 
 ### Claude Code Task Annotations
 
 **Task 4 (Zod Validators)**:
+
 - **Context needed**: Domain types from `types/domain.ts`, the spec's validator examples, Zod v3 API
 - **Constraints**: Every Zod schema MUST have a corresponding `z.infer` type export. Do NOT duplicate types manually — always infer from schemas.
 - **Done state**: `bun turbo type-check --filter=@[project-name]/shared` passes. All schemas parse valid data and reject invalid data.
 - **Verification command**: `cd packages/shared && bun test`
 
 **Task 8 (Unit Tests)**:
+
 - **Context needed**: All validators, formatters, and helpers from tasks 4-6
 - **Constraints**: Test both valid and invalid inputs for every Zod schema. Test edge cases (empty strings, max length, invalid UUIDs). Use Bun test runner (`import { describe, test, expect } from "bun:test"`).
 - **Done state**: All tests pass. Coverage covers happy path + validation failures for every schema.
@@ -386,11 +391,11 @@ packages/shared/
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | Zod schema validation (valid + invalid), formatters, helpers | Bun test | 25-35 |
-| Integration | Cross-workspace import resolution | Manual type-check | 1-2 |
-| E2E | N/A | — | 0 |
+| Level       | What's Tested                                                | Tool              | Count (approx) |
+| ----------- | ------------------------------------------------------------ | ----------------- | -------------- |
+| Unit        | Zod schema validation (valid + invalid), formatters, helpers | Bun test          | 25-35          |
+| Integration | Cross-workspace import resolution                            | Manual type-check | 1-2            |
+| E2E         | N/A                                                          | —                 | 0              |
 
 ### Key Test Scenarios
 
@@ -405,12 +410,12 @@ packages/shared/
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Bundle size | Zod + shared utils < 50KB gzipped | `bun build` output size |
-| Type-check speed | `tsc --noEmit` for shared package < 2s | Timed locally |
-| Zero runtime deps (types) | `types/` directory has no imports from `node_modules` | Code review |
-| Zod only runtime dep (utils) | `utils/` directory imports only from Zod and `types/` | ESLint boundary check |
+| Requirement                  | Target                                                | How Verified            |
+| ---------------------------- | ----------------------------------------------------- | ----------------------- |
+| Bundle size                  | Zod + shared utils < 50KB gzipped                     | `bun build` output size |
+| Type-check speed             | `tsc --noEmit` for shared package < 2s                | Timed locally           |
+| Zero runtime deps (types)    | `types/` directory has no imports from `node_modules` | Code review             |
+| Zod only runtime dep (utils) | `utils/` directory imports only from Zod and `types/` | ESLint boundary check   |
 
 ---
 
@@ -429,16 +434,16 @@ Since this is a boilerplate PRD (not a migration), rollout is simply:
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should we also export Zod schemas from `types/` or keep them strictly in `utils/`? | If schemas are in `types/`, the types package gets a runtime dependency (Zod) | Architect | Resolved — schemas live in `utils/`, types in `types/`. Types package stays pure. |
-| 2 | Do we need branded types (e.g., `UserId` as a branded string)? | Affects type safety at callsites | Architect | Open — defer to first project. If needed, add as a utility in `utils/`. |
-| 3 | Should `PaginatedResponse` be generic or per-entity? | Affects API response consistency | API lead | Resolved — generic `PaginatedResponse<T>` in `types/api.ts`. |
+| #   | Question                                                                           | Impact                                                                        | Owner     | Status                                                                            |
+| --- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------- | --------------------------------------------------------------------------------- |
+| 1   | Should we also export Zod schemas from `types/` or keep them strictly in `utils/`? | If schemas are in `types/`, the types package gets a runtime dependency (Zod) | Architect | Resolved — schemas live in `utils/`, types in `types/`. Types package stays pure. |
+| 2   | Do we need branded types (e.g., `UserId` as a branded string)?                     | Affects type safety at callsites                                              | Architect | Open — defer to first project. If needed, add as a utility in `utils/`.           |
+| 3   | Should `PaginatedResponse` be generic or per-entity?                               | Affects API response consistency                                              | API lead  | Resolved — generic `PaginatedResponse<T>` in `types/api.ts`.                      |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

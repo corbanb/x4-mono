@@ -23,15 +23,15 @@ This PRD creates the documentation layer: the getting started checklist, key com
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| Time to dev server | New developer: clone → install → running | < 30 minutes |
-| Zero tribal knowledge | Every setup step is documented | No "ask someone" steps |
-| CLAUDE.md | Claude Code can execute tasks using project context | AI agent productivity within 1 prompt |
-| README quality | Root README explains what, why, how | New developer understands the project in 5 min |
-| Key commands | Every `bun` command is documented | Single reference sheet |
-| Env var docs | Every env var has description, where to get it, required/optional | No mystery variables |
-| Troubleshooting | Common issues have documented solutions | Top 10 gotchas covered |
+| Criteria              | Measurement                                                       | Target                                         |
+| --------------------- | ----------------------------------------------------------------- | ---------------------------------------------- |
+| Time to dev server    | New developer: clone → install → running                          | < 30 minutes                                   |
+| Zero tribal knowledge | Every setup step is documented                                    | No "ask someone" steps                         |
+| CLAUDE.md             | Claude Code can execute tasks using project context               | AI agent productivity within 1 prompt          |
+| README quality        | Root README explains what, why, how                               | New developer understands the project in 5 min |
+| Key commands          | Every `bun` command is documented                                 | Single reference sheet                         |
+| Env var docs          | Every env var has description, where to get it, required/optional | No mystery variables                           |
+| Troubleshooting       | Common issues have documented solutions                           | Top 10 gotchas covered                         |
 
 ---
 
@@ -89,18 +89,18 @@ PRD-016 (This PRD)
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
+| Depends On         | What It Provides            |
+| ------------------ | --------------------------- |
 | All PRDs (001-015) | The system being documented |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
-| New developers | Onboarding, setup, reference |
-| Returning developers | Command reference, troubleshooting |
-| Claude Code | CLAUDE.md provides project context for AI agent tasks |
-| Future projects | Template cloned and customized |
+| Consumer             | How It's Used                                         |
+| -------------------- | ----------------------------------------------------- |
+| New developers       | Onboarding, setup, reference                          |
+| Returning developers | Command reference, troubleshooting                    |
+| Claude Code          | CLAUDE.md provides project context for AI agent tasks |
+| Future projects      | Template cloned and customized                        |
 
 ---
 
@@ -123,13 +123,16 @@ PRD-016 (This PRD)
 ### 5.3 Key Documents
 
 **CLAUDE.md Structure**:
+
 ```markdown
 # CLAUDE.md — [Project Name]
 
 ## Project Overview
+
 [One paragraph: what this project is and who it's for]
 
 ## Architecture
+
 - Monorepo: Bun + Turborepo
 - API: Hono + tRPC on Bun (apps/api)
 - Web: Next.js 15 App Router (apps/web)
@@ -138,33 +141,39 @@ PRD-016 (This PRD)
 - AI: Vercel AI SDK + Claude (packages/ai-integrations)
 
 ## Key Conventions
+
 - Types: Zod schemas in packages/shared/utils/validators.ts → infer types, never duplicate
-- Errors: Always use Errors.* constructors (apps/api/src/lib/errors.ts)
+- Errors: Always use Errors.\* constructors (apps/api/src/lib/errors.ts)
 - Auth: protectedProcedure for authenticated, adminProcedure for admin-only
 - Logging: Use child loggers (aiLogger, dbLogger, authLogger), never console.log in production
 - Tests: Bun test, createCaller + createTestContext for tRPC tests
 
 ## File Organization
+
 - New tRPC router → apps/api/src/routers/{name}.ts, add to appRouter in index.ts
 - New database table → packages/database/schema.ts, run bun db:generate
 - New shared type → packages/shared/types/domain.ts + Zod schema in utils/validators.ts
 - New UI component → packages/shared/ui/ (cross-platform) or apps/web/src/components/ (web-only)
 
 ## Do NOT
+
 - Add API routes to apps/web (API is standalone in apps/api)
 - Use console.log for logging (use Pino logger)
 - Create types manually when a Zod schema exists (use z.infer)
-- Import from apps/* in packages/* (dependency boundary violation)
+- Import from apps/_ in packages/_ (dependency boundary violation)
 - Hard-code environment variables (use apps/api/src/lib/env.ts)
 
 ## Common Tasks
+
 ### Add a new tRPC router
+
 1. Create apps/api/src/routers/{name}.ts
 2. Add to appRouter in apps/api/src/routers/index.ts
 3. Run bun type-check to verify AppRouter type updates
 4. Use trpc.{name}.{procedure}.useQuery/useMutation in web/mobile
 
 ### Add a database table
+
 1. Add table to packages/database/schema.ts
 2. Add relations if needed
 3. Run bun db:generate to create migration
@@ -202,28 +211,30 @@ apps/marketing/README.md
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Write root `README.md` — overview, architecture, quick start | 30m | All PRDs | 🟡 Partial | AI drafts, human refines voice and accuracy |
-| 2 | Write `CONTRIBUTING.md` — workflow, conventions, style guide | 25m | PRD-001 (conventions) | 🟡 Partial | AI drafts, human reviews conventions |
-| 3 | Write `CLAUDE.md` — full Claude Code context file | 30m | All PRDs | 🟡 Partial | Critical document — human reviews every section |
-| 4 | Write `docs/getting-started.md` — checklists from spec | 20m | All PRDs | ✅ Yes | Checklist format from spec |
-| 5 | Write `docs/commands.md` — key commands reference | 15m | All PRDs | ✅ Yes | Extract from spec and package.json scripts |
-| 6 | Write `docs/environment.md` — env var documentation | 15m | All PRDs | ✅ Yes | Extract from .env.example with descriptions |
-| 7 | Write `docs/troubleshooting.md` — common gotchas | 20m | All PRDs | 🟡 Partial | AI lists known issues, human adds real-world fixes |
-| 8 | Write `docs/adr-template.md` — ADR format | 10m | None | ✅ Yes | Standard ADR template |
-| 9 | Write per-workspace README.md files (5 workspaces) | 25m | PRDs 005, 010-013 | ✅ Yes | Template with workspace-specific details |
-| 10 | Review all documentation for accuracy | 20m | Tasks 1-9 | ❌ No | Human reviews every document against actual codebase |
+| #   | Task                                                         | Estimate | Dependencies          | Claude Code Candidate? | Notes                                                |
+| --- | ------------------------------------------------------------ | -------- | --------------------- | ---------------------- | ---------------------------------------------------- |
+| 1   | Write root `README.md` — overview, architecture, quick start | 30m      | All PRDs              | 🟡 Partial             | AI drafts, human refines voice and accuracy          |
+| 2   | Write `CONTRIBUTING.md` — workflow, conventions, style guide | 25m      | PRD-001 (conventions) | 🟡 Partial             | AI drafts, human reviews conventions                 |
+| 3   | Write `CLAUDE.md` — full Claude Code context file            | 30m      | All PRDs              | 🟡 Partial             | Critical document — human reviews every section      |
+| 4   | Write `docs/getting-started.md` — checklists from spec       | 20m      | All PRDs              | ✅ Yes                 | Checklist format from spec                           |
+| 5   | Write `docs/commands.md` — key commands reference            | 15m      | All PRDs              | ✅ Yes                 | Extract from spec and package.json scripts           |
+| 6   | Write `docs/environment.md` — env var documentation          | 15m      | All PRDs              | ✅ Yes                 | Extract from .env.example with descriptions          |
+| 7   | Write `docs/troubleshooting.md` — common gotchas             | 20m      | All PRDs              | 🟡 Partial             | AI lists known issues, human adds real-world fixes   |
+| 8   | Write `docs/adr-template.md` — ADR format                    | 10m      | None                  | ✅ Yes                 | Standard ADR template                                |
+| 9   | Write per-workspace README.md files (5 workspaces)           | 25m      | PRDs 005, 010-013     | ✅ Yes                 | Template with workspace-specific details             |
+| 10  | Review all documentation for accuracy                        | 20m      | Tasks 1-9             | ❌ No                  | Human reviews every document against actual codebase |
 
 ### Claude Code Task Annotations
 
 **Task 3 (CLAUDE.md)**:
+
 - **Context needed**: Full project architecture from all PRDs. File organization patterns. Coding conventions. Dependency boundaries from PRD-001. Testing patterns from PRD-015.
 - **Constraints**: Must be accurate — incorrect CLAUDE.md is worse than none. Include "Do NOT" section to prevent common AI mistakes. Keep under 500 lines. Focus on actionable patterns, not prose explanations.
 - **Done state**: A new Claude Code session can read CLAUDE.md and immediately: add a tRPC router, add a database table, write tests, without additional context.
 - **Verification command**: Give CLAUDE.md to Claude Code and ask it to add a new feature — verify it follows the conventions.
 
 **Task 7 (Troubleshooting)**:
+
 - **Context needed**: Known Bun quirks (Pino worker threads, ESM resolution). Drizzle gotchas (migration vs. push, $onUpdate behavior). Better Auth setup issues (auth tables, CLI commands). tRPC version compatibility.
 - **Constraints**: Every issue must have a concrete solution, not just "check the docs." Include the error message the developer would see.
 - **Done state**: Top 10 most likely setup issues have documented solutions.
@@ -237,12 +248,12 @@ apps/marketing/README.md
 
 Documentation doesn't have traditional tests, but it has verification:
 
-| Level | What's Tested | Tool | Method |
-|-------|--------------|------|--------|
-| Accuracy | Commands actually work | Manual | Run every command in docs/commands.md |
-| Completeness | Every env var documented | Script | Compare .env.example with docs/environment.md |
-| Links | No broken links in markdown | Markdown lint | `markdownlint` or manual check |
-| CLAUDE.md | AI agent can follow the conventions | Claude Code | Give CLAUDE.md to Claude Code, ask it to add a feature |
+| Level        | What's Tested                       | Tool          | Method                                                 |
+| ------------ | ----------------------------------- | ------------- | ------------------------------------------------------ |
+| Accuracy     | Commands actually work              | Manual        | Run every command in docs/commands.md                  |
+| Completeness | Every env var documented            | Script        | Compare .env.example with docs/environment.md          |
+| Links        | No broken links in markdown         | Markdown lint | `markdownlint` or manual check                         |
+| CLAUDE.md    | AI agent can follow the conventions | Claude Code   | Give CLAUDE.md to Claude Code, ask it to add a feature |
 
 ### Key Test Scenarios
 
@@ -255,12 +266,12 @@ Documentation doesn't have traditional tests, but it has verification:
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Readability | Scannable by someone in a hurry | Human review — no walls of text |
-| Accuracy | Every command, path, and convention matches the codebase | Manual verification |
-| Maintenance | Documents updated when stack changes | CONTRIBUTING.md includes "update docs" as PR checklist item |
-| CLAUDE.md effectiveness | AI agent follows conventions on first prompt | Test with Claude Code |
+| Requirement             | Target                                                   | How Verified                                                |
+| ----------------------- | -------------------------------------------------------- | ----------------------------------------------------------- |
+| Readability             | Scannable by someone in a hurry                          | Human review — no walls of text                             |
+| Accuracy                | Every command, path, and convention matches the codebase | Manual verification                                         |
+| Maintenance             | Documents updated when stack changes                     | CONTRIBUTING.md includes "update docs" as PR checklist item |
+| CLAUDE.md effectiveness | AI agent follows conventions on first prompt             | Test with Claude Code                                       |
 
 ---
 
@@ -278,16 +289,16 @@ This is the capstone — it ships last because it documents everything that came
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should CLAUDE.md live in the root or in a `.claude/` directory? | Affects Claude Code's auto-discovery | DX | Resolved — root. Claude Code looks for CLAUDE.md at project root. |
-| 2 | Should we include a video walkthrough or just written docs? | Richer onboarding vs. maintenance overhead | DX | Open — written docs first. Video per-project if team wants it. |
-| 3 | Should docs/ be a separate workspace with its own build (e.g., Docusaurus)? | Affects discoverability and maintenance | DX | Resolved — plain markdown in `docs/`. No build system for docs in the boilerplate. |
+| #   | Question                                                                    | Impact                                     | Owner | Status                                                                             |
+| --- | --------------------------------------------------------------------------- | ------------------------------------------ | ----- | ---------------------------------------------------------------------------------- |
+| 1   | Should CLAUDE.md live in the root or in a `.claude/` directory?             | Affects Claude Code's auto-discovery       | DX    | Resolved — root. Claude Code looks for CLAUDE.md at project root.                  |
+| 2   | Should we include a video walkthrough or just written docs?                 | Richer onboarding vs. maintenance overhead | DX    | Open — written docs first. Video per-project if team wants it.                     |
+| 3   | Should docs/ be a separate workspace with its own build (e.g., Docusaurus)? | Affects discoverability and maintenance    | DX    | Resolved — plain markdown in `docs/`. No build system for docs in the boilerplate. |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

@@ -2,10 +2,10 @@
 
 ## Supported Versions
 
-| Version | Supported |
-|---------|-----------|
-| Latest on `main` | Yes |
-| Older versions | No |
+| Version          | Supported |
+| ---------------- | --------- |
+| Latest on `main` | Yes       |
+| Older versions   | No        |
 
 This is a boilerplate/template repository. Security patches are applied to the latest version on `main` only.
 

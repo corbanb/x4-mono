@@ -1,7 +1,7 @@
 name: PRD Task
 description: Create an issue for a specific PRD implementation task
-title: "[PRD-NNN] Task #N: "
-labels: ["prd-task"]
+title: '[PRD-NNN] Task #N: '
+labels: ['prd-task']
 body:
   - type: markdown
     attributes:
@@ -13,7 +13,7 @@ body:
     attributes:
       label: PRD ID
       description: Which PRD does this task belong to?
-      placeholder: "PRD-001"
+      placeholder: 'PRD-001'
     validations:
       required: true
 
@@ -22,7 +22,7 @@ body:
     attributes:
       label: Task Number
       description: The task number from the PRD's Implementation Plan table.
-      placeholder: "3"
+      placeholder: '3'
     validations:
       required: true
 
@@ -39,7 +39,7 @@ body:
     attributes:
       label: Estimate
       description: Time estimate from the PRD.
-      placeholder: "30m"
+      placeholder: '30m'
     validations:
       required: false
 
@@ -48,7 +48,7 @@ body:
     attributes:
       label: Task Dependencies
       description: Which tasks must be completed first? (from the PRD table)
-      placeholder: "Task 1, Task 2"
+      placeholder: 'Task 1, Task 2'
     validations:
       required: false
 
@@ -58,9 +58,9 @@ body:
       label: Claude Code Candidate?
       description: Can Claude Code handle this task?
       options:
-        - "Yes"
-        - "Partial — AI generates, human reviews"
-        - "No — requires manual work"
+        - 'Yes'
+        - 'Partial — AI generates, human reviews'
+        - 'No — requires manual work'
     validations:
       required: true
 
@@ -69,7 +69,7 @@ body:
     attributes:
       label: Context Needed
       description: What files or knowledge does Claude Code need before starting?
-      placeholder: "Read PRD-001 section 5.4 for file structure, section 5.2 for architecture decisions..."
+      placeholder: 'Read PRD-001 section 5.4 for file structure, section 5.2 for architecture decisions...'
     validations:
       required: false
 
@@ -86,7 +86,7 @@ body:
     attributes:
       label: Verification Command
       description: Shell command to verify the task is complete.
-      placeholder: "bun turbo type-check && bun test"
+      placeholder: 'bun turbo type-check && bun test'
     validations:
       required: false
 

@@ -1,7 +1,7 @@
 name: Feature Request
 description: Suggest a new feature or enhancement
-title: "[Feature]: "
-labels: ["enhancement"]
+title: '[Feature]: '
+labels: ['enhancement']
 body:
   - type: markdown
     attributes:
@@ -31,17 +31,17 @@ body:
       label: Affected Workspace
       description: Which workspace would this feature affect?
       options:
-        - "packages/shared"
-        - "packages/database"
-        - "packages/auth"
-        - "packages/ai-integrations"
-        - "apps/api"
-        - "apps/web"
-        - "apps/mobile-main"
-        - "apps/desktop"
-        - "apps/marketing"
-        - "Root / Monorepo tooling"
-        - "Multiple / Cross-cutting"
+        - 'packages/shared'
+        - 'packages/database'
+        - 'packages/auth'
+        - 'packages/ai-integrations'
+        - 'apps/api'
+        - 'apps/web'
+        - 'apps/mobile-main'
+        - 'apps/desktop'
+        - 'apps/marketing'
+        - 'Root / Monorepo tooling'
+        - 'Multiple / Cross-cutting'
     validations:
       required: true
 
@@ -58,7 +58,7 @@ body:
     attributes:
       label: Related PRD
       description: If this relates to an existing PRD, reference it here.
-      placeholder: "PRD-005"
+      placeholder: 'PRD-005'
     validations:
       required: false
 

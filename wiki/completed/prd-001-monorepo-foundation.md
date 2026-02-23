@@ -23,15 +23,15 @@ The specific pain points this solves: inconsistent TypeScript configs across wor
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| Workspace resolution | `bun install` resolves all workspace dependencies | Zero resolution errors |
-| TypeScript compilation | `bun turbo type-check` passes across all workspaces | Zero type errors in empty boilerplate |
-| Dev orchestration | `bun turbo dev` starts all workspaces simultaneously | All workspaces running within 5s |
-| Selective builds | `bun turbo build --filter=[HEAD^]` only rebuilds changed packages | Turbo cache hit rate visible in output |
-| Dependency boundaries | ESLint catches invalid cross-package imports | `bun turbo lint` fails on boundary violations |
-| Path aliases | `@packages/*` and `@/*` resolve correctly in every workspace | Import autocomplete works in VS Code |
-| Clean state | `bun clean` removes all build artifacts and node_modules | Single command resets to fresh state |
+| Criteria               | Measurement                                                       | Target                                        |
+| ---------------------- | ----------------------------------------------------------------- | --------------------------------------------- |
+| Workspace resolution   | `bun install` resolves all workspace dependencies                 | Zero resolution errors                        |
+| TypeScript compilation | `bun turbo type-check` passes across all workspaces               | Zero type errors in empty boilerplate         |
+| Dev orchestration      | `bun turbo dev` starts all workspaces simultaneously              | All workspaces running within 5s              |
+| Selective builds       | `bun turbo build --filter=[HEAD^]` only rebuilds changed packages | Turbo cache hit rate visible in output        |
+| Dependency boundaries  | ESLint catches invalid cross-package imports                      | `bun turbo lint` fails on boundary violations |
+| Path aliases           | `@packages/*` and `@/*` resolve correctly in every workspace      | Import autocomplete works in VS Code          |
+| Clean state            | `bun clean` removes all build artifacts and node_modules          | Single command resets to fresh state          |
 
 ---
 
@@ -93,17 +93,17 @@ PRD-001 (This PRD)
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
-| Nothing | This is the root PRD |
+| Depends On | What It Provides     |
+| ---------- | -------------------- |
+| Nothing    | This is the root PRD |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
-| Every PRD (002-016) | Workspace structure, TypeScript config, Turbo pipeline, lint rules |
-| CI pipeline (PRD-014) | `turbo.json` tasks define what CI runs |
-| Developers | `bun turbo dev` is the daily driver command |
+| Consumer              | How It's Used                                                      |
+| --------------------- | ------------------------------------------------------------------ |
+| Every PRD (002-016)   | Workspace structure, TypeScript config, Turbo pipeline, lint rules |
+| CI pipeline (PRD-014) | `turbo.json` tasks define what CI runs                             |
+| Developers            | `bun turbo dev` is the daily driver command                        |
 
 ---
 
@@ -169,10 +169,12 @@ No domain types in this PRD. The only "types" are the TypeScript compiler config
 This PRD doesn't expose APIs. It exposes **conventions**:
 
 **Workspace naming convention**:
+
 - Packages: `@[project-name]/shared`, `@[project-name]/database`, `@[project-name]/auth`, `@[project-name]/ai-integrations`
 - Apps: `@[project-name]/api`, `@[project-name]/web`, `@[project-name]/mobile`, `@[project-name]/desktop`, `@[project-name]/marketing`
 
 **Turbo task contract** — every workspace must support these scripts (if applicable):
+
 - `dev` — start development server
 - `build` — production build
 - `lint` — ESLint check
@@ -180,6 +182,7 @@ This PRD doesn't expose APIs. It exposes **conventions**:
 - `test` — run tests
 
 **Dependency boundary rules** (enforced via ESLint):
+
 ```
 packages/shared/types    → imports NOTHING (leaf node)
 packages/shared/utils    → can import: shared/types
@@ -265,21 +268,22 @@ apps/*                   → can import: any package
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Create root config files (`package.json`, `bunfig.toml`, `turbo.json`, `tsconfig.base.json`) | 30m | None | ✅ Yes | Pure boilerplate, well-defined spec |
-| 2 | Create linting & formatting config (`.eslintrc.json` with boundaries, `.prettierrc`) | 30m | Task 1 | ✅ Yes | Declarative config files |
-| 3 | Scaffold all workspace directories with `package.json` and `tsconfig.json` | 45m | Task 1 | ✅ Yes | 9 workspaces, repetitive structure |
-| 4 | Create `.gitignore`, `.env.example`, `CODEOWNERS` | 15m | Task 1 | ✅ Yes | Standard files |
-| 5 | Create `README.md` and `CONTRIBUTING.md` templates | 30m | Task 4 | ✅ Yes | Documentation scaffolding |
-| 6 | Install dependencies and verify `bun install` resolves | 15m | Tasks 1-3 | ❌ No | Manual verification |
-| 7 | Verify `bun turbo dev` starts all workspaces | 15m | Task 6 | ❌ No | Manual verification |
-| 8 | Verify `bun turbo type-check` passes across all workspaces | 15m | Task 6 | ❌ No | Manual verification |
-| 9 | Test dependency boundary violations are caught by lint | 15m | Task 6 | 🟡 Partial | Create intentional violation, verify lint catches it |
+| #   | Task                                                                                         | Estimate | Dependencies | Claude Code Candidate? | Notes                                                |
+| --- | -------------------------------------------------------------------------------------------- | -------- | ------------ | ---------------------- | ---------------------------------------------------- |
+| 1   | Create root config files (`package.json`, `bunfig.toml`, `turbo.json`, `tsconfig.base.json`) | 30m      | None         | ✅ Yes                 | Pure boilerplate, well-defined spec                  |
+| 2   | Create linting & formatting config (`.eslintrc.json` with boundaries, `.prettierrc`)         | 30m      | Task 1       | ✅ Yes                 | Declarative config files                             |
+| 3   | Scaffold all workspace directories with `package.json` and `tsconfig.json`                   | 45m      | Task 1       | ✅ Yes                 | 9 workspaces, repetitive structure                   |
+| 4   | Create `.gitignore`, `.env.example`, `CODEOWNERS`                                            | 15m      | Task 1       | ✅ Yes                 | Standard files                                       |
+| 5   | Create `README.md` and `CONTRIBUTING.md` templates                                           | 30m      | Task 4       | ✅ Yes                 | Documentation scaffolding                            |
+| 6   | Install dependencies and verify `bun install` resolves                                       | 15m      | Tasks 1-3    | ❌ No                  | Manual verification                                  |
+| 7   | Verify `bun turbo dev` starts all workspaces                                                 | 15m      | Task 6       | ❌ No                  | Manual verification                                  |
+| 8   | Verify `bun turbo type-check` passes across all workspaces                                   | 15m      | Task 6       | ❌ No                  | Manual verification                                  |
+| 9   | Test dependency boundary violations are caught by lint                                       | 15m      | Task 6       | 🟡 Partial             | Create intentional violation, verify lint catches it |
 
 ### Claude Code Task Annotations
 
 **Tasks 1-5 (Scaffolding)**:
+
 - **Context needed**: The full file structure from section 5.4, the exact config contents from the tech spec (turbo.json, tsconfig.base.json, package.json), and the workspace naming convention `@[project-name]/*`
 - **Constraints**: Do NOT add any application dependencies (no hono, no next, no trpc). Only tooling deps: turbo, typescript, eslint, prettier, eslint-plugin-boundaries, bun-types. Do NOT create any business logic files.
 - **Done state**: All files exist with correct content. `bun install` runs without errors.
@@ -291,11 +295,11 @@ apps/*                   → can import: any package
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | N/A — no business logic | — | 0 |
-| Integration | Workspace resolution, Turbo pipeline | Manual + script | 3-5 checks |
-| E2E | N/A | — | 0 |
+| Level       | What's Tested                        | Tool            | Count (approx) |
+| ----------- | ------------------------------------ | --------------- | -------------- |
+| Unit        | N/A — no business logic              | —               | 0              |
+| Integration | Workspace resolution, Turbo pipeline | Manual + script | 3-5 checks     |
+| E2E         | N/A                                  | —               | 0              |
 
 ### Key Test Scenarios
 
@@ -308,12 +312,12 @@ apps/*                   → can import: any package
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Install speed | `bun install` < 10s on warm cache | Timed locally |
-| Type-check speed | `bun turbo type-check` < 15s across all workspaces | Timed locally |
-| Dev startup | All workspaces running within 5s of `bun turbo dev` | Manual observation |
-| Disk footprint | `node_modules` < 200MB for empty boilerplate | `du -sh node_modules` |
+| Requirement      | Target                                              | How Verified          |
+| ---------------- | --------------------------------------------------- | --------------------- |
+| Install speed    | `bun install` < 10s on warm cache                   | Timed locally         |
+| Type-check speed | `bun turbo type-check` < 15s across all workspaces  | Timed locally         |
+| Dev startup      | All workspaces running within 5s of `bun turbo dev` | Manual observation    |
+| Disk footprint   | `node_modules` < 200MB for empty boilerplate        | `du -sh node_modules` |
 
 ---
 
@@ -333,16 +337,16 @@ This is the first PRD — there's nothing to migrate from. Rollout is:
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should we use `@project-name/*` scoped packages or generic `@packages/*` aliases? | Affects every import statement in the project | Architect | Resolved — using `@[project-name]/*` for package.json names, `@packages/*` for TS path aliases |
-| 2 | Do we need a shared Tailwind config at root or per-app? | Affects PRD-004 and PRD-010 | Frontend lead | Resolved — shared `tailwind.config.ts` at root, apps extend it |
-| 3 | Should `packages/shared/` be one package or split into `packages/types/`, `packages/utils/`, etc.? | Affects granularity of dependency boundaries | Architect | Resolved — single `packages/shared/` package with subdirectories for types, utils, ui, hooks, api-client, ai |
+| #   | Question                                                                                           | Impact                                        | Owner         | Status                                                                                                       |
+| --- | -------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------ |
+| 1   | Should we use `@project-name/*` scoped packages or generic `@packages/*` aliases?                  | Affects every import statement in the project | Architect     | Resolved — using `@[project-name]/*` for package.json names, `@packages/*` for TS path aliases               |
+| 2   | Do we need a shared Tailwind config at root or per-app?                                            | Affects PRD-004 and PRD-010                   | Frontend lead | Resolved — shared `tailwind.config.ts` at root, apps extend it                                               |
+| 3   | Should `packages/shared/` be one package or split into `packages/types/`, `packages/utils/`, etc.? | Affects granularity of dependency boundaries  | Architect     | Resolved — single `packages/shared/` package with subdirectories for types, utils, ui, hooks, api-client, ai |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

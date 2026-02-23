@@ -21,14 +21,14 @@ This PRD sets up the Electron app with a clean three-process architecture (main,
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| tRPC integration | Same `trpc.projects.list.useQuery()` hooks as web | Shared hooks work in renderer |
-| Auth security | Token encrypted via Electron `safeStorage` | Token not readable from filesystem |
-| IPC bridge | Renderer retrieves token from main process via IPC | Secure channel, no token in renderer memory |
-| Dev workflow | Hot reload on renderer changes | File save → UI updates |
-| Build | `electron-builder` produces installable app | macOS .dmg and/or Windows .exe |
-| Shared code | Types, validators, hooks from `@packages/shared` | No duplicated definitions |
+| Criteria         | Measurement                                        | Target                                      |
+| ---------------- | -------------------------------------------------- | ------------------------------------------- |
+| tRPC integration | Same `trpc.projects.list.useQuery()` hooks as web  | Shared hooks work in renderer               |
+| Auth security    | Token encrypted via Electron `safeStorage`         | Token not readable from filesystem          |
+| IPC bridge       | Renderer retrieves token from main process via IPC | Secure channel, no token in renderer memory |
+| Dev workflow     | Hot reload on renderer changes                     | File save → UI updates                      |
+| Build            | `electron-builder` produces installable app        | macOS .dmg and/or Windows .exe              |
+| Shared code      | Types, validators, hooks from `@packages/shared`   | No duplicated definitions                   |
 
 ---
 
@@ -84,16 +84,16 @@ apps/api                     (PRD-005)
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
-| PRD-004 (Shared UI & Hooks) | tRPC client, shared hooks |
-| PRD-005 (API Server) | tRPC endpoints |
-| PRD-006 (Auth) | Desktop auth pattern with safeStorage |
+| Depends On                  | What It Provides                      |
+| --------------------------- | ------------------------------------- |
+| PRD-004 (Shared UI & Hooks) | tRPC client, shared hooks             |
+| PRD-005 (API Server)        | tRPC endpoints                        |
+| PRD-006 (Auth)              | Desktop auth pattern with safeStorage |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
+| Consumer        | How It's Used                                  |
+| --------------- | ---------------------------------------------- |
 | PRD-014 (CI/CD) | `deploy-desktop.yml` triggers electron-builder |
 
 ---
@@ -123,19 +123,21 @@ apps/api                     (PRD-005)
 ### 5.3 API Contracts / Interfaces
 
 **IPC Channels**:
+
 ```typescript
 // Exposed via contextBridge in preload:
 window.electronAuth = {
-  getToken: () => Promise<string | null>,  // IPC invoke → main decrypts from safeStorage
-  setToken: (token: string) => Promise<void>,  // IPC invoke → main encrypts to safeStorage
-  clearToken: () => Promise<void>,  // IPC invoke → main deletes from safeStorage
+  getToken: () => Promise<string | null>, // IPC invoke → main decrypts from safeStorage
+  setToken: (token: string) => Promise<void>, // IPC invoke → main encrypts to safeStorage
+  clearToken: () => Promise<void>, // IPC invoke → main deletes from safeStorage
 };
 ```
 
 **tRPC Client in Renderer**:
+
 ```typescript
 const client = createTRPCClient(API_URL, async () => {
-  return (await window.electronAuth.getToken()) || "";
+  return (await window.electronAuth.getToken()) || '';
 });
 ```
 
@@ -169,21 +171,22 @@ apps/desktop/
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Create `apps/desktop/` workspace with Electron scaffolding | 20m | PRD-001 | 🟡 Partial | Boilerplate but Electron config is nuanced |
-| 2 | Implement `src/main/index.ts` — app lifecycle, BrowserWindow | 20m | Task 1 | ✅ Yes | Standard Electron main process |
-| 3 | Implement `src/main/auth.ts` — safeStorage + IPC handlers | 25m | Task 2, PRD-006 | 🟡 Partial | Security-critical — human reviews |
-| 4 | Implement `src/preload/index.ts` — contextBridge for auth | 15m | Task 3 | ✅ Yes | Standard preload pattern |
-| 5 | Implement `src/renderer/` — React app with TRPCProvider | 25m | Task 4, PRD-004 | ✅ Yes | Same as web, token from IPC |
-| 6 | Implement login/dashboard screens in renderer | 25m | Task 5 | ✅ Yes | Same component patterns as web |
-| 7 | Configure `electron-builder.yml` | 15m | Task 1 | ✅ Yes | Packaging config |
-| 8 | Set up dev workflow with hot reload | 15m | Task 5 | 🟡 Partial | Electron + Vite/webpack HMR setup |
-| 9 | Test: build and run packaged app | 15m | All above | ❌ No | Manual — run `electron-builder` |
+| #   | Task                                                         | Estimate | Dependencies    | Claude Code Candidate? | Notes                                      |
+| --- | ------------------------------------------------------------ | -------- | --------------- | ---------------------- | ------------------------------------------ |
+| 1   | Create `apps/desktop/` workspace with Electron scaffolding   | 20m      | PRD-001         | 🟡 Partial             | Boilerplate but Electron config is nuanced |
+| 2   | Implement `src/main/index.ts` — app lifecycle, BrowserWindow | 20m      | Task 1          | ✅ Yes                 | Standard Electron main process             |
+| 3   | Implement `src/main/auth.ts` — safeStorage + IPC handlers    | 25m      | Task 2, PRD-006 | 🟡 Partial             | Security-critical — human reviews          |
+| 4   | Implement `src/preload/index.ts` — contextBridge for auth    | 15m      | Task 3          | ✅ Yes                 | Standard preload pattern                   |
+| 5   | Implement `src/renderer/` — React app with TRPCProvider      | 25m      | Task 4, PRD-004 | ✅ Yes                 | Same as web, token from IPC                |
+| 6   | Implement login/dashboard screens in renderer                | 25m      | Task 5          | ✅ Yes                 | Same component patterns as web             |
+| 7   | Configure `electron-builder.yml`                             | 15m      | Task 1          | ✅ Yes                 | Packaging config                           |
+| 8   | Set up dev workflow with hot reload                          | 15m      | Task 5          | 🟡 Partial             | Electron + Vite/webpack HMR setup          |
+| 9   | Test: build and run packaged app                             | 15m      | All above       | ❌ No                  | Manual — run `electron-builder`            |
 
 ### Claude Code Task Annotations
 
 **Task 3 (safeStorage + IPC)**:
+
 - **Context needed**: Electron `safeStorage` API. IPC main/renderer communication via `ipcMain.handle`. The token store/retrieve/clear pattern from PRD-006.
 - **Constraints**: Check `safeStorage.isEncryptionAvailable()` before use. Store encrypted buffer in a known file path (e.g., app data directory). Never log the decrypted token. IPC channel names must be typed constants.
 - **Done state**: Main process can encrypt/store, decrypt/retrieve, and delete tokens. IPC handlers respond to renderer requests.
@@ -195,11 +198,11 @@ apps/desktop/
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | safeStorage wrapper, IPC handler logic | Bun test (mock Electron APIs) | 8-12 |
-| Integration | Full auth flow in running Electron app | Manual | 2-3 |
-| E2E | Spectron or Playwright Electron (optional) | Per-project | 0 (boilerplate) |
+| Level       | What's Tested                              | Tool                          | Count (approx)  |
+| ----------- | ------------------------------------------ | ----------------------------- | --------------- |
+| Unit        | safeStorage wrapper, IPC handler logic     | Bun test (mock Electron APIs) | 8-12            |
+| Integration | Full auth flow in running Electron app     | Manual                        | 2-3             |
+| E2E         | Spectron or Playwright Electron (optional) | Per-project                   | 0 (boilerplate) |
 
 ### Key Test Scenarios
 
@@ -218,11 +221,11 @@ apps/desktop/
 
 ```typescript
 // Mock Electron APIs for unit tests
-import { mock } from "bun:test";
+import { mock } from 'bun:test';
 
 const encrypted = new Map<string, Buffer>();
 
-mock.module("electron", () => ({
+mock.module('electron', () => ({
   safeStorage: {
     isEncryptionAvailable: () => true,
     encryptString: (text: string) => {
@@ -230,7 +233,7 @@ mock.module("electron", () => ({
       return buf;
     },
     decryptString: (buf: Buffer) => {
-      return buf.toString().replace("encrypted:", "");
+      return buf.toString().replace('encrypted:', '');
     },
   },
   ipcMain: {
@@ -247,12 +250,12 @@ mock.module("electron", () => ({
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| App launch time | Window visible within 2s | Manual timing |
-| Memory usage | < 200MB idle (Electron baseline) | Activity Monitor / Task Manager |
-| Token security | Encrypted at rest via OS APIs | Code review + `safeStorage` verification |
-| Binary size | < 150MB packaged (Electron baseline) | `electron-builder` output |
+| Requirement     | Target                               | How Verified                             |
+| --------------- | ------------------------------------ | ---------------------------------------- |
+| App launch time | Window visible within 2s             | Manual timing                            |
+| Memory usage    | < 200MB idle (Electron baseline)     | Activity Monitor / Task Manager          |
+| Token security  | Encrypted at rest via OS APIs        | Code review + `safeStorage` verification |
+| Binary size     | < 150MB packaged (Electron baseline) | `electron-builder` output                |
 
 ---
 
@@ -269,15 +272,15 @@ mock.module("electron", () => ({
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Vite or webpack for renderer bundling? | Affects dev server speed and config complexity | Desktop lead | Open — Vite preferred for speed, but Electron + Vite requires `electron-vite` |
-| 2 | Do we need a custom protocol handler for deep links? | Affects whether desktop app can be opened from browser links | Product | Resolved — defer to per-project |
+| #   | Question                                             | Impact                                                       | Owner        | Status                                                                        |
+| --- | ---------------------------------------------------- | ------------------------------------------------------------ | ------------ | ----------------------------------------------------------------------------- |
+| 1   | Vite or webpack for renderer bundling?               | Affects dev server speed and config complexity               | Desktop lead | Open — Vite preferred for speed, but Electron + Vite requires `electron-vite` |
+| 2   | Do we need a custom protocol handler for deep links? | Affects whether desktop app can be opened from browser links | Product      | Resolved — defer to per-project                                               |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

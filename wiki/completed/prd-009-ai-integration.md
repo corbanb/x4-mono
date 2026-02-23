@@ -23,16 +23,16 @@ This PRD creates the AI integration layer: provider wrappers using Vercel AI SDK
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| Text generation | `ai.generate` mutation returns AI-generated text | Valid response from Claude API |
-| Usage tracking | Every AI call writes to `aiUsageLog` table | Row with model, tokens, cost, endpoint |
-| Cost estimation | `estimateTokenCost(tokens, model)` returns dollar amount | Correct rates for Claude and GPT-4 |
-| Provider abstraction | Switching from Claude to OpenAI requires changing one parameter | Model string swap only |
-| Rate limiting | AI endpoints enforce 10 requests/min limit | Request 11 returns 429 |
-| AI logging | Every AI call logs model, tokens, cost, latency via `aiLogger` | Structured log entry |
-| Prompt templates | `SystemPrompts.CUSTOMER_SUPPORT` etc. available as constants | String templates exported |
-| Input validation | Prompt length and max tokens are validated | Invalid input returns Zod error |
+| Criteria             | Measurement                                                     | Target                                 |
+| -------------------- | --------------------------------------------------------------- | -------------------------------------- |
+| Text generation      | `ai.generate` mutation returns AI-generated text                | Valid response from Claude API         |
+| Usage tracking       | Every AI call writes to `aiUsageLog` table                      | Row with model, tokens, cost, endpoint |
+| Cost estimation      | `estimateTokenCost(tokens, model)` returns dollar amount        | Correct rates for Claude and GPT-4     |
+| Provider abstraction | Switching from Claude to OpenAI requires changing one parameter | Model string swap only                 |
+| Rate limiting        | AI endpoints enforce 10 requests/min limit                      | Request 11 returns 429                 |
+| AI logging           | Every AI call logs model, tokens, cost, latency via `aiLogger`  | Structured log entry                   |
+| Prompt templates     | `SystemPrompts.CUSTOMER_SUPPORT` etc. available as constants    | String templates exported              |
+| Input validation     | Prompt length and max tokens are validated                      | Invalid input returns Zod error        |
 
 ---
 
@@ -98,21 +98,21 @@ apps/api/src/routers/ai.ts     ← This PRD (tRPC ai router)
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
-| PRD-002 (Shared Types) | Base types for AI interfaces |
-| PRD-003 (Database) | `aiUsageLog` table for usage tracking |
-| PRD-005 (API Server) | tRPC router system to mount AI router |
-| PRD-007 (Error Handling & Logging) | `aiLogger` for AI call logging |
-| PRD-008 (Rate Limiting) | AI rate limit tier protecting endpoints |
+| Depends On                         | What It Provides                        |
+| ---------------------------------- | --------------------------------------- |
+| PRD-002 (Shared Types)             | Base types for AI interfaces            |
+| PRD-003 (Database)                 | `aiUsageLog` table for usage tracking   |
+| PRD-005 (API Server)               | tRPC router system to mount AI router   |
+| PRD-007 (Error Handling & Logging) | `aiLogger` for AI call logging          |
+| PRD-008 (Rate Limiting)            | AI rate limit tier protecting endpoints |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
-| Per-project AI features | Import `generateAIResponse`, `SystemPrompts`, extend with project-specific prompts |
-| tRPC clients (web/mobile/desktop) | `trpc.ai.generate.useMutation()` |
-| Cost monitoring | Query `aiUsageLog` table for usage dashboards |
+| Consumer                          | How It's Used                                                                      |
+| --------------------------------- | ---------------------------------------------------------------------------------- |
+| Per-project AI features           | Import `generateAIResponse`, `SystemPrompts`, extend with project-specific prompts |
+| tRPC clients (web/mobile/desktop) | `trpc.ai.generate.useMutation()`                                                   |
+| Cost monitoring                   | Query `aiUsageLog` table for usage dashboards                                      |
 
 ---
 
@@ -121,6 +121,7 @@ apps/api/src/routers/ai.ts     ← This PRD (tRPC ai router)
 ### 5.1 Data Model / Types
 
 **AI Types**:
+
 ```typescript
 // packages/shared/ai/types.ts
 export interface AIOptions {
@@ -140,12 +141,13 @@ export interface AIResponse {
 }
 
 export interface AIMessage {
-  role: "user" | "assistant" | "system";
+  role: 'user' | 'assistant' | 'system';
   content: string;
 }
 ```
 
 **Database table** (from PRD-003, consumed here):
+
 ```typescript
 // aiUsageLog — userId, model, tokensUsed, estimatedCost, endpoint, createdAt
 ```
@@ -173,10 +175,14 @@ export interface AIMessage {
 ### 5.3 API Contracts / Interfaces
 
 **Package exports**:
+
 ```typescript
 // packages/shared/ai/index.ts
 export async function generateAIResponse(prompt: string, options?: AIOptions): Promise<string>;
-export async function streamAIResponse(prompt: string, options?: AIOptions): Promise<ReadableStream>;
+export async function streamAIResponse(
+  prompt: string,
+  options?: AIOptions,
+): Promise<ReadableStream>;
 
 // packages/ai-integrations/providers/index.ts
 export function getProvider(model: string): LanguageModel;
@@ -186,6 +192,7 @@ export function estimateTokenCost(tokensUsed: number, model: string): number;
 ```
 
 **tRPC Router**:
+
 ```typescript
 // apps/api/src/routers/ai.ts
 ai.generate: protectedProcedure
@@ -203,6 +210,7 @@ ai.generate: protectedProcedure
 ```
 
 **Return shape**:
+
 ```typescript
 {
   text: string;
@@ -240,25 +248,26 @@ apps/api/src/routers/
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Create `packages/shared/ai/` — types, interfaces | 15m | PRD-002 | ✅ Yes | Type definitions only |
-| 2 | Create `packages/ai-integrations/package.json` and install AI SDK deps | 10m | PRD-001 | ✅ Yes | Config + dependencies |
-| 3 | Implement `providers/claude.ts` — Vercel AI SDK + Anthropic | 25m | Task 2 | ✅ Yes | Well-documented SDK |
-| 4 | Implement `providers/openai.ts` — Vercel AI SDK + OpenAI | 15m | Task 2 | ✅ Yes | Same pattern as Claude |
-| 5 | Implement provider factory (`providers/index.ts`) | 10m | Tasks 3-4 | ✅ Yes | Simple switch/map |
-| 6 | Implement `packages/shared/ai/index.ts` — `generateAIResponse`, `streamAIResponse` | 25m | Task 5 | 🟡 Partial | AI generates, human reviews error handling for API failures |
-| 7 | Implement `cost-tracking.ts` — `estimateTokenCost()` | 10m | Task 1 | ✅ Yes | Rate lookup table |
-| 8 | Implement `prompts/system.ts` — `SystemPrompts` constant | 10m | None | ✅ Yes | String templates |
-| 9 | Implement `apps/api/src/routers/ai.ts` — tRPC AI router | 40m | Tasks 6-7, PRD-003 (aiUsageLog), PRD-007 (aiLogger) | 🟡 Partial | Core wiring — human reviews logging + DB insert |
-| 10 | Add `ai` router to root `appRouter` | 5m | Task 9 | ✅ Yes | One line addition |
-| 11 | Write unit tests for cost tracking, provider factory | 20m | Tasks 5, 7 | ✅ Yes | Test rate calculations, provider resolution |
-| 12 | Write integration test for ai.generate (mock AI provider) | 25m | Task 9 | 🟡 Partial | Mock the AI SDK, verify DB write + logging |
-| 13 | Manual test: call ai.generate with real Anthropic API key | 10m | Task 9 | ❌ No | Requires live API key |
+| #   | Task                                                                               | Estimate | Dependencies                                        | Claude Code Candidate? | Notes                                                       |
+| --- | ---------------------------------------------------------------------------------- | -------- | --------------------------------------------------- | ---------------------- | ----------------------------------------------------------- |
+| 1   | Create `packages/shared/ai/` — types, interfaces                                   | 15m      | PRD-002                                             | ✅ Yes                 | Type definitions only                                       |
+| 2   | Create `packages/ai-integrations/package.json` and install AI SDK deps             | 10m      | PRD-001                                             | ✅ Yes                 | Config + dependencies                                       |
+| 3   | Implement `providers/claude.ts` — Vercel AI SDK + Anthropic                        | 25m      | Task 2                                              | ✅ Yes                 | Well-documented SDK                                         |
+| 4   | Implement `providers/openai.ts` — Vercel AI SDK + OpenAI                           | 15m      | Task 2                                              | ✅ Yes                 | Same pattern as Claude                                      |
+| 5   | Implement provider factory (`providers/index.ts`)                                  | 10m      | Tasks 3-4                                           | ✅ Yes                 | Simple switch/map                                           |
+| 6   | Implement `packages/shared/ai/index.ts` — `generateAIResponse`, `streamAIResponse` | 25m      | Task 5                                              | 🟡 Partial             | AI generates, human reviews error handling for API failures |
+| 7   | Implement `cost-tracking.ts` — `estimateTokenCost()`                               | 10m      | Task 1                                              | ✅ Yes                 | Rate lookup table                                           |
+| 8   | Implement `prompts/system.ts` — `SystemPrompts` constant                           | 10m      | None                                                | ✅ Yes                 | String templates                                            |
+| 9   | Implement `apps/api/src/routers/ai.ts` — tRPC AI router                            | 40m      | Tasks 6-7, PRD-003 (aiUsageLog), PRD-007 (aiLogger) | 🟡 Partial             | Core wiring — human reviews logging + DB insert             |
+| 10  | Add `ai` router to root `appRouter`                                                | 5m       | Task 9                                              | ✅ Yes                 | One line addition                                           |
+| 11  | Write unit tests for cost tracking, provider factory                               | 20m      | Tasks 5, 7                                          | ✅ Yes                 | Test rate calculations, provider resolution                 |
+| 12  | Write integration test for ai.generate (mock AI provider)                          | 25m      | Task 9                                              | 🟡 Partial             | Mock the AI SDK, verify DB write + logging                  |
+| 13  | Manual test: call ai.generate with real Anthropic API key                          | 10m      | Task 9                                              | ❌ No                  | Requires live API key                                       |
 
 ### Claude Code Task Annotations
 
 **Task 9 (AI Router)**:
+
 - **Context needed**: tRPC protectedProcedure from PRD-005. `aiUsageLog` schema from PRD-003. `aiLogger` from PRD-007. `generateAIResponse` from Task 6. `estimateTokenCost` from Task 7. Input validation limits from spec (prompt: 10000 chars, maxTokens: 4000).
 - **Constraints**: MUST write to `aiUsageLog` table after every successful generation. MUST log via `aiLogger` with model, tokens, cost, latency. MUST use `protectedProcedure` (no anonymous AI access). Handle AI provider errors gracefully — wrap in AppError, don't expose raw API errors to client.
 - **Done state**: `ai.generate` mutation works end-to-end. DB row created. Log entry written. Response includes text, tokensUsed, estimatedCost.
@@ -270,11 +279,11 @@ apps/api/src/routers/
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | Cost tracking, provider factory, prompt templates, input validation | Bun test | 12-15 |
-| Integration | ai.generate with mocked AI provider, DB write, logging | Bun test | 5-8 |
-| E2E | N/A (manual test with real API key) | — | 0 |
+| Level       | What's Tested                                                       | Tool     | Count (approx) |
+| ----------- | ------------------------------------------------------------------- | -------- | -------------- |
+| Unit        | Cost tracking, provider factory, prompt templates, input validation | Bun test | 12-15          |
+| Integration | ai.generate with mocked AI provider, DB write, logging              | Bun test | 5-8            |
+| E2E         | N/A (manual test with real API key)                                 | —        | 0              |
 
 ### Key Test Scenarios
 
@@ -293,13 +302,13 @@ apps/api/src/routers/
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Generation latency | < 5s for 1000-token response (depends on provider) | Measured in integration test |
-| DB write overhead | aiUsageLog insert < 10ms | Measured in integration test |
-| Cost accuracy | Token cost estimates within 10% of actual billing | Compare with provider dashboard |
-| No API key exposure | API keys never appear in logs or error responses | Code review + grep |
-| Graceful degradation | If AI provider is down, return clear error (not hang or timeout) | Test with invalid API key |
+| Requirement          | Target                                                           | How Verified                    |
+| -------------------- | ---------------------------------------------------------------- | ------------------------------- |
+| Generation latency   | < 5s for 1000-token response (depends on provider)               | Measured in integration test    |
+| DB write overhead    | aiUsageLog insert < 10ms                                         | Measured in integration test    |
+| Cost accuracy        | Token cost estimates within 10% of actual billing                | Compare with provider dashboard |
+| No API key exposure  | API keys never appear in logs or error responses                 | Code review + grep              |
+| Graceful degradation | If AI provider is down, return clear error (not hang or timeout) | Test with invalid API key       |
 
 ---
 
@@ -320,17 +329,17 @@ apps/api/src/routers/
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should `aiUsageLog.tokensUsed` store input + output separately or combined? | Affects cost granularity | Data | Open — spec stores combined as varchar. Consider splitting to `inputTokens` + `outputTokens` as integers. |
-| 2 | Should AI responses be cached by default? | Affects cost and latency | Product | Resolved — optional via `cache.getOrGenerate()` from PRD-008. Not automatic. |
-| 3 | Do we need a user-facing AI usage dashboard in the boilerplate? | Adds scope to web app | Product | Resolved — no. Query the table directly. Dashboards are per-project. |
-| 4 | Should streaming be supported in the tRPC router or only via separate SSE endpoint? | Affects UX for chat-like features | Architect | Open — tRPC supports streaming via `experimental_stream`. Evaluate when a project needs it. |
+| #   | Question                                                                            | Impact                            | Owner     | Status                                                                                                    |
+| --- | ----------------------------------------------------------------------------------- | --------------------------------- | --------- | --------------------------------------------------------------------------------------------------------- |
+| 1   | Should `aiUsageLog.tokensUsed` store input + output separately or combined?         | Affects cost granularity          | Data      | Open — spec stores combined as varchar. Consider splitting to `inputTokens` + `outputTokens` as integers. |
+| 2   | Should AI responses be cached by default?                                           | Affects cost and latency          | Product   | Resolved — optional via `cache.getOrGenerate()` from PRD-008. Not automatic.                              |
+| 3   | Do we need a user-facing AI usage dashboard in the boilerplate?                     | Adds scope to web app             | Product   | Resolved — no. Query the table directly. Dashboards are per-project.                                      |
+| 4   | Should streaming be supported in the tRPC router or only via separate SSE endpoint? | Affects UX for chat-like features | Architect | Open — tRPC supports streaming via `experimental_stream`. Evaluate when a project needs it.               |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

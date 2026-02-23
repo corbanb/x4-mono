@@ -23,15 +23,15 @@ This PRD sets up Neon (serverless PostgreSQL) with Drizzle ORM — a combination
 
 ## 2. Success Criteria
 
-| Criteria | Measurement | Target |
-|----------|-------------|--------|
-| Type-safe queries | Drizzle queries are fully typed — no `any` in query results | `bun turbo type-check` passes with zero `any` in db layer |
-| Migration workflow | `drizzle-kit generate` produces SQL from schema changes | Generated SQL matches schema diff |
-| Schema push (dev) | `drizzle-kit push` applies schema to Neon dev DB | Schema matches expected tables/columns |
-| Seed data | `bun db:seed` populates dev database with test data | Admin + user accounts, 2+ projects exist after seed |
-| Cross-runtime | Database client works in Bun, Node.js, and edge | Import and query from `apps/api` (Bun) and `apps/web` (Node/Edge) |
-| Re-exports | `import { db, users, projects } from "@packages/database"` works | Single import path for all consumers |
-| Drizzle Studio | `bun db:studio` opens visual DB explorer | Studio connects and shows tables |
+| Criteria           | Measurement                                                      | Target                                                            |
+| ------------------ | ---------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Type-safe queries  | Drizzle queries are fully typed — no `any` in query results      | `bun turbo type-check` passes with zero `any` in db layer         |
+| Migration workflow | `drizzle-kit generate` produces SQL from schema changes          | Generated SQL matches schema diff                                 |
+| Schema push (dev)  | `drizzle-kit push` applies schema to Neon dev DB                 | Schema matches expected tables/columns                            |
+| Seed data          | `bun db:seed` populates dev database with test data              | Admin + user accounts, 2+ projects exist after seed               |
+| Cross-runtime      | Database client works in Bun, Node.js, and edge                  | Import and query from `apps/api` (Bun) and `apps/web` (Node/Edge) |
+| Re-exports         | `import { db, users, projects } from "@packages/database"` works | Single import path for all consumers                              |
+| Drizzle Studio     | `bun db:studio` opens visual DB explorer                         | Studio connects and shows tables                                  |
 
 ---
 
@@ -87,19 +87,19 @@ packages/database       ← This PRD
 
 ### Dependency Map
 
-| Depends On | What It Provides |
-|------------|-----------------|
-| PRD-001 (Monorepo Foundation) | Workspace structure, Turbo db:* tasks |
-| PRD-002 (Shared Types) | Domain type shapes informing schema design (reference only) |
+| Depends On                    | What It Provides                                            |
+| ----------------------------- | ----------------------------------------------------------- |
+| PRD-001 (Monorepo Foundation) | Workspace structure, Turbo db:\* tasks                      |
+| PRD-002 (Shared Types)        | Domain type shapes informing schema design (reference only) |
 
 ### Consumed By
 
-| Consumer | How It's Used |
-|----------|--------------|
-| apps/api (PRD-005) | `db` instance in tRPC context, schema imports for queries |
-| packages/auth (PRD-006) | `db` instance for Better Auth's Drizzle adapter |
-| CI pipeline (PRD-014) | `drizzle-kit generate --check` and `drizzle-kit migrate` on Neon branches |
-| Developers | `bun db:studio` for visual DB exploration, `bun db:seed` for dev data |
+| Consumer                | How It's Used                                                             |
+| ----------------------- | ------------------------------------------------------------------------- |
+| apps/api (PRD-005)      | `db` instance in tRPC context, schema imports for queries                 |
+| packages/auth (PRD-006) | `db` instance for Better Auth's Drizzle adapter                           |
+| CI pipeline (PRD-014)   | `drizzle-kit generate --check` and `drizzle-kit migrate` on Neon branches |
+| Developers              | `bun db:studio` for visual DB exploration, `bun db:seed` for dev data     |
 
 ---
 
@@ -112,59 +112,82 @@ packages/database       ← This PRD
 ```typescript
 // packages/database/schema.ts
 import {
-  pgTable, uuid, varchar, text, timestamp,
-  boolean, pgEnum, index, vector,
-} from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
-import { relations } from "drizzle-orm";
+  pgTable,
+  uuid,
+  varchar,
+  text,
+  timestamp,
+  boolean,
+  pgEnum,
+  index,
+  vector,
+} from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { relations } from 'drizzle-orm';
 
 // --- Enums ---
-export const userRoleEnum = pgEnum("user_role", ["user", "admin"]);
+export const userRoleEnum = pgEnum('user_role', ['user', 'admin']);
 
 // --- Tables ---
-export const users = pgTable("users", {
+export const users = pgTable('users', {
   id: uuid().primaryKey().defaultRandom(),
   email: varchar({ length: 255 }).unique().notNull(),
   name: varchar({ length: 255 }).notNull(),
   passwordHash: varchar({ length: 255 }),
-  role: userRoleEnum().default("user"),
+  role: userRoleEnum().default('user'),
   emailVerified: boolean().default(false),
-  createdAt: timestamp().default(sql`now()`).notNull(),
-  updatedAt: timestamp().default(sql`now()`).notNull().$onUpdate(() => new Date()),
+  createdAt: timestamp()
+    .default(sql`now()`)
+    .notNull(),
+  updatedAt: timestamp()
+    .default(sql`now()`)
+    .notNull()
+    .$onUpdate(() => new Date()),
 });
 
 export const projects = pgTable(
-  "projects",
+  'projects',
   {
     id: uuid().primaryKey().defaultRandom(),
-    ownerId: uuid().notNull().references(() => users.id, { onDelete: "cascade" }),
+    ownerId: uuid()
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
     name: varchar({ length: 255 }).notNull(),
     description: text(),
-    status: varchar({ length: 50 }).default("active"),
-    createdAt: timestamp().default(sql`now()`).notNull(),
-    updatedAt: timestamp().default(sql`now()`).notNull().$onUpdate(() => new Date()),
+    status: varchar({ length: 50 }).default('active'),
+    createdAt: timestamp()
+      .default(sql`now()`)
+      .notNull(),
+    updatedAt: timestamp()
+      .default(sql`now()`)
+      .notNull()
+      .$onUpdate(() => new Date()),
   },
   (table) => ({
-    ownerIdx: index("idx_projects_owner_id").on(table.ownerId),
-    statusIdx: index("idx_projects_status").on(table.status),
-  })
+    ownerIdx: index('idx_projects_owner_id').on(table.ownerId),
+    statusIdx: index('idx_projects_status').on(table.status),
+  }),
 );
 
 export const aiUsageLog = pgTable(
-  "ai_usage_log",
+  'ai_usage_log',
   {
     id: uuid().primaryKey().defaultRandom(),
-    userId: uuid().notNull().references(() => users.id, { onDelete: "cascade" }),
+    userId: uuid()
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
     model: varchar({ length: 100 }).notNull(),
     tokensUsed: varchar({ length: 50 }).notNull(),
     estimatedCost: varchar({ length: 50 }),
     endpoint: varchar({ length: 255 }),
-    createdAt: timestamp().default(sql`now()`).notNull(),
+    createdAt: timestamp()
+      .default(sql`now()`)
+      .notNull(),
   },
   (table) => ({
-    userIdx: index("idx_ai_usage_user_id").on(table.userId),
-    createdIdx: index("idx_ai_usage_created").on(table.createdAt),
-  })
+    userIdx: index('idx_ai_usage_user_id').on(table.userId),
+    createdIdx: index('idx_ai_usage_created').on(table.createdAt),
+  }),
 );
 
 // --- Relations ---
@@ -206,16 +229,16 @@ export const aiUsageLogRelations = relations(aiUsageLog, ({ one }) => ({
 
 ```typescript
 // packages/database/index.ts — public surface
-export { db } from "./client";
-export * from "./schema";
+export { db } from './client';
+export * from './schema';
 
 // Usage in consumers:
-import { db, users, projects, aiUsageLog } from "@packages/database";
-import { eq, desc, and, like } from "drizzle-orm";
+import { db, users, projects, aiUsageLog } from '@packages/database';
+import { eq, desc, and, like } from 'drizzle-orm';
 
 // Relation queries via db.query.*
 const userWithProjects = await db.query.users.findFirst({
-  where: eq(users.email, "user@example.com"),
+  where: eq(users.email, 'user@example.com'),
   with: { projects: true },
 });
 ```
@@ -242,29 +265,31 @@ packages/database/
 
 ### Task Breakdown
 
-| # | Task | Estimate | Dependencies | Claude Code Candidate? | Notes |
-|---|------|----------|-------------|----------------------|-------|
-| 1 | Create `packages/database/package.json` and `tsconfig.json` | 15m | PRD-001 | ✅ Yes | Config files |
-| 2 | Implement `client.ts` — Neon driver + Drizzle setup | 20m | Task 1 | ✅ Yes | Well-specified in tech spec |
-| 3 | Implement `schema.ts` — all tables, enums, indexes, relations | 45m | Task 2 | 🟡 Partial | AI generates from spec, human reviews column choices |
-| 4 | Implement `drizzle.config.ts` | 10m | Task 2 | ✅ Yes | Small config file |
-| 5 | Implement `index.ts` re-exports | 5m | Tasks 2-3 | ✅ Yes | Simple re-exports |
-| 6 | Implement `seed.ts` | 30m | Task 3 | ✅ Yes | Mechanical — insert test data |
-| 7 | Implement `migrate.ts` runner | 15m | Task 4 | ✅ Yes | Standard Drizzle migration runner |
-| 8 | Add Turbo tasks to root `package.json` | 10m | Task 4 | ✅ Yes | Add db:* scripts |
-| 9 | Generate initial migration and push to Neon | 15m | Task 3 | ❌ No | Requires live DB connection |
-| 10 | Run seed script and verify with Drizzle Studio | 15m | Tasks 6, 9 | ❌ No | Manual verification |
-| 11 | Write unit tests for schema exports and query patterns | 30m | Task 5 | ✅ Yes | Test type exports, basic query construction |
+| #   | Task                                                          | Estimate | Dependencies | Claude Code Candidate? | Notes                                                |
+| --- | ------------------------------------------------------------- | -------- | ------------ | ---------------------- | ---------------------------------------------------- |
+| 1   | Create `packages/database/package.json` and `tsconfig.json`   | 15m      | PRD-001      | ✅ Yes                 | Config files                                         |
+| 2   | Implement `client.ts` — Neon driver + Drizzle setup           | 20m      | Task 1       | ✅ Yes                 | Well-specified in tech spec                          |
+| 3   | Implement `schema.ts` — all tables, enums, indexes, relations | 45m      | Task 2       | 🟡 Partial             | AI generates from spec, human reviews column choices |
+| 4   | Implement `drizzle.config.ts`                                 | 10m      | Task 2       | ✅ Yes                 | Small config file                                    |
+| 5   | Implement `index.ts` re-exports                               | 5m       | Tasks 2-3    | ✅ Yes                 | Simple re-exports                                    |
+| 6   | Implement `seed.ts`                                           | 30m      | Task 3       | ✅ Yes                 | Mechanical — insert test data                        |
+| 7   | Implement `migrate.ts` runner                                 | 15m      | Task 4       | ✅ Yes                 | Standard Drizzle migration runner                    |
+| 8   | Add Turbo tasks to root `package.json`                        | 10m      | Task 4       | ✅ Yes                 | Add db:\* scripts                                    |
+| 9   | Generate initial migration and push to Neon                   | 15m      | Task 3       | ❌ No                  | Requires live DB connection                          |
+| 10  | Run seed script and verify with Drizzle Studio                | 15m      | Tasks 6, 9   | ❌ No                  | Manual verification                                  |
+| 11  | Write unit tests for schema exports and query patterns        | 30m      | Task 5       | ✅ Yes                 | Test type exports, basic query construction          |
 
 ### Claude Code Task Annotations
 
 **Task 3 (Schema)**:
+
 - **Context needed**: Full schema from tech spec section "Schema Design". Domain types from PRD-002 for reference. Drizzle ORM pg-core API.
 - **Constraints**: Include ALL indexes specified in spec. Use `$onUpdate()` for `updatedAt`. Keep pgvector embeddings table commented out. Do NOT import from `@packages/shared` — schema is self-contained.
 - **Done state**: `bun turbo type-check --filter=@[project-name]/database` passes. Schema exports all tables, enums, and relations.
 - **Verification command**: `cd packages/database && bun type-check`
 
 **Task 6 (Seed)**:
+
 - **Context needed**: Schema tables and their column types. Need to create: 1 admin user, 1 regular user, 2 projects (one per user).
 - **Constraints**: Use `.returning()` to get IDs for foreign keys. Handle `process.exit()` for clean script termination. Use `console.log` for progress output.
 - **Done state**: `bun db:seed` creates all test data without errors.
@@ -276,11 +301,11 @@ packages/database/
 
 ### Test Pyramid for This PRD
 
-| Level | What's Tested | Tool | Count (approx) |
-|-------|--------------|------|----------------|
-| Unit | Schema exports, type inference, query builder shapes | Bun test | 10-15 |
-| Integration | CRUD operations against Neon branch | Bun test + Neon branch | 8-12 |
-| E2E | N/A | — | 0 |
+| Level       | What's Tested                                        | Tool                   | Count (approx) |
+| ----------- | ---------------------------------------------------- | ---------------------- | -------------- |
+| Unit        | Schema exports, type inference, query builder shapes | Bun test               | 10-15          |
+| Integration | CRUD operations against Neon branch                  | Bun test + Neon branch | 8-12           |
+| E2E         | N/A                                                  | —                      | 0              |
 
 ### Key Test Scenarios
 
@@ -295,13 +320,13 @@ packages/database/
 
 ## 8. Non-Functional Requirements
 
-| Requirement | Target | How Verified |
-|-------------|--------|-------------|
-| Query latency | Simple SELECT < 50ms from serverless function | Measured in integration tests |
-| Cold start | Neon connection establishment < 200ms | Measured in integration tests |
-| Migration safety | `drizzle-kit generate --check` catches schema/migration drift | CI job (PRD-014) |
-| Zero runtime overhead | No Prisma-like binary engine in `node_modules` | `ls node_modules/.prisma` should not exist |
-| pgvector ready | Embeddings table template compiles when uncommented | Type-check after uncommenting |
+| Requirement           | Target                                                        | How Verified                               |
+| --------------------- | ------------------------------------------------------------- | ------------------------------------------ |
+| Query latency         | Simple SELECT < 50ms from serverless function                 | Measured in integration tests              |
+| Cold start            | Neon connection establishment < 200ms                         | Measured in integration tests              |
+| Migration safety      | `drizzle-kit generate --check` catches schema/migration drift | CI job (PRD-014)                           |
+| Zero runtime overhead | No Prisma-like binary engine in `node_modules`                | `ls node_modules/.prisma` should not exist |
+| pgvector ready        | Embeddings table template compiles when uncommented           | Type-check after uncommenting              |
 
 ---
 
@@ -321,16 +346,16 @@ packages/database/
 
 ## 10. Open Questions
 
-| # | Question | Impact | Owner | Status |
-|---|----------|--------|-------|--------|
-| 1 | Should `aiUsageLog.tokensUsed` be `integer` instead of `varchar`? | Affects aggregation queries (SUM on integers is cleaner) | DB architect | Open — spec uses varchar, but integer makes more sense |
-| 2 | Do we need a `createdBy`/`updatedBy` audit trail on projects? | Affects schema complexity | Product | Resolved — defer to per-project. Keep schema minimal. |
-| 3 | Should we use Drizzle's `serial` instead of `uuid` for primary keys? | UUIDs are better for distributed systems, serials are faster for joins | Architect | Resolved — UUIDs. We're serverless-first and may need cross-service references. |
+| #   | Question                                                             | Impact                                                                 | Owner        | Status                                                                          |
+| --- | -------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------- |
+| 1   | Should `aiUsageLog.tokensUsed` be `integer` instead of `varchar`?    | Affects aggregation queries (SUM on integers is cleaner)               | DB architect | Open — spec uses varchar, but integer makes more sense                          |
+| 2   | Do we need a `createdBy`/`updatedBy` audit trail on projects?        | Affects schema complexity                                              | Product      | Resolved — defer to per-project. Keep schema minimal.                           |
+| 3   | Should we use Drizzle's `serial` instead of `uuid` for primary keys? | UUIDs are better for distributed systems, serials are faster for joins | Architect    | Resolved — UUIDs. We're serverless-first and may need cross-service references. |
 
 ---
 
 ## 11. Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-07 | AI-Native TPM | Initial draft |
+| Version | Date       | Author        | Changes       |
+| ------- | ---------- | ------------- | ------------- |
+| 1.0     | 2026-02-07 | AI-Native TPM | Initial draft |

@@ -8,12 +8,12 @@ This document tracks the implementation status of all PRDs, their dependencies, 
 
 PRDs move through four stages:
 
-| Stage | Directory | Meaning |
-|-------|-----------|---------|
-| **Inbox** | `wiki/inbox/` | New or unstarted PRDs. All drafts land here. |
-| **Active** | `wiki/active/` | PRD is currently being implemented. Move the file here when work begins. |
-| **Completed** | `wiki/completed/` | PRD has been implemented and verified against its success criteria. |
-| **Archived** | `wiki/archived/` | PRD was superseded or abandoned. Add a note at the top explaining why. |
+| Stage         | Directory         | Meaning                                                                  |
+| ------------- | ----------------- | ------------------------------------------------------------------------ |
+| **Inbox**     | `wiki/inbox/`     | New or unstarted PRDs. All drafts land here.                             |
+| **Active**    | `wiki/active/`    | PRD is currently being implemented. Move the file here when work begins. |
+| **Completed** | `wiki/completed/` | PRD has been implemented and verified against its success criteria.      |
+| **Archived**  | `wiki/archived/`  | PRD was superseded or abandoned. Add a note at the top explaining why.   |
 
 **To move a PRD**: Move the file to the appropriate directory and update the `Status` field in the PRD header metadata.
 
@@ -21,24 +21,24 @@ PRDs move through four stages:
 
 ## PRD Inventory
 
-| PRD ID | Title | Status | Dependencies | Location |
-|--------|-------|--------|--------------|----------|
-| PRD-001 | [Monorepo Foundation & Tooling](completed/prd-001-monorepo-foundation.md) | Completed | None (root) | completed |
-| PRD-002 | [Shared Types, Validators & Utilities](completed/prd-002-shared-types.md) | Completed | PRD-001 | completed |
-| PRD-003 | [Database & ORM Layer](completed/prd-003-database-orm.md) | Completed | PRD-001, PRD-002 | completed |
-| PRD-004 | [Shared UI Components & Hooks](completed/prd-004-shared-ui-hooks.md) | Completed | PRD-001, PRD-002 | completed |
-| PRD-005 | [API Server — Hono + tRPC on Bun](completed/prd-005-api-server.md) | Completed | PRD-001, PRD-002, PRD-003 | completed |
-| PRD-006 | [Authentication & Authorization — Better Auth](completed/prd-006-auth.md) | Completed | PRD-003, PRD-005 | completed |
-| PRD-007 | [Error Handling & Logging](completed/prd-007-error-handling-logging.md) | Completed | PRD-002, PRD-005 | completed |
-| PRD-008 | [Rate Limiting & Caching](completed/prd-008-rate-limiting-caching.md) | Completed | PRD-005 | completed |
-| PRD-009 | [AI Integration Layer](completed/prd-009-ai-integration.md) | Completed | PRD-002, PRD-003, PRD-005, PRD-007, PRD-008 | completed |
-| PRD-010 | [Web Application — Next.js](completed/prd-010-web-app.md) | Completed | PRD-004, PRD-005, PRD-006 | completed |
-| PRD-011 | [Mobile Application — Expo + React Native](completed/prd-011-mobile-app.md) | Completed | PRD-004, PRD-005, PRD-006 | completed |
-| PRD-012 | [Desktop Application — Electron](completed/prd-012-desktop-app.md) | Completed | PRD-004, PRD-005, PRD-006 | completed |
-| PRD-013 | [Marketing Site — Next.js Static](completed/prd-013-marketing-site.md) | Completed | PRD-001, PRD-010 | completed |
-| PRD-014 | [CI/CD, Deployment & DevOps](completed/prd-014-cicd-devops.md) | Completed | All previous PRDs | completed |
-| PRD-015 | [Testing Strategy & Infrastructure](completed/prd-015-testing-strategy.md) | Completed | PRD-001, PRD-003 | completed |
-| PRD-016 | [Getting Started Guide & Developer Experience](completed/prd-016-getting-started-dx.md) | Completed | All previous PRDs | completed |
+| PRD ID  | Title                                                                                   | Status    | Dependencies                                | Location  |
+| ------- | --------------------------------------------------------------------------------------- | --------- | ------------------------------------------- | --------- |
+| PRD-001 | [Monorepo Foundation & Tooling](completed/prd-001-monorepo-foundation.md)               | Completed | None (root)                                 | completed |
+| PRD-002 | [Shared Types, Validators & Utilities](completed/prd-002-shared-types.md)               | Completed | PRD-001                                     | completed |
+| PRD-003 | [Database & ORM Layer](completed/prd-003-database-orm.md)                               | Completed | PRD-001, PRD-002                            | completed |
+| PRD-004 | [Shared UI Components & Hooks](completed/prd-004-shared-ui-hooks.md)                    | Completed | PRD-001, PRD-002                            | completed |
+| PRD-005 | [API Server — Hono + tRPC on Bun](completed/prd-005-api-server.md)                      | Completed | PRD-001, PRD-002, PRD-003                   | completed |
+| PRD-006 | [Authentication & Authorization — Better Auth](completed/prd-006-auth.md)               | Completed | PRD-003, PRD-005                            | completed |
+| PRD-007 | [Error Handling & Logging](completed/prd-007-error-handling-logging.md)                 | Completed | PRD-002, PRD-005                            | completed |
+| PRD-008 | [Rate Limiting & Caching](completed/prd-008-rate-limiting-caching.md)                   | Completed | PRD-005                                     | completed |
+| PRD-009 | [AI Integration Layer](completed/prd-009-ai-integration.md)                             | Completed | PRD-002, PRD-003, PRD-005, PRD-007, PRD-008 | completed |
+| PRD-010 | [Web Application — Next.js](completed/prd-010-web-app.md)                               | Completed | PRD-004, PRD-005, PRD-006                   | completed |
+| PRD-011 | [Mobile Application — Expo + React Native](completed/prd-011-mobile-app.md)             | Completed | PRD-004, PRD-005, PRD-006                   | completed |
+| PRD-012 | [Desktop Application — Electron](completed/prd-012-desktop-app.md)                      | Completed | PRD-004, PRD-005, PRD-006                   | completed |
+| PRD-013 | [Marketing Site — Next.js Static](completed/prd-013-marketing-site.md)                  | Completed | PRD-001, PRD-010                            | completed |
+| PRD-014 | [CI/CD, Deployment & DevOps](completed/prd-014-cicd-devops.md)                          | Completed | All previous PRDs                           | completed |
+| PRD-015 | [Testing Strategy & Infrastructure](completed/prd-015-testing-strategy.md)              | Completed | PRD-001, PRD-003                            | completed |
+| PRD-016 | [Getting Started Guide & Developer Experience](completed/prd-016-getting-started-dx.md) | Completed | All previous PRDs                           | completed |
 
 ---
 
@@ -90,24 +90,24 @@ PRD-001 (Monorepo Foundation) ← ROOT — everything depends on this
 
 Track milestones and completed work here as PRDs are implemented.
 
-| Date | What | PR |
-|------|------|----|
-| 2026-02-07 | Dev infrastructure scaffolded (wiki, .github, CLAUDE.md, .claude/) | — |
-| 2026-02-07 | PRD-001: Monorepo foundation implemented — root configs, 9 workspaces, lint boundaries, TypeScript | — |
-| 2026-02-07 | PRD-001: Moved to completed. PRD-002: Started — shared types, validators & utilities | — |
-| 2026-02-07 | PRD-002: Completed — domain types, error types, Zod validators, formatting utils, helpers, 125 tests | — |
-| 2026-02-07 | PRD-003: Completed — Drizzle schema (users, projects, ai_usage_log), Neon client, migrations, seed, 25 tests | — |
-| 2026-02-07 | PRD-005: Started — API server (Hono + tRPC on Bun) | — |
-| 2026-02-07 | PRD-005: Completed — Hono app, tRPC v11 init, projects CRUD router, users stub, env validation, placeholder auth, 15 tests | — |
-| 2026-02-07 | PRD-004: Completed — tRPC React client, convenience hooks, auth hooks (placeholder), Button/Input UI scaffolding, 20 new tests (145 total in shared) | — |
-| 2026-02-07 | PRD-006: Completed — Better Auth server config, Hono route mounting, tRPC context integration, web/native/desktop clients, auth middleware tests, 40 API tests | — |
-| 2026-02-07 | PRD-007: Completed — AppError class, Errors.* constructors, tRPC code mapping, Pino logger + child loggers, request logging middleware, global error handler, tRPC error formatter, React ErrorBoundary, router refactor, 47 new tests (87 total API) | — |
-| 2026-02-07 | PRD-008: Completed — Upstash Redis rate limiting (3 tiers: general/ai/auth), cache interface (get/set/del/getOrGenerate), Hono middleware wiring, fail-open behavior, 28 new tests (115 total API) | — |
-| 2026-02-07 | PRD-009: Completed — Vercel AI SDK providers (Claude + OpenAI), generateAIResponse/streamAIResponse, provider factory, cost tracking, system prompts, tRPC ai.generate router with DB usage logging, 41 new tests (351 total) | — |
-| 2026-02-07 | PRD-010: Completed — Next.js 15 web app with TRPCProvider, auth pages (login/signup), dashboard with project CRUD, middleware auth redirects, react-hook-form + Zod, Tailwind v4, Vercel deployment config | — |
-| 2026-02-07 | PRD-011: Completed — Expo + React Native mobile app with Expo Router, tRPC client with SecureStore token, auth-gated dashboard, ProjectList + CreateProjectForm, EAS build config | — |
-| 2026-02-07 | PRD-012: Completed — Electron desktop app with three-process architecture (main/preload/renderer), safeStorage token encryption, IPC bridge for auth, React renderer with tRPC, electron-builder config | — |
-| 2026-02-07 | PRD-013: Completed — Next.js static marketing site with Hero, CTA, Header, Footer components, landing/pricing/about pages, Tailwind v4, Vercel deployment config, all pages statically generated | — |
-| 2026-02-07 | PRD-014: Completed — CI/CD pipeline with Neon branching per PR, migration safety checks, Claude AI code review, path-filtered deploy workflows (API/web/mobile/desktop), Neon cleanup, Hono Vercel adapter | — |
-| 2026-02-09 | PRD-015: Completed — Coverage config (bunfig.toml + turbo.json), centralized test helpers (createTestContext, createCaller), mock factories (AI + Redis), Playwright E2E setup with auth + project CRUD specs, testing conventions docs | — |
-| 2026-02-09 | PRD-016: Completed — Root README, CONTRIBUTING.md, CLAUDE.md update, docs (getting-started, commands, environment, troubleshooting, adr-template), per-workspace READMEs (api, web, mobile, desktop, marketing) | — |
+| Date       | What                                                                                                                                                                                                                                                   | PR  |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --- |
+| 2026-02-07 | Dev infrastructure scaffolded (wiki, .github, CLAUDE.md, .claude/)                                                                                                                                                                                     | —   |
+| 2026-02-07 | PRD-001: Monorepo foundation implemented — root configs, 9 workspaces, lint boundaries, TypeScript                                                                                                                                                     | —   |
+| 2026-02-07 | PRD-001: Moved to completed. PRD-002: Started — shared types, validators & utilities                                                                                                                                                                   | —   |
+| 2026-02-07 | PRD-002: Completed — domain types, error types, Zod validators, formatting utils, helpers, 125 tests                                                                                                                                                   | —   |
+| 2026-02-07 | PRD-003: Completed — Drizzle schema (users, projects, ai_usage_log), Neon client, migrations, seed, 25 tests                                                                                                                                           | —   |
+| 2026-02-07 | PRD-005: Started — API server (Hono + tRPC on Bun)                                                                                                                                                                                                     | —   |
+| 2026-02-07 | PRD-005: Completed — Hono app, tRPC v11 init, projects CRUD router, users stub, env validation, placeholder auth, 15 tests                                                                                                                             | —   |
+| 2026-02-07 | PRD-004: Completed — tRPC React client, convenience hooks, auth hooks (placeholder), Button/Input UI scaffolding, 20 new tests (145 total in shared)                                                                                                   | —   |
+| 2026-02-07 | PRD-006: Completed — Better Auth server config, Hono route mounting, tRPC context integration, web/native/desktop clients, auth middleware tests, 40 API tests                                                                                         | —   |
+| 2026-02-07 | PRD-007: Completed — AppError class, Errors.\* constructors, tRPC code mapping, Pino logger + child loggers, request logging middleware, global error handler, tRPC error formatter, React ErrorBoundary, router refactor, 47 new tests (87 total API) | —   |
+| 2026-02-07 | PRD-008: Completed — Upstash Redis rate limiting (3 tiers: general/ai/auth), cache interface (get/set/del/getOrGenerate), Hono middleware wiring, fail-open behavior, 28 new tests (115 total API)                                                     | —   |
+| 2026-02-07 | PRD-009: Completed — Vercel AI SDK providers (Claude + OpenAI), generateAIResponse/streamAIResponse, provider factory, cost tracking, system prompts, tRPC ai.generate router with DB usage logging, 41 new tests (351 total)                          | —   |
+| 2026-02-07 | PRD-010: Completed — Next.js 15 web app with TRPCProvider, auth pages (login/signup), dashboard with project CRUD, middleware auth redirects, react-hook-form + Zod, Tailwind v4, Vercel deployment config                                             | —   |
+| 2026-02-07 | PRD-011: Completed — Expo + React Native mobile app with Expo Router, tRPC client with SecureStore token, auth-gated dashboard, ProjectList + CreateProjectForm, EAS build config                                                                      | —   |
+| 2026-02-07 | PRD-012: Completed — Electron desktop app with three-process architecture (main/preload/renderer), safeStorage token encryption, IPC bridge for auth, React renderer with tRPC, electron-builder config                                                | —   |
+| 2026-02-07 | PRD-013: Completed — Next.js static marketing site with Hero, CTA, Header, Footer components, landing/pricing/about pages, Tailwind v4, Vercel deployment config, all pages statically generated                                                       | —   |
+| 2026-02-07 | PRD-014: Completed — CI/CD pipeline with Neon branching per PR, migration safety checks, Claude AI code review, path-filtered deploy workflows (API/web/mobile/desktop), Neon cleanup, Hono Vercel adapter                                             | —   |
+| 2026-02-09 | PRD-015: Completed — Coverage config (bunfig.toml + turbo.json), centralized test helpers (createTestContext, createCaller), mock factories (AI + Redis), Playwright E2E setup with auth + project CRUD specs, testing conventions docs                | —   |
+| 2026-02-09 | PRD-016: Completed — Root README, CONTRIBUTING.md, CLAUDE.md update, docs (getting-started, commands, environment, troubleshooting, adr-template), per-workspace READMEs (api, web, mobile, desktop, marketing)                                        | —   |
