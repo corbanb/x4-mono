@@ -2,6 +2,102 @@
 
 Full-stack TypeScript monorepo boilerplate for building multi-platform applications (web, mobile, desktop) with a shared backend. Production-ready foundation with type-safe APIs, authentication, database ORM, AI integration, and CI/CD.
 
+## Quick Start
+
+The fastest way to get started is with the `create-x4` CLI:
+
+```bash
+# Install Bun (if you don't have it)
+curl -fsSL https://bun.sh/install | bash
+
+# Create a new project
+bunx create-x4 my-app
+
+# Start developing
+cd my-app
+bun dev
+```
+
+The interactive wizard walks you through naming, platform selection, and environment setup. Your app will be running at:
+
+- **Web** — http://localhost:3000
+- **API** — http://localhost:3002
+- **Marketing** — http://localhost:3001
+
+### Presets
+
+Skip the wizard with a preset for common setups:
+
+```bash
+# Full stack — Web + API + Mobile + Desktop + AI + Marketing + Docs
+bunx create-x4 my-app --preset full-stack --yes
+
+# SaaS — Web + API + AI (most common)
+bunx create-x4 my-app --preset saas --yes
+
+# Landing page — Web + API + Marketing
+bunx create-x4 my-app --preset landing --yes
+
+# API only — Hono + tRPC server
+bunx create-x4 my-app --preset api-only --yes
+```
+
+### Excluding Platforms
+
+Don't need mobile or desktop? Use `--no-*` flags:
+
+```bash
+bunx create-x4 my-app --no-mobile --no-desktop
+```
+
+Available flags: `--no-mobile`, `--no-desktop`, `--no-marketing`, `--no-docs`, `--no-ai`
+
+### Other Package Managers
+
+Bun is recommended, but npm, yarn, and pnpm work too:
+
+```bash
+npx create-x4 my-app
+# or
+yarn create x4 my-app
+# or
+pnpm create x4 my-app
+```
+
+## Prerequisites
+
+- [Bun](https://bun.sh) >= 1.1 (recommended) or Node.js >= 18
+- [Neon](https://neon.tech) Postgres database (free tier works)
+- [Anthropic API key](https://console.anthropic.com) for AI features (optional)
+
+## Manual Setup
+
+If you prefer to clone the repo directly instead of using the CLI:
+
+```bash
+# Clone and install
+git clone https://github.com/corbanb/x4-mono.git my-project
+cd my-project
+bun install
+
+# Configure environment
+cp .env.example .env.local
+# Edit .env.local with your credentials:
+#   DATABASE_URL   — Neon Postgres connection string
+#   JWT_SECRET     — Random string, 32+ characters
+#   BETTER_AUTH_SECRET — Random string, 32+ characters
+#   ANTHROPIC_API_KEY  — Your Claude API key (starts with sk-)
+
+# Set up database
+bun db:push        # Push schema to dev database
+bun db:seed        # Seed with test data
+
+# Start development
+bun dev            # Starts all workspaces
+```
+
+See [docs/environment.md](docs/environment.md) for the full environment variable reference.
+
 ## Architecture
 
 ```
@@ -35,48 +131,6 @@ packages/
 | Validation | Zod (source of truth for all types) |
 | Testing    | Bun test runner + Playwright E2E    |
 | CI/CD      | GitHub Actions + Vercel             |
-
-## Quick Start
-
-```bash
-bunx create-x4 my-app
-cd my-app
-bun dev
-```
-
-Or with a preset:
-
-```bash
-bunx create-x4 my-app --preset saas --yes
-```
-
-### Prerequisites
-
-- [Bun](https://bun.sh) >= 1.1
-- [Neon](https://neon.tech) Postgres database
-- [Anthropic API key](https://console.anthropic.com) for AI features
-
-### Manual Setup
-
-```bash
-# Clone and install
-git clone <repo-url> my-project
-cd my-project
-bun install
-
-# Configure environment
-cp .env.example .env.local
-# Edit .env.local with your credentials (see docs/environment.md)
-
-# Set up database
-bun db:push        # Push schema to dev database
-bun db:seed        # Seed with test data
-
-# Start development
-bun dev            # Starts all workspaces
-```
-
-The API runs on `http://localhost:3002`, web on `http://localhost:3000`, and marketing on `http://localhost:3001`.
 
 ## Key Commands
 
