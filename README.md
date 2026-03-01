@@ -52,9 +52,41 @@ bunx create-x4 my-app --no-mobile --no-desktop
 
 Available flags: `--no-mobile`, `--no-desktop`, `--no-marketing`, `--no-docs`, `--no-ai`
 
+### Install the CLI
+
+You can run `create-x4` without installing anything using `bunx` or `npx` (shown above). If you prefer to install it globally so the command is always available:
+
+```bash
+# With Bun (recommended)
+bun install -g create-x4
+
+# With npm
+npm install -g create-x4
+
+# With yarn
+yarn global add create-x4
+
+# With pnpm
+pnpm add -g create-x4
+```
+
+Once installed, use it directly:
+
+```bash
+create-x4 my-app
+```
+
+To update to the latest version:
+
+```bash
+bun install -g create-x4@latest
+# or
+npm update -g create-x4
+```
+
 ### Other Package Managers
 
-Bun is recommended, but npm, yarn, and pnpm work too:
+Bun is recommended, but npm, yarn, and pnpm work too without a global install:
 
 ```bash
 npx create-x4 my-app
