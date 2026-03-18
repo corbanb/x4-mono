@@ -3,7 +3,8 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { GlowCard } from '@/components/effects/GlowCard';
-import { Shield, Zap, Smartphone, Brain, Lock, Globe } from 'lucide-react';
+import { Shield, Zap, Smartphone, Brain, Lock, Globe, Bot, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 const FEATURES = [
   {
@@ -97,6 +98,39 @@ export function BentoGrid() {
               </GlowCard>
             </motion.div>
           ))}
+
+          {/* Agent Plugins — full-width highlight card */}
+          <motion.div
+            className="md:col-span-3"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : undefined}
+            transition={{ duration: 0.5, delay: 0.7 }}
+          >
+            <div className="relative overflow-hidden rounded-2xl border border-violet-500/20 bg-gradient-to-r from-violet-500/[0.06] via-card to-cyan-500/[0.06] p-6 md:p-8">
+              <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-violet-500/20 bg-violet-500/10">
+                    <Bot className="h-6 w-6 text-violet-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">Agent Plugins</h3>
+                    <p className="mt-1 max-w-lg text-sm leading-relaxed text-muted-foreground">
+                      Four Claude Code plugins that turn a single conversation into a shipped pull
+                      request. Onboard, scaffold, plan, build, and ship — fully orchestrated by an
+                      AI development team.
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  href="/plugins"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-violet-500/30 bg-violet-500/10 px-6 py-3 text-sm font-semibold text-foreground transition-all hover:border-violet-500/50 hover:bg-violet-500/15"
+                >
+                  Explore Plugins
+                  <ArrowRight size={14} />
+                </Link>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>

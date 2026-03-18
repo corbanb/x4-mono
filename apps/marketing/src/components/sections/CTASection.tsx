@@ -2,10 +2,10 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
-import { ShimmerButton } from '@/components/effects/ShimmerButton';
-import { ArrowRight } from 'lucide-react';
+import { Github } from 'lucide-react';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+const MONOREPO_URL = 'https://github.com/corbanb/x4-mono';
+const PLUGINS_URL = 'https://github.com/studiox4/x4-agent-plugins';
 
 export function CTASection() {
   const ref = useRef<HTMLDivElement>(null);
@@ -30,11 +30,24 @@ export function CTASection() {
           wired up and ready to ship.
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <ShimmerButton href={`${APP_URL}/signup`}>
-            Start Building
-            <ArrowRight size={16} className="ml-2" />
-          </ShimmerButton>
-          <span className="text-sm text-muted-foreground">Free and open source</span>
+          <a
+            href={MONOREPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl border border-border bg-card/80 px-8 py-3.5 text-sm font-semibold text-foreground backdrop-blur-sm transition-all hover:border-white/20 hover:bg-white/5"
+          >
+            <Github size={16} />
+            View the Monorepo on GitHub
+          </a>
+          <a
+            href={PLUGINS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl border border-violet-500/30 bg-violet-500/10 px-8 py-3.5 text-sm font-semibold text-foreground backdrop-blur-sm transition-all hover:border-violet-500/50 hover:bg-violet-500/15"
+          >
+            <Github size={16} />
+            View Agent Plugins on GitHub
+          </a>
         </div>
       </motion.div>
     </section>
