@@ -8,6 +8,7 @@ const FOOTER_SECTIONS = {
   Product: [
     { href: '/features', label: 'Features' },
     { href: '/stack', label: 'Stack' },
+    { href: '/plugins', label: 'Plugins' },
     { href: '/ai', label: 'AI' },
   ],
   Resources: [

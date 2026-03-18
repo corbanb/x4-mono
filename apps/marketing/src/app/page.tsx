@@ -1,6 +1,7 @@
 import { HeroSceneLoader } from '@/components/hero/HeroSceneLoader';
 import { HeroContent } from '@/components/hero/HeroContent';
 import { BentoGrid } from '@/components/sections/BentoGrid';
+import { AgentPluginShowcase } from '@/components/sections/AgentPluginShowcase';
 import { CodeShowcase } from '@/components/sections/CodeShowcase';
 import { StatsCounter } from '@/components/sections/StatsCounter';
 import { LogoMarquee } from '@/components/sections/LogoMarquee';
@@ -19,6 +20,7 @@ export default function HomePage() {
 
       <LogoMarquee />
       <BentoGrid />
+      <AgentPluginShowcase />
       <CodeShowcase />
       <StatsCounter />
       <CTASection />
