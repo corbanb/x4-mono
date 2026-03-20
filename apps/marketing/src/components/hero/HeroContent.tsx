@@ -130,7 +130,7 @@ export function HeroContent() {
             <div className="text-left text-muted-foreground">
               <div>
                 <span className="text-cyan-glow">$</span>{' '}
-                <span className="text-foreground">/x4-onboard</span>
+                <span className="text-foreground">/x4:onboard</span>
               </div>
               <div className="mt-1">
                 <span className="text-emerald-400">&#10003;</span> Bun, Git, GitHub CLI — verified
@@ -145,7 +145,7 @@ export function HeroContent() {
                 <span className="text-emerald-400">&#10003;</span> Env vars configured
               </div>
               <div className="mt-1 font-semibold text-emerald-400">
-                <span>&#9670;</span> Ready — run <span className="text-cyan-glow">/work</span> to
+                <span>&#9670;</span> Ready — run <span className="text-cyan-glow">/x4:work</span> to
                 start building
               </div>
               <div className="mt-2 text-xs text-violet-400/60">

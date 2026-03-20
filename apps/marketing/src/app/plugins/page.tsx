@@ -7,7 +7,7 @@ import { CTASection } from '@/components/sections/CTASection';
 export const metadata: Metadata = {
   title: 'Agent Plugins',
   description:
-    'Claude Code plugins for the complete AI-powered development workflow: scaffolding, backlog management, agent team coordination, and reference docs.',
+    'One Claude Code plugin for the complete AI-powered development workflow: scaffolding, backlog management, agent team coordination, and reference docs.',
 };
 
 export default function PluginsPage() {
@@ -24,7 +24,7 @@ export default function PluginsPage() {
             Your AI <span className="gradient-text">Development Team</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Four plugins that turn Claude Code into a complete development pipeline. Scaffold
+            One plugin that turns Claude Code into a complete development pipeline. Scaffold
             projects, capture ideas, plan features, dispatch agent teams, and ship PRs — all from
             your terminal.
           </p>

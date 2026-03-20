@@ -45,12 +45,12 @@ const STAGES: PipelineStage[] = [
     icon: CheckCircle2,
     color: 'text-emerald-400',
     glowColor: 'emerald',
-    plugin: 'x4-scaffold',
+    plugin: 'x4',
     headline: 'Get your machine ready in seconds',
     description:
       "The onboarding wizard checks every tool, account, and CLI you need — Bun, Git, GitHub CLI, Neon, Railway, Vercel. It detects what you already have and only walks through what's missing.",
     terminal: [
-      { text: '$ /x4-onboard', type: 'command', delay: 0 },
+      { text: '$ /x4:onboard', type: 'command', delay: 0 },
       { text: '', type: 'output', delay: 400 },
       { text: 'Checking prerequisites...', type: 'output', delay: 600 },
       { text: '  Bun >= 1.1          ✓ installed (1.1.34)', type: 'success', delay: 1000 },
@@ -72,12 +72,12 @@ const STAGES: PipelineStage[] = [
     icon: Hammer,
     color: 'text-blue-400',
     glowColor: 'blue',
-    plugin: 'x4-scaffold',
+    plugin: 'x4',
     headline: 'Full-stack project in one command',
     description:
       'Choose a preset — saas, full-stack, landing, or api-only — and get a complete TypeScript monorepo with Next.js, Hono, tRPC, Drizzle, Better Auth, and AI integration. Database provisioned, env vars configured, ready to dev.',
     terminal: [
-      { text: '$ /x4-create my-app --preset saas', type: 'command', delay: 0 },
+      { text: '$ /x4:create my-app --preset saas', type: 'command', delay: 0 },
       { text: '', type: 'output', delay: 400 },
       { text: 'Creating project "my-app" with saas preset...', type: 'output', delay: 600 },
       { text: '  Scaffolding monorepo structure', type: 'info', delay: 1000 },
@@ -97,12 +97,12 @@ const STAGES: PipelineStage[] = [
     icon: Lightbulb,
     color: 'text-yellow-400',
     glowColor: 'yellow',
-    plugin: 'x4-project-tracker',
+    plugin: 'x4',
     headline: 'Drop ideas, build a backlog',
     description:
       'Capture feature ideas as structured backlog items with a single command. Each idea gets priority, sizing, and dependencies. Your backlog becomes the input for the planning phase.',
     terminal: [
-      { text: '$ /idea "Add user dashboard with analytics"', type: 'command', delay: 0 },
+      { text: '$ /x4:idea "Add user dashboard with analytics"', type: 'command', delay: 0 },
       { text: '', type: 'output', delay: 400 },
       { text: 'Capturing idea...', type: 'output', delay: 600 },
       { text: '  Title: User dashboard with analytics', type: 'info', delay: 1000 },
@@ -119,12 +119,12 @@ const STAGES: PipelineStage[] = [
     icon: Map,
     color: 'text-orange-400',
     glowColor: 'orange',
-    plugin: 'x4-project-tracker',
+    plugin: 'x4',
     headline: 'Brainstorm, plan, write PRD — automatically',
     description:
       'The planner triages your backlog, runs a brainstorming session to explore approaches, builds an implementation plan with task dependencies, and outputs a full PRD ready for the agent team.',
     terminal: [
-      { text: '$ /plan-backlog', type: 'command', delay: 0 },
+      { text: '$ /x4:plan-backlog', type: 'command', delay: 0 },
       { text: '', type: 'output', delay: 400 },
       { text: 'Triaging backlog (4 items)...', type: 'output', delay: 600 },
       { text: '  → Selected: "User dashboard with analytics"', type: 'info', delay: 1200 },
@@ -149,12 +149,12 @@ const STAGES: PipelineStage[] = [
     icon: Users,
     color: 'text-violet-400',
     glowColor: 'violet',
-    plugin: 'x4-agent-team-ops',
+    plugin: 'x4',
     headline: 'Agent team builds, reviews, verifies',
     description:
-      'The /work command dispatches a 5-agent team: backend builds the API and schema, frontend builds the UI, reviewer audits for security and architecture issues, tester writes and runs tests, and performance agent checks bundle size and query efficiency.',
+      'The /x4:work command dispatches a 5-agent team: backend builds the API and schema, frontend builds the UI, reviewer audits for security and architecture issues, tester writes and runs tests, and performance agent checks bundle size and query efficiency.',
     terminal: [
-      { text: '$ /work', type: 'command', delay: 0 },
+      { text: '$ /x4:work', type: 'command', delay: 0 },
       { text: '', type: 'output', delay: 400 },
       { text: 'Phase 1 — Orient: Reading PRD...', type: 'output', delay: 600 },
       { text: 'Phase 2 — Setup: Creating feature branch', type: 'output', delay: 1200 },
@@ -176,7 +176,7 @@ const STAGES: PipelineStage[] = [
     icon: Rocket,
     color: 'text-cyan-400',
     glowColor: 'cyan',
-    plugin: 'x4-agent-team-ops',
+    plugin: 'x4',
     headline: 'Branch, PR, and cleanup — handled',
     description:
       'Creates a draft PR with full context, watches CI, auto-fixes lint or type errors, and cleans up database branches and local branches after merge. You review and click merge.',
@@ -416,7 +416,7 @@ export function AgentPluginShowcase() {
             Your AI <span className="gradient-text">development team</span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            Four Claude Code plugins that turn a single conversation into a shipped pull request.
+            One Claude Code plugin that turns a single conversation into a shipped pull request.
             Idea to production — fully orchestrated.
           </p>
         </motion.div>
@@ -496,7 +496,7 @@ export function AgentPluginShowcase() {
             href="/plugins"
             className="group inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
-            Explore all 4 plugins and installation guide
+            Explore the plugin and installation guide
             <ChevronRight size={14} className="transition-transform group-hover:translate-x-0.5" />
           </Link>
           <div className="mt-3">

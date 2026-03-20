@@ -115,7 +115,7 @@ export function BentoGrid() {
                   <div>
                     <h3 className="text-lg font-semibold text-foreground">Agent Plugins</h3>
                     <p className="mt-1 max-w-lg text-sm leading-relaxed text-muted-foreground">
-                      Four Claude Code plugins that turn a single conversation into a shipped pull
+                      One Claude Code plugin that turns a single conversation into a shipped pull
                       request. Onboard, scaffold, plan, build, and ship — fully orchestrated by an
                       AI development team.
                     </p>

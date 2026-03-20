@@ -18,7 +18,7 @@ const FEATURES = [
     badge: 'Agent Teams',
     title: 'AI Agents That Design, Plan & Build',
     description:
-      'Four Claude Code plugins work together as a development team. Brainstorm approaches, generate PRDs, build the implementation, write tests, run security review, and ship a pull request — all from a single /work command. Fully tested, fully reviewed, ready to merge.',
+      'One Claude Code plugin powers an entire development team. Brainstorm approaches, generate PRDs, build the implementation, write tests, run security review, and ship a pull request — all from a single /x4:work command. Fully tested, fully reviewed, ready to merge.',
     color: 'bg-violet-500/10 text-violet-400',
     visual: <AgentTeamVisual />,
   },

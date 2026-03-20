@@ -7,22 +7,19 @@ import { CodeBlock } from '@/components/ui/code-block';
 const INSTALL_CODE = `# Add the x4 plugin marketplace
 /plugin marketplace add studiox4/x4-agent-plugins
 
-# Install all plugins
-/plugin install x4-scaffold@x4-agent-plugins
-/plugin install x4-project-tracker@x4-agent-plugins
-/plugin install x4-agent-team-ops@x4-agent-plugins
-/plugin install x4-llmstxt-manager@x4-agent-plugins
+# Install the x4 plugin (one install — everything included)
+/plugin install x4@x4-agent-plugins
 
 # Run the onboarding wizard
-/x4-onboard
+/x4:onboard
 
 # Create your first project
-/x4-create my-app --preset saas
+/x4:create my-app --preset saas
 
 # Start building
 cd my-app && bun dev`;
 
-const TEAM_CONFIG = `# Auto-suggest plugins for your team
+const TEAM_CONFIG = `# Auto-suggest for your team
 # Add to .claude/settings.json:
 {
   "extraKnownMarketplaces": {
@@ -34,10 +31,7 @@ const TEAM_CONFIG = `# Auto-suggest plugins for your team
     }
   },
   "enabledPlugins": {
-    "x4-scaffold@x4-agent-plugins": true,
-    "x4-project-tracker@x4-agent-plugins": true,
-    "x4-agent-team-ops@x4-agent-plugins": true,
-    "x4-llmstxt-manager@x4-agent-plugins": true
+    "x4@x4-agent-plugins": true
   }
 }`;
 

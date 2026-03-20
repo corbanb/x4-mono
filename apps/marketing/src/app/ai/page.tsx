@@ -8,7 +8,7 @@ import { CTASection } from '@/components/sections/CTASection';
 export const metadata: Metadata = {
   title: 'AI',
   description:
-    '7 specialist agents, 25 commands, 2 skills — Claude Code automation that ships production code.',
+    '7 specialist agents, 16 commands, 15 skills — Claude Code automation that ships production code.',
 };
 
 export default function AIPage() {
@@ -25,7 +25,7 @@ export default function AIPage() {
             <span className="gradient-text">AI-Powered</span> Development
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            7 specialist agents, 25 commands, 2 skills — Claude Code automation that ships
+            7 specialist agents, 16 commands, 15 skills — Claude Code automation that ships
             production code. From scaffolding to deployment, every step is orchestrated by AI that
             understands your codebase.
           </p>

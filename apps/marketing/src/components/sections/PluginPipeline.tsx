@@ -5,31 +5,31 @@ import { motion, useInView } from 'motion/react';
 
 const STAGES = [
   {
-    command: '/x4-onboard',
+    command: '/x4:onboard',
     label: 'Onboard',
     description: 'Check tools, accounts, CLI access',
     color: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400',
   },
   {
-    command: '/x4-create',
+    command: '/x4:create',
     label: 'Scaffold',
     description: 'Create a full-stack TypeScript monorepo',
     color: 'border-blue-500/30 bg-blue-500/10 text-blue-400',
   },
   {
-    command: '/idea',
+    command: '/x4:idea',
     label: 'Capture',
     description: 'Drop feature ideas into a structured backlog',
     color: 'border-yellow-500/30 bg-yellow-500/10 text-yellow-400',
   },
   {
-    command: '/plan-backlog',
+    command: '/x4:plan-backlog',
     label: 'Plan',
     description: 'Brainstorm, create plan, write PRD',
     color: 'border-orange-500/30 bg-orange-500/10 text-orange-400',
   },
   {
-    command: '/work',
+    command: '/x4:work',
     label: 'Build',
     description: 'Dispatch agent team to build & review',
     color: 'border-violet-500/30 bg-violet-500/10 text-violet-400',
