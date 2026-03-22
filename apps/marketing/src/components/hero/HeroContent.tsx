@@ -34,7 +34,7 @@ export function HeroContent() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.4, 0, 1] }}
       >
-        Ship Multi-Platform Apps <span className="gradient-text">From One Codebase</span>
+        From Idea to Shipped PR <span className="gradient-text">With One Plugin</span>
       </motion.h1>
 
       {/* Subtitle */}
@@ -44,8 +44,8 @@ export function HeroContent() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
       >
-        Web, mobile, and desktop — powered by TypeScript, tRPC, and a shared backend. Type-safe from
-        database to UI, with auth, AI, and CI/CD built in.
+        One Claude Code plugin that scaffolds a full-stack TypeScript monorepo, captures ideas,
+        plans features, dispatches agent teams, and ships pull requests — all from your terminal.
       </motion.p>
 
       {/* CTAs — two GitHub buttons */}
