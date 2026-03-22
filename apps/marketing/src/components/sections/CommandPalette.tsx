@@ -15,7 +15,7 @@ const TABS = [
     commands: [
       {
         name: '/x4:onboard',
-        description: 'Check tools, accounts, CLIs — set up your dev environment',
+        description: 'Check tools, accounts, CLIs, companion plugins — set up your dev environment',
       },
       {
         name: '/x4:create [name]',
@@ -34,8 +34,12 @@ const TABS = [
     ] satisfies Command[],
   },
   {
-    label: 'Project Tracking',
+    label: 'Project Planning',
     commands: [
+      {
+        name: '/x4:kickstart',
+        description: 'Brainstorm features, design UI, prioritize, and batch-generate PRDs',
+      },
       { name: '/x4:idea <idea>', description: 'Capture a feature idea to the backlog' },
       {
         name: '/x4:plan-backlog',
@@ -54,7 +58,7 @@ const TABS = [
       },
       {
         name: '/x4:init-setup',
-        description: 'Interactive wizard for database, hosting, CI, tests',
+        description: 'Interactive wizard for database, hosting, CI, tests, tracker, llms.txt',
       },
       {
         name: '/x4:init-agents',
@@ -97,7 +101,7 @@ export function CommandPalette() {
           transition={{ duration: 0.5 }}
         >
           <span className="inline-block rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-1.5 text-xs font-medium text-blue-400">
-            21 Commands
+            24 Commands
           </span>
           <h2 className="mt-6 text-3xl font-bold sm:text-4xl">A command for everything</h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
