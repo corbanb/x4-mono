@@ -186,37 +186,32 @@ See [docs/commands.md](docs/commands.md) for the full reference.
 
 x4 is built for AI-first development with [Claude Code](https://claude.ai/download). The **x4 Agent Plugins** turn Claude Code into a full development team — from project scaffolding to shipping PRs.
 
-### x4 Agent Plugins
+### x4 Agent Plugins (v3.0)
 
-Install the complete AI-powered development workflow:
+One plugin. One install. Idea to PR in minutes.
 
 ```bash
-# Add the x4 plugin marketplace
+# Add the marketplace
 /plugin marketplace add studiox4/x4-agent-plugins
 
-# Install all plugins
-/plugin install x4-scaffold@x4-agent-plugins
-/plugin install x4-project-tracker@x4-agent-plugins
-/plugin install x4-agent-team-ops@x4-agent-plugins
-/plugin install x4-llmstxt-manager@x4-agent-plugins
+# Install the plugin
+/plugin install x4@x4-agent-plugins
+
+# Run onboarding
+/x4:onboard
 ```
 
-| Plugin                 | What it does                                                                                                   |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------- |
-| **x4-scaffold**        | `/x4-create my-app` — scaffold a full-stack project with presets (saas, full-stack, landing, api-only)         |
-| **x4-project-tracker** | `/idea`, `/plan-backlog` — capture ideas, triage, brainstorm, and generate PRDs                                |
-| **x4-agent-team-ops**  | `/work` — dispatch an agent team (backend, frontend, reviewer, tester, performance) to build, review, and ship |
-| **x4-llmstxt-manager** | `/llmstxt-update` — scan dependencies and download AI-readable reference docs                                  |
+| Stage        | Command              | What Happens                                                   |
+| ------------ | -------------------- | -------------------------------------------------------------- |
+| **Onboard**  | `/x4:onboard`        | Check tools, accounts, CLI access — get your machine ready     |
+| **Scaffold** | `/x4:create my-app`  | Create a full-stack TypeScript monorepo with one command       |
+| **Tour**     | `/x4:tour`           | Guided walkthrough — test login, try AI chat, explore your app |
+| **Capture**  | `/x4:idea "feature"` | Drop a feature idea into a structured backlog                  |
+| **Plan**     | `/x4:plan-backlog`   | Brainstorm approaches, create implementation plan, write PRD   |
+| **Build**    | `/x4:work`           | Dispatch a 5-agent team — build, review, verify, ship          |
+| **Monitor**  | `/x4:status`         | Quick dashboard — what's running, what's configured            |
 
-The full pipeline: **Onboard** → **Scaffold** → **Capture** → **Plan** → **Build** → **Ship**
-
-```bash
-/x4-onboard                                    # Check tools & accounts
-/x4-create my-app --preset saas                # Scaffold project
-/idea "Add user dashboard with analytics"       # Capture feature idea
-/plan-backlog                                   # Brainstorm → plan → PRD
-/work                                           # Agent team builds & ships
-```
+The `/x4:work` pipeline dispatches 5 agents (backend, frontend, reviewer, tester, performance) across 7 phases: Orient → Setup → Build → Review + Verify → Ship → Memory Sweep → Cleanup.
 
 See the [x4 Agent Plugins repo](https://github.com/studiox4/x4-agent-plugins) for full documentation.
 
@@ -242,7 +237,7 @@ This adds skills for test-driven development, systematic debugging, parallel age
 
 ### Claude Commands
 
-The project includes 24 custom Claude commands in `.claude/commands/` for scaffolding, specialist agents, and PRD lifecycle management. Type `/` in Claude Code to see them.
+The project includes 21 commands under the `/x4:` namespace for scaffolding, project tracking, agent team ops, and reference docs. Type `/x4:` in Claude Code to see them all.
 
 ## Documentation
 

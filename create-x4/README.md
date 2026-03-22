@@ -57,6 +57,24 @@ Options:
   -h, --help            Print help
 ```
 
+## Presets
+
+Skip the wizard with a preset:
+
+```bash
+# SaaS — Web + API + AI (most common)
+bunx create-x4 my-app --preset saas --yes
+
+# Full stack — everything included
+bunx create-x4 my-app --preset full-stack --yes
+
+# Landing page — Web + API + Marketing
+bunx create-x4 my-app --preset landing --yes
+
+# API only — Hono + tRPC server
+bunx create-x4 my-app --preset api-only --yes
+```
+
 ## Examples
 
 Create with a custom npm scope:
