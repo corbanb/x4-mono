@@ -2,91 +2,78 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
-import { Server, Layout, Database, TestTube, Shield, Container, FileText } from 'lucide-react';
+import { Server, Layout, Eye, TestTube, Gauge } from 'lucide-react';
 import { GlowCard } from '@/components/effects/GlowCard';
 
 const AGENTS = [
   {
     name: 'Backend',
-    command: '/backend',
+    role: 'Server-side engineer',
     icon: Server,
     color: 'text-violet-400',
     bgColor: 'bg-violet-500/10',
-    description: 'Hono, tRPC v11, API architecture',
+    description: 'API routes, database schema, tRPC procedures, middleware',
     capabilities: [
-      'Router & procedure design',
-      'Middleware patterns',
+      'Drizzle schema & migrations',
+      'tRPC router design',
+      'Hono middleware',
       'Error handling strategy',
-      'Performance optimization',
     ],
   },
   {
     name: 'Frontend',
-    command: '/frontend',
+    role: 'UI engineer',
     icon: Layout,
     color: 'text-blue-400',
     bgColor: 'bg-blue-500/10',
-    description: 'Next.js 15, React 19, component design',
+    description: 'Pages, components, styling, client state',
     capabilities: [
-      'App Router patterns',
-      'Server/Client split',
-      'State management',
-      'Responsive UI',
+      'Next.js App Router pages',
+      'React 19 components',
+      'Tailwind styling',
+      'Client-side state',
     ],
   },
   {
-    name: 'Database',
-    command: '/database',
-    icon: Database,
-    color: 'text-cyan-400',
-    bgColor: 'bg-cyan-500/10',
-    description: 'Drizzle ORM, Neon Postgres, modeling',
-    capabilities: ['Schema design', 'Migration strategy', 'Query optimization', 'Index planning'],
+    name: 'Reviewer',
+    role: 'Code reviewer (read-only)',
+    icon: Eye,
+    color: 'text-orange-400',
+    bgColor: 'bg-orange-500/10',
+    description: 'Security, architecture, quality audits',
+    capabilities: [
+      'Security vulnerability scan',
+      'Architecture review',
+      'Code quality audit',
+      'Dependency boundary check',
+    ],
   },
   {
-    name: 'Testing',
-    command: '/testing',
+    name: 'Tester',
+    role: 'Test engineer',
     icon: TestTube,
     color: 'text-emerald-400',
     bgColor: 'bg-emerald-500/10',
-    description: 'Bun test runner, test pyramid, patterns',
+    description: 'Unit tests, e2e tests, coverage',
     capabilities: [
-      'Unit & integration tests',
+      'Bun unit & integration tests',
+      'Playwright e2e tests',
       'Mock factories',
-      'Coverage strategy',
-      'E2E with Playwright',
+      'Coverage analysis',
     ],
   },
   {
-    name: 'Security',
-    command: '/security',
-    icon: Shield,
-    color: 'text-orange-400',
-    bgColor: 'bg-orange-500/10',
-    description: 'Better Auth, OWASP, token management',
-    capabilities: ['Auth flow design', 'RBAC policies', 'Input validation', 'Vulnerability audit'],
-  },
-  {
-    name: 'DevOps',
-    command: '/devops',
-    icon: Container,
-    color: 'text-rose-400',
-    bgColor: 'bg-rose-500/10',
-    description: 'GitHub Actions, Turborepo, deployment',
-    capabilities: ['CI/CD pipelines', 'Neon branching', 'Vercel deployment', 'Environment config'],
-  },
-  {
-    name: 'Docs',
-    command: '/docs',
-    icon: FileText,
-    color: 'text-amber-400',
-    bgColor: 'bg-amber-500/10',
-    description: 'Fumadocs, READMEs, API reference',
+    name: 'Performance',
+    role: 'Performance auditor (read-only)',
+    icon: Gauge,
+    color: 'text-cyan-400',
+    bgColor: 'bg-cyan-500/10',
+    description: 'Bundle size, re-renders, memory leaks, query efficiency',
     capabilities: [
-      'API documentation',
-      'Getting started guides',
-      'JSDoc annotations',
-      'Architecture docs',
+      'Bundle size analysis',
+      'Re-render detection',
+      'Memory leak checks',
+      'Database query efficiency',
     ],
   },
 ];
@@ -105,12 +92,13 @@ export function AgentShowcase() {
           transition={{ duration: 0.5 }}
         >
           <span className="inline-block rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 text-xs font-medium text-violet-400">
-            7 Specialist Agents
+            5 Agent Team — /x4:work
           </span>
-          <h2 className="mt-6 text-3xl font-bold sm:text-4xl">An expert for every layer</h2>
+          <h2 className="mt-6 text-3xl font-bold sm:text-4xl">A specialist for every role</h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            Each agent is a domain specialist with deep knowledge of its stack layer. Route any task
-            to the right expert with a single slash command.
+            The <code className="text-foreground">/x4:work</code> pipeline dispatches a 5-agent team
+            with ownership boundaries — the frontend agent can&apos;t touch API code, the backend
+            can&apos;t touch UI code, and reviewers are read-only.
           </p>
         </motion.div>
 
@@ -131,7 +119,7 @@ export function AgentShowcase() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">{agent.name}</h3>
-                    <code className="text-xs text-muted-foreground">{agent.command}</code>
+                    <span className="text-xs text-muted-foreground">{agent.role}</span>
                   </div>
                 </div>
                 <p className="mt-3 text-sm text-muted-foreground">{agent.description}</p>
