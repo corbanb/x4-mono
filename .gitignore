@@ -34,9 +34,13 @@ Thumbs.db
 # Claude Code
 .claude-old/
 .claude/docs/
+.claude/settings.local.json
 
 # Plans
 docs/plans/
+
+# Videos
+videos/
 
 # Debug
 *.log
