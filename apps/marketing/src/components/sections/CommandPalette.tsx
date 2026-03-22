@@ -11,39 +11,73 @@ interface Command {
 
 const TABS = [
   {
-    label: 'Scaffolding',
-    commands: [
-      { name: '/add-schema', description: 'Zod schemas + inferred types for an entity' },
-      { name: '/add-router', description: 'tRPC router with CRUD procedures and tests' },
-      { name: '/add-table', description: 'Drizzle database table with migration and seed' },
-      { name: '/add-middleware', description: 'Hono middleware with test file' },
-      { name: '/add-page', description: 'Next.js App Router page with Server/Client split' },
-      { name: '/add-form', description: 'react-hook-form wired to tRPC mutation' },
-      { name: '/add-hook', description: 'Shared React hook in packages/shared/hooks/' },
-      { name: '/add-env', description: 'Environment variable 3-way sync' },
-      { name: '/add-test', description: 'Generate tests for an existing source file' },
-      { name: '/add-workflow', description: 'GitHub Actions workflow scaffold' },
-    ] satisfies Command[],
-  },
-  {
-    label: 'PRD Lifecycle',
-    commands: [
-      { name: '/new-prd', description: 'Create a new PRD from template' },
-      { name: '/review-prd', description: 'Review PRD for completeness and quality' },
-      { name: '/implement-task', description: 'Implement a specific PRD task' },
-      { name: '/move-prd', description: 'Move PRD between lifecycle stages' },
-      { name: '/check-prd', description: 'Verify PRD completion against success criteria' },
-      { name: '/next-prd', description: 'Auto-detect and implement the next PRD' },
-    ] satisfies Command[],
-  },
-  {
-    label: 'Quality & Shipping',
+    label: 'Scaffolding & Setup',
     commands: [
       {
-        name: '/check-boundaries',
-        description: 'Audit for convention violations and dependency issues',
+        name: '/x4:onboard',
+        description: 'Check tools, accounts, CLIs — set up your dev environment',
       },
-      { name: '/ship', description: 'Branch, commit, and open a pull request with CI watch' },
+      {
+        name: '/x4:create [name]',
+        description: 'Scaffold a new project (presets: full-stack, saas, landing, api-only)',
+      },
+      {
+        name: '/x4:tour',
+        description: 'Guided walkthrough — explore apps, test login, try AI chat, set up git',
+      },
+      { name: '/x4:add', description: 'Add a mobile or web app to an existing project' },
+      { name: '/x4:env', description: 'Set up environment variables (database, auth, AI keys)' },
+      {
+        name: '/x4:status',
+        description: 'Quick project health dashboard — apps, ports, database, git, plugins',
+      },
+    ] satisfies Command[],
+  },
+  {
+    label: 'Project Tracking',
+    commands: [
+      { name: '/x4:idea <idea>', description: 'Capture a feature idea to the backlog' },
+      {
+        name: '/x4:plan-backlog',
+        description: 'Triage backlog → brainstorm → implementation plan → write PRD',
+      },
+      { name: '/x4:init-tracker', description: 'Scaffold STATUS.md, BACKLOG.md, planning folders' },
+    ] satisfies Command[],
+  },
+  {
+    label: 'Agent Team Ops',
+    commands: [
+      { name: '/x4:work', description: '7-phase pipeline: Orient → Build → Review → Ship' },
+      {
+        name: '/x4:run-tests',
+        description: 'Run configured test commands (unit, e2e, lint, typecheck)',
+      },
+      {
+        name: '/x4:init-setup',
+        description: 'Interactive wizard for database, hosting, CI, tests',
+      },
+      {
+        name: '/x4:init-agents',
+        description: 'Generate project-specific agent files from templates',
+      },
+      {
+        name: '/x4:verify-local',
+        description: 'Run all checks with auto-fix — mandatory ship gate',
+      },
+      { name: '/x4:pr-create', description: 'Create branch + DB branch + draft PR' },
+      { name: '/x4:pr-status', description: 'Check CI, preview URLs, review state' },
+      { name: '/x4:pr-cleanup', description: 'Post-merge cleanup' },
+    ] satisfies Command[],
+  },
+  {
+    label: 'LLMs.txt Docs',
+    commands: [
+      { name: '/x4:llmstxt-init', description: 'Scaffold download script and docs directory' },
+      {
+        name: '/x4:llmstxt-update',
+        description: 'Scan dependencies, discover, download llms.txt docs',
+      },
+      { name: '/x4:llmstxt-status', description: 'Read-only status report of current docs' },
     ] satisfies Command[],
   },
 ];
@@ -63,7 +97,7 @@ export function CommandPalette() {
           transition={{ duration: 0.5 }}
         >
           <span className="inline-block rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-1.5 text-xs font-medium text-blue-400">
-            25 Commands
+            21 Commands
           </span>
           <h2 className="mt-6 text-3xl font-bold sm:text-4xl">A command for everything</h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">

@@ -14,11 +14,13 @@ const PLUGIN_SECTIONS = [
     commands: [
       { cmd: '/x4:onboard', desc: 'Check tools, accounts, CLIs' },
       { cmd: '/x4:create [name]', desc: 'Scaffold new project with presets' },
+      { cmd: '/x4:tour', desc: 'Guided walkthrough — test login, AI chat, git setup' },
       { cmd: '/x4:add', desc: 'Add mobile or web app to existing project' },
       { cmd: '/x4:env', desc: 'Set up environment variables' },
+      { cmd: '/x4:status', desc: 'Quick project health dashboard' },
     ],
     highlights: [
-      'Presets: full-stack, saas, landing, api-only',
+      'Presets: full-stack, saas, landing, api-only, custom',
       'Interactive wizard or --yes for instant setup',
       'Neon DB, Better Auth, AI keys — all configured',
     ],
