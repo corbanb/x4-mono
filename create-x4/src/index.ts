@@ -18,10 +18,12 @@ import { exitWithError } from './ui.js';
 import type { Platform } from './constants.js';
 import { resolve } from 'node:path';
 
+declare const PKG_VERSION: string;
+
 const main = defineCommand({
   meta: {
     name: 'create-x4',
-    version: '1.0.0',
+    version: PKG_VERSION,
     description: 'Scaffold a full-stack TypeScript monorepo with x4',
   },
   args: {
