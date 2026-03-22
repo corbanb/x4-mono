@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { PluginCards } from '@/components/sections/PluginCards';
 import { PluginPipeline } from '@/components/sections/PluginPipeline';
+import { CompanionPlugins } from '@/components/sections/CompanionPlugins';
+import { HooksSection } from '@/components/sections/HooksSection';
 import { PluginInstall } from '@/components/sections/PluginInstall';
 import { CTASection } from '@/components/sections/CTASection';
 
@@ -25,8 +27,8 @@ export default function PluginsPage() {
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
             One plugin that turns Claude Code into a complete development pipeline. Scaffold
-            projects, capture ideas, plan features, dispatch agent teams, and ship PRs — all from
-            your terminal.
+            projects, design features with AI, dispatch agent teams, and ship PRs — all from your
+            terminal. 24 commands, 5 agents, 9 companion plugins.
           </p>
           <div className="mt-8">
             <a
@@ -51,6 +53,8 @@ export default function PluginsPage() {
 
       <PluginPipeline />
       <PluginCards />
+      <CompanionPlugins />
+      <HooksSection />
       <PluginInstall />
       <CTASection />
     </>

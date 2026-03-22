@@ -27,18 +27,19 @@ const PLUGIN_SECTIONS = [
   },
   {
     icon: ListTodo,
-    name: 'Project Tracking',
+    name: 'Project Planning',
     color: 'text-yellow-400',
-    tagline: 'Backlog capture, triage, PRD generation',
+    tagline: 'Feature brainstorming, UI design, PRD generation',
     commands: [
+      { cmd: '/x4:kickstart', desc: 'Brainstorm features, design UI, batch-generate PRDs' },
       { cmd: '/x4:idea <idea>', desc: 'Capture a feature idea to backlog' },
       { cmd: '/x4:plan-backlog', desc: 'Triage, brainstorm, plan, write PRD' },
       { cmd: '/x4:init-tracker', desc: 'Scaffold STATUS.md, BACKLOG.md, planning dirs' },
     ],
     highlights: [
-      'Structured backlog with priority and sizing',
-      'Auto-generates PRDs from brainstorm sessions',
-      'Integrates with Superpowers brainstorming skill',
+      'Kickstart: vision → brainstorm → UI design → batch PRDs',
+      'Two modes: kickstart (new projects) or incremental (ongoing)',
+      'Integrates with superpowers + frontend-design plugins',
     ],
   },
   {
