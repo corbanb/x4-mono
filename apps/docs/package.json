@@ -12,7 +12,7 @@
     "generate-api-docs": "bun run scripts/generate-api-pages.ts"
   },
   "dependencies": {
-    "fumadocs-core": "^15.0.0",
+    "fumadocs-core": "^16.6.5",
     "fumadocs-mdx": "14.2.7",
     "fumadocs-openapi": "^6.0.0",
     "fumadocs-ui": "^15.0.0",
