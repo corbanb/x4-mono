@@ -2,10 +2,17 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
-import { Github } from 'lucide-react';
 
-const MONOREPO_URL = 'https://github.com/corbanb/x4-mono';
 const PLUGINS_URL = 'https://github.com/studiox4/x4-agent-plugins';
+
+const INSTALL_COMMANDS = `# Install the x4 plugin
+claude mcp add x4
+
+# Scaffold your project
+/x4:create my-app --preset saas
+
+# Start building
+/x4:kickstart`;
 
 export function CTASection() {
   const ref = useRef<HTMLDivElement>(null);
@@ -22,34 +29,45 @@ export function CTASection() {
         animate={isInView ? { opacity: 1, y: 0 } : undefined}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="text-4xl font-bold sm:text-5xl">
-          Ready to build <span className="gradient-text">something great</span>?
-        </h2>
+        <h2 className="text-4xl font-bold sm:text-5xl">Ready to stop building manually?</h2>
         <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
-          Get started in minutes with a production-ready monorepo. Web, mobile, and desktop — all
-          wired up and ready to ship.
+          Three commands. Your machine is ready. Your agents are waiting.
         </p>
-        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+
+        {/* Code block */}
+        <div className="mt-10 overflow-hidden rounded-xl border border-border bg-black/50 text-left">
+          <pre className="overflow-x-auto px-5 py-4 font-mono text-xs leading-relaxed text-foreground/80 sm:text-sm">
+            {INSTALL_COMMANDS}
+          </pre>
+        </div>
+
+        {/* Buttons */}
+        <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <a
-            href={MONOREPO_URL}
+            href={PLUGINS_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-xl border border-border bg-card/80 px-8 py-3.5 text-sm font-semibold text-foreground backdrop-blur-sm transition-all hover:border-white/20 hover:bg-white/5"
+            className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-violet-500"
           >
-            <Github size={16} />
-            View the Monorepo on GitHub
+            Install x4
           </a>
           <a
             href={PLUGINS_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-xl border border-violet-500/30 bg-violet-500/10 px-8 py-3.5 text-sm font-semibold text-foreground backdrop-blur-sm transition-all hover:border-violet-500/50 hover:bg-violet-500/15"
+            className="inline-flex items-center gap-2 rounded-lg border border-border bg-transparent px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:border-white/20 hover:bg-white/5"
           >
-            <Github size={16} />
-            View Agent Plugins on GitHub
+            View on GitHub ↗
           </a>
         </div>
+
+        {/* Footer line */}
+        <p className="mt-8 font-mono text-xs text-muted-foreground/60">
+          v3.5.0 · Apache 2.0 · studiox4/x4-agent-plugins
+        </p>
       </motion.div>
     </section>
   );
 }
+
+export default CTASection;
