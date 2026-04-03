@@ -21,15 +21,12 @@ export function HeroDescribeApp() {
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined;
-    let planTimeout: ReturnType<typeof setTimeout> | undefined;
 
     const startDelay = setTimeout(() => {
       interval = setInterval(() => {
         setTypedCount((c) => {
           if (c >= TYPED_PHRASE.length) {
             clearInterval(interval);
-            // Show plan card 400ms after typing completes
-            planTimeout = setTimeout(() => setShowPlan(true), 400);
             return c;
           }
           return c + 1;
@@ -40,9 +37,15 @@ export function HeroDescribeApp() {
     return () => {
       clearTimeout(startDelay);
       clearInterval(interval);
-      clearTimeout(planTimeout);
     };
   }, []);
+
+  useEffect(() => {
+    if (typedCount >= TYPED_PHRASE.length) {
+      const t = setTimeout(() => setShowPlan(true), 400);
+      return () => clearTimeout(t);
+    }
+  }, [typedCount]);
 
   return (
     <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 text-center">
