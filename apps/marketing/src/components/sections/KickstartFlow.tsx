@@ -71,15 +71,15 @@ export function KickstartFlow() {
     <section ref={ref} className="py-24">
       <div className="mx-auto max-w-7xl px-6">
         {/* Horizontal flow */}
-        <div className="overflow-x-auto pb-4">
-          <div className="flex min-w-max flex-row gap-4 md:min-w-0 md:flex-row md:flex-wrap md:justify-center lg:flex-nowrap">
+        <div className="md:overflow-x-auto md:pb-4">
+          <div className="flex flex-col gap-4 md:min-w-max md:flex-row md:flex-nowrap">
             {FLOW_STEPS.map((step, index) => (
               <motion.div
                 key={step.number}
                 initial={{ opacity: 0, y: 24 }}
                 animate={isInView ? { opacity: 1, y: 0 } : undefined}
                 transition={{ duration: 0.5, delay: index * 0.08 }}
-                className="flex w-44 shrink-0 flex-col rounded-2xl border bg-card p-5 md:w-40 lg:w-44"
+                className="relative flex w-44 shrink-0 flex-col rounded-2xl border bg-card p-5 md:w-40 lg:w-44"
                 style={{ borderColor: `${step.color}40` }}
               >
                 {/* Step number */}
