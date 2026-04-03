@@ -20,23 +20,28 @@ export function HeroDescribeApp() {
   const [showPlan, setShowPlan] = useState(false);
 
   useEffect(() => {
-    // Start typing after 600ms
+    let interval: ReturnType<typeof setInterval> | undefined;
+    let planTimeout: ReturnType<typeof setTimeout> | undefined;
+
     const startDelay = setTimeout(() => {
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         setTypedCount((c) => {
           if (c >= TYPED_PHRASE.length) {
             clearInterval(interval);
             // Show plan card 400ms after typing completes
-            setTimeout(() => setShowPlan(true), 400);
+            planTimeout = setTimeout(() => setShowPlan(true), 400);
             return c;
           }
           return c + 1;
         });
       }, 38);
-      return () => clearInterval(interval);
     }, 600);
 
-    return () => clearTimeout(startDelay);
+    return () => {
+      clearTimeout(startDelay);
+      clearInterval(interval);
+      clearTimeout(planTimeout);
+    };
   }, []);
 
   return (
