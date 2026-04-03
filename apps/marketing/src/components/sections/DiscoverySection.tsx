@@ -68,12 +68,12 @@ export function DiscoverySection() {
               ))}
             </ul>
 
-            <label className="mt-5 flex cursor-default items-center gap-2 text-xs text-muted-foreground select-none">
+            <div className="mt-5 flex cursor-default items-center gap-2 text-xs text-muted-foreground select-none">
               <span className="flex h-4 w-4 items-center justify-center rounded border border-border bg-white/5">
                 <span className="h-2 w-2 rounded-sm bg-violet-500" />
               </span>
               Send to backlog
-            </label>
+            </div>
           </motion.div>
 
           {/* Dream card */}
@@ -99,12 +99,12 @@ export function DiscoverySection() {
               ))}
             </ul>
 
-            <label className="mt-5 flex cursor-default items-center gap-2 text-xs text-muted-foreground select-none">
+            <div className="mt-5 flex cursor-default items-center gap-2 text-xs text-muted-foreground select-none">
               <span className="flex h-4 w-4 items-center justify-center rounded border border-border bg-white/5">
                 <span className="h-2 w-2 rounded-sm bg-emerald-500" />
               </span>
               Add to backlog
-            </label>
+            </div>
           </motion.div>
         </div>
 

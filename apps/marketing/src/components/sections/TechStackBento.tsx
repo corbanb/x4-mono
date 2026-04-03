@@ -85,8 +85,9 @@ export function TechStackBento() {
           className="mt-6 flex justify-center"
         >
           <div className="rounded-xl border border-border bg-black/40 px-5 py-3 font-mono text-sm text-foreground/80">
-            <span className="text-violet-400 select-none">/ </span>
-            <span>x4:create my-app --preset saas</span>
+            <span>
+              <span className="text-violet-400 select-none">/</span>x4:create my-app --preset saas
+            </span>
           </div>
         </motion.div>
       </div>
