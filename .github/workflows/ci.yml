@@ -25,6 +25,8 @@ jobs:
       api: ${{ steps.filter.outputs.api }}
       docs: ${{ steps.filter.outputs.docs }}
       create-x4: ${{ steps.filter.outputs.create-x4 }}
+      marketing: ${{ steps.filter.outputs.marketing }}
+
     steps:
       - uses: actions/checkout@v6
       - uses: dorny/paths-filter@v3
@@ -78,6 +80,13 @@ jobs:
               - 'bun.lock'
             create-x4:
               - 'create-x4/**'
+            marketing:
+              - 'apps/marketing/**'
+              - 'packages/shared/**'
+              - 'tsconfig.base.json'
+              - 'turbo.json'
+              - 'package.json'
+              - 'bun.lock'
 
   # ─── Type Check, Lint & Audit ──────────────────────────────────────
   quality:
@@ -341,3 +350,98 @@ jobs:
             exit 1
           fi
           echo "All CI jobs passed (or were skipped)"
+
+  # ─── Railway Preview Deploy (PR only, after CI passes) ────────────────
+  railway-preview:
+    name: Railway Preview Deploy
+    runs-on: ubuntu-latest
+    needs: [changes, ci-passed]
+    if: |
+      github.event_name == 'pull_request' &&
+      needs.changes.outputs.marketing == 'true' &&
+      needs.ci-passed.result == 'success'
+    permissions:
+      pull-requests: write
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli@latest
+
+      - name: Link Railway project
+        run: railway link --project-id b3cce76b-e8e6-4323-943f-47799019db15
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Create preview environment
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          railway environment new "pr-${PR_NUMBER}" --copy production 2>/dev/null || true
+
+      - name: Deploy marketing service
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          railway up \
+            --service marketing \
+            --environment "pr-${PR_NUMBER}" \
+            --detach
+
+      - name: Get or generate preview URL
+        id: preview-url
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          URL=$(railway domain \
+            --service marketing \
+            --environment "pr-${PR_NUMBER}" \
+            --json 2>/dev/null | jq -r '.domain // empty' || true)
+          if [[ -z "$URL" ]]; then
+            URL="https://marketing-pr-${PR_NUMBER}.up.railway.app"
+          fi
+          echo "url=https://${URL#https://}" >> "$GITHUB_OUTPUT"
+
+      - name: Comment preview URL on PR
+        uses: actions/github-script@v7
+        env:
+          PREVIEW_URL: ${{ steps.preview-url.outputs.url }}
+          HEAD_REF: ${{ github.head_ref }}
+          PROJECT_ID: b3cce76b-e8e6-4323-943f-47799019db15
+        with:
+          script: |
+            const url = process.env.PREVIEW_URL;
+            const branch = process.env.HEAD_REF;
+            const projectId = process.env.PROJECT_ID;
+            const body = [
+              '## 🚀 Preview Deployment',
+              '',
+              `**Marketing site:** ${url}`,
+              '',
+              `Deployed from \`${branch}\` · [Railway project](https://railway.com/project/${projectId})`,
+            ].join('\n');
+
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.data.find(c => c.body.includes('## 🚀 Preview Deployment'));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
