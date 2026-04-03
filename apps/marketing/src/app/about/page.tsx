@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Timeline } from '@/components/sections/Timeline';
-import { PhilosophyCards } from '@/components/sections/PhilosophyCards';
 import { CTASection } from '@/components/sections/CTASection';
 
 export const metadata: Metadata = {
@@ -46,7 +45,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <PhilosophyCards />
       <Timeline />
       <CTASection />
     </>
