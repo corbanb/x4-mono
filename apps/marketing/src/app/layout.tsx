@@ -7,23 +7,23 @@ import '@/styles/globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'x4 — Ship Multi-Platform Apps From One Codebase',
+    default: 'x4 — The Complete AI Dev Workflow for Claude Code',
     template: '%s | x4',
   },
   description:
-    'Build web, mobile, and desktop apps from a single TypeScript codebase. Type-safe APIs, built-in auth, AI integration, and production-ready infrastructure.',
+    'One Claude Code plugin. Scaffold a full-stack TypeScript monorepo, plan features with AI, dispatch agent teams, and ship pull requests — all from your terminal.',
   openGraph: {
-    title: 'x4 — Ship Multi-Platform Apps From One Codebase',
+    title: 'x4 — The Complete AI Dev Workflow for Claude Code',
     description:
-      'Build web, mobile, and desktop apps from a single TypeScript codebase. Type-safe APIs, built-in auth, AI integration, and production-ready infrastructure.',
+      'One Claude Code plugin. Scaffold, plan, build, and ship full-stack TypeScript apps with autonomous agent teams.',
     type: 'website',
     locale: 'en_US',
     siteName: 'x4',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'x4 — Ship Multi-Platform Apps From One Codebase',
-    description: 'Build web, mobile, and desktop apps from a single TypeScript codebase.',
+    title: 'x4 — The Complete AI Dev Workflow for Claude Code',
+    description: 'One Claude Code plugin. Describe your app. Watch agents build it.',
   },
 };
 
