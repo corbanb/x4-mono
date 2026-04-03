@@ -7,13 +7,13 @@ import CTASection from '@/components/sections/CTASection';
 
 export default function HomePage() {
   return (
-    <main>
+    <>
       <HeroDescribeApp />
       <AutoLoopTerminal />
       <TechStackBento />
       <DiscoverySection />
       <AgentPluginShowcase />
       <CTASection />
-    </main>
+    </>
   );
 }
