@@ -5,14 +5,14 @@ import { motion, useInView } from 'motion/react';
 
 const PLUGINS_URL = 'https://github.com/studiox4/x4-agent-plugins';
 
-const INSTALL_COMMANDS = `# Install the x4 plugin
-claude mcp add x4
+const INSTALL_COMMANDS = `# Add the marketplace
+/plugin marketplace add studiox4/x4-agent-plugins
 
-# Scaffold your project
-/x4:create my-app --preset saas
+# Install x4
+/plugin install x4@x4-agent-plugins
 
-# Start building
-/x4:kickstart`;
+# Start onboarding
+/x4:onboard`;
 
 export function CTASection() {
   const ref = useRef<HTMLDivElement>(null);
@@ -63,7 +63,7 @@ export function CTASection() {
 
         {/* Footer line */}
         <p className="mt-8 font-mono text-xs text-muted-foreground/60">
-          v3.5.0 · Apache 2.0 · studiox4/x4-agent-plugins
+          v3.10.0 · Apache 2.0 · studiox4/x4-agent-plugins
         </p>
       </motion.div>
     </section>
