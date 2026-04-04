@@ -1,4 +1,5 @@
 import { HeroDescribeApp } from '@/components/hero/HeroDescribeApp';
+import DayInLifeSection from '@/components/sections/DayInLifeSection';
 import { AutoLoopTerminal } from '@/components/sections/AutoLoopTerminal';
 import TechStackBento from '@/components/sections/TechStackBento';
 import DiscoverySection from '@/components/sections/DiscoverySection';
@@ -9,6 +10,7 @@ export default function HomePage() {
   return (
     <>
       <HeroDescribeApp />
+      <DayInLifeSection />
       <AutoLoopTerminal />
       <TechStackBento />
       <DiscoverySection />
