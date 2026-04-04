@@ -8,12 +8,13 @@ import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const NAV_LINKS = [
-  { href: '/features', label: 'Features' },
-  { href: '/stack', label: 'Stack' },
-  { href: '/plugins', label: 'Plugins' },
-  { href: '/ai', label: 'AI' },
-  { href: '/about', label: 'About' },
+  { href: '/#how-it-works', label: 'How It Works' },
+  { href: '/kickstart', label: 'Kickstart' },
+  { href: '/commands', label: 'Commands' },
+  { href: '/teams', label: 'For Teams' },
 ];
+
+const PLUGINS_URL = 'https://github.com/studiox4/x4-agent-plugins';
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -47,7 +48,6 @@ export function Navbar() {
         <ul className="hidden items-center gap-1 md:flex">
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href;
-
             return (
               <li key={link.href}>
                 <Link
@@ -62,11 +62,7 @@ export function Navbar() {
                     <motion.div
                       layoutId="navbar-active"
                       className="absolute inset-0 rounded-lg bg-white/5"
-                      transition={{
-                        type: 'spring',
-                        stiffness: 350,
-                        damping: 30,
-                      }}
+                      transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                     />
                   )}
                 </Link>
@@ -75,8 +71,15 @@ export function Navbar() {
           })}
         </ul>
 
-        {/* Spacer */}
-        <div className="hidden md:block" />
+        {/* Install CTA */}
+        <a
+          href={PLUGINS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-violet-500 md:block"
+        >
+          Install
+        </a>
 
         {/* Mobile menu button */}
         <button
@@ -101,7 +104,6 @@ export function Navbar() {
             <div className="mx-auto max-w-7xl space-y-1 px-6 py-4">
               {NAV_LINKS.map((link) => {
                 const isActive = pathname === link.href;
-
                 return (
                   <Link
                     key={link.href}
@@ -117,6 +119,14 @@ export function Navbar() {
                   </Link>
                 );
               })}
+              <a
+                href={PLUGINS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-lg bg-violet-600 px-4 py-3 text-center text-sm font-semibold text-white"
+              >
+                Install
+              </a>
             </div>
           </motion.div>
         )}

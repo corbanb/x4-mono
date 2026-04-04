@@ -2,176 +2,21 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
-import { ExternalLink } from 'lucide-react';
 
-interface TechItem {
-  name: string;
-  abbr: string;
-  description: string;
-  url: string;
-  color: string;
-  span?: string;
-}
-
-const TECH_STACK: TechItem[] = [
-  {
-    name: 'TypeScript',
-    abbr: 'TS',
-    description:
-      'Strict type safety from database to UI. Catch errors at compile time, not in production.',
-    url: 'https://www.typescriptlang.org',
-    color: 'text-blue-400',
-    span: 'md:col-span-2',
-  },
-  {
-    name: 'React',
-    abbr: 'Re',
-    description: 'Component-based UI library powering web, mobile, and desktop from one skillset.',
-    url: 'https://react.dev',
-    color: 'text-cyan-400',
-  },
-  {
-    name: 'Next.js',
-    abbr: 'Nx',
-    description:
-      'Full-stack React framework with SSR, SSG, and API routes. Deploys to Vercel in seconds.',
-    url: 'https://nextjs.org',
-    color: 'text-foreground',
-  },
-  {
-    name: 'Expo',
-    abbr: 'Ex',
-    description: 'Build native iOS and Android apps with React. OTA updates and universal modules.',
-    url: 'https://expo.dev',
-    color: 'text-violet-400',
-  },
-  {
-    name: 'Electron',
-    abbr: 'El',
-    description: 'Desktop apps for macOS, Windows, and Linux using the same React components.',
-    url: 'https://www.electronjs.org',
-    color: 'text-blue-300',
-  },
-  {
-    name: 'Hono',
-    abbr: 'Ho',
-    description:
-      'Ultra-fast web framework for the API layer. Runs on Bun, Node, Cloudflare, and Deno.',
-    url: 'https://hono.dev',
-    color: 'text-orange-400',
-    span: 'md:col-span-2',
-  },
-  {
-    name: 'tRPC',
-    abbr: 'tR',
-    description:
-      'End-to-end type-safe APIs. Change a backend procedure, TypeScript catches every caller.',
-    url: 'https://trpc.io',
-    color: 'text-blue-500',
-  },
-  {
-    name: 'Drizzle ORM',
-    abbr: 'Dz',
-    description:
-      'Type-safe SQL ORM with zero overhead. Migrations, schema, and queries in TypeScript.',
-    url: 'https://orm.drizzle.team',
-    color: 'text-green-400',
-  },
-  {
-    name: 'Neon',
-    abbr: 'Ne',
-    description:
-      'Serverless Postgres with branching. Scale to zero, instant provisioning, edge-ready.',
-    url: 'https://neon.tech',
-    color: 'text-emerald-400',
-  },
-  {
-    name: 'Better Auth',
-    abbr: 'BA',
-    description:
-      'Authentication framework with sessions, bearer tokens, OAuth, and role-based access.',
-    url: 'https://www.better-auth.com',
-    color: 'text-yellow-400',
-  },
-  {
-    name: 'Vercel AI SDK',
-    abbr: 'AI',
-    description:
-      'Streaming AI responses, tool calling, and multi-provider support with Claude and GPT.',
-    url: 'https://sdk.vercel.ai',
-    color: 'text-violet-glow',
-    span: 'md:col-span-2',
-  },
-  {
-    name: 'Bun',
-    abbr: 'Bn',
-    description:
-      'All-in-one JavaScript runtime. Package manager, test runner, and bundler — blazing fast.',
-    url: 'https://bun.sh',
-    color: 'text-amber-300',
-  },
-  {
-    name: 'Turborepo',
-    abbr: 'Tb',
-    description: 'Monorepo build orchestration with caching, parallelism, and incremental builds.',
-    url: 'https://turbo.build/repo',
-    color: 'text-red-400',
-  },
-  {
-    name: 'Tailwind CSS',
-    abbr: 'Tw',
-    description:
-      'Utility-first CSS framework for rapid UI development. Dark mode and theming built in.',
-    url: 'https://tailwindcss.com',
-    color: 'text-cyan-glow',
-  },
-  {
-    name: 'Zod',
-    abbr: 'Zd',
-    description:
-      'Schema validation and type inference. Single source of truth for all data shapes.',
-    url: 'https://zod.dev',
-    color: 'text-blue-glow',
-  },
-  {
-    name: 'Pino',
-    abbr: 'Pi',
-    description:
-      'Structured JSON logging with near-zero overhead. Child loggers for every service.',
-    url: 'https://getpino.io',
-    color: 'text-green-300',
-  },
+const TECH_ITEMS = [
+  'Next.js 15',
+  'Hono',
+  'tRPC 11',
+  'Drizzle',
+  'Neon',
+  'Better Auth',
+  'Vercel AI SDK',
+  'Expo 52',
+  'Turborepo',
+  'Bun',
 ];
 
-function TechCard({ item, index, isInView }: { item: TechItem; index: number; isInView: boolean }) {
-  return (
-    <motion.a
-      href={item.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`group relative overflow-hidden rounded-2xl border border-border bg-card p-5 transition-all duration-300 hover:border-white/15 hover:bg-white/[0.03] ${item.span ?? ''}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : undefined}
-      transition={{ duration: 0.4, delay: 0.03 * index }}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <span
-            className={`flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 font-mono text-xs font-bold ${item.color}`}
-          >
-            {item.abbr}
-          </span>
-          <span className="text-sm font-semibold text-foreground">{item.name}</span>
-        </div>
-        <ExternalLink
-          size={14}
-          className="text-muted-foreground/0 transition-all group-hover:text-muted-foreground/60"
-        />
-      </div>
-      <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{item.description}</p>
-    </motion.a>
-  );
-}
+const PRESETS = ['saas', 'full-stack', 'landing', 'api-only'] as const;
 
 export function TechStackBento() {
   const ref = useRef<HTMLDivElement>(null);
@@ -179,7 +24,7 @@ export function TechStackBento() {
 
   return (
     <section ref={ref} className="py-24">
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto max-w-5xl px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : undefined}
@@ -187,20 +32,67 @@ export function TechStackBento() {
           className="text-center"
         >
           <h2 className="text-3xl font-bold sm:text-4xl">
-            Built with the <span className="gradient-text">modern stack</span>
+            The stack you would have chosen anyway.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            Every tool carefully chosen for developer experience, performance, and type safety.
-            Click any to learn more.
+            Not scaffolded toys. Not locked-in frameworks. The exact tools senior engineers pick.
           </p>
         </motion.div>
 
-        <div className="mt-12 grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-          {TECH_STACK.map((item, i) => (
-            <TechCard key={item.name} item={item} index={i} isInView={isInView} />
+        {/* Tech grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : undefined}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="mt-10 grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5"
+        >
+          {TECH_ITEMS.map((name) => (
+            <div
+              key={name}
+              className="flex items-center justify-center rounded-xl border border-border bg-card px-3 py-2.5 text-center font-mono text-xs font-medium text-foreground/80 transition-colors hover:border-white/15 hover:text-foreground"
+            >
+              {name}
+            </div>
           ))}
-        </div>
+        </motion.div>
+
+        {/* Preset pills */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={isInView ? { opacity: 1, y: 0 } : undefined}
+          transition={{ duration: 0.5, delay: 0.25 }}
+          className="mt-8 flex flex-wrap items-center justify-center gap-2"
+        >
+          {PRESETS.map((preset) => (
+            <span
+              key={preset}
+              className={
+                preset === 'saas'
+                  ? 'rounded-full px-4 py-1.5 font-mono text-xs font-semibold bg-violet-600 text-white'
+                  : 'rounded-full border border-border bg-card px-4 py-1.5 font-mono text-xs font-medium text-muted-foreground'
+              }
+            >
+              {preset}
+            </span>
+          ))}
+        </motion.div>
+
+        {/* Command line */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={isInView ? { opacity: 1, y: 0 } : undefined}
+          transition={{ duration: 0.5, delay: 0.35 }}
+          className="mt-6 flex justify-center"
+        >
+          <div className="rounded-xl border border-border bg-black/40 px-5 py-3 font-mono text-sm text-foreground/80">
+            <span>
+              <span className="text-violet-400 select-none">/</span>x4:create my-app --preset saas
+            </span>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
 }
+
+export default TechStackBento;

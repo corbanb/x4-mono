@@ -1,26 +1,20 @@
-import { HeroSceneLoader } from '@/components/hero/HeroSceneLoader';
-import { HeroContent } from '@/components/hero/HeroContent';
-import { TechStackBento } from '@/components/sections/TechStackBento';
-import { BentoGrid } from '@/components/sections/BentoGrid';
-import { AgentPluginShowcase } from '@/components/sections/AgentPluginShowcase';
-import { CodeShowcase } from '@/components/sections/CodeShowcase';
-import { CTASection } from '@/components/sections/CTASection';
+import { HeroDescribeApp } from '@/components/hero/HeroDescribeApp';
+import DayInLifeSection from '@/components/sections/DayInLifeSection';
+import { AutoLoopTerminal } from '@/components/sections/AutoLoopTerminal';
+import TechStackBento from '@/components/sections/TechStackBento';
+import DiscoverySection from '@/components/sections/DiscoverySection';
+import AgentPluginShowcase from '@/components/sections/AgentPluginShowcase';
+import CTASection from '@/components/sections/CTASection';
 
 export default function HomePage() {
   return (
     <>
-      {/* Hero — full viewport with 3D background */}
-      <section className="relative min-h-screen overflow-hidden">
-        <HeroSceneLoader />
-        <HeroContent />
-        {/* Bottom fade */}
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
-      </section>
-
+      <HeroDescribeApp />
+      <DayInLifeSection />
+      <AutoLoopTerminal />
       <TechStackBento />
-      <BentoGrid />
+      <DiscoverySection />
       <AgentPluginShowcase />
-      <CodeShowcase />
       <CTASection />
     </>
   );
