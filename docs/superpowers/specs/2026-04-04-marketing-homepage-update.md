@@ -98,7 +98,7 @@ Chapter 5 (amber):
 
 #### Layout
 
-- Chapter label: small text, chapter color, `font-mono text-xs uppercase tracking-wider` + chapter number
+- Chapter label: `font-mono text-xs uppercase tracking-wider` in chapter color. Format: `01 · DAY 1 · MORNING — GET YOUR MACHINE READY` (zero-padded two-digit number, interpunct separators, all caps). Each chapter's number is its position: `01`–`05`.
 - Cards within a chapter: `flex flex-col gap-3 md:flex-row md:flex-wrap`
 - Chapter rows: `flex flex-col gap-8` (stacked vertically with generous spacing)
 - Section padding: `py-20 px-4`, `max-w-5xl mx-auto`
@@ -106,8 +106,8 @@ Chapter 5 (amber):
 #### Animation
 
 - `'use client'` directive
-- `useInView` from `motion/react` with `once: true`
-- Chapters stagger in on scroll: each chapter `motion.div` with `initial={{ opacity: 0, y: 20 }}`, `animate` driven by `inView`, stagger delay increases by chapter index (`delay: index * 0.1`)
+- Single `useRef` + `useInView(ref, { once: true, margin: '-80px' })` on the outer section container — same pattern as `AutoLoopTerminal.tsx`. One `isInView` boolean drives all chapters.
+- Each chapter is a `motion.div` with `initial={{ opacity: 0, y: 20 }}` and `animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}`. Stagger via `transition={{ delay: index * 0.1 }}` where `index` is the chapter's position (0–4).
 
 ---
 
