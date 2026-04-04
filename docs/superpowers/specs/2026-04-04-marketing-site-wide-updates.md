@@ -29,7 +29,7 @@ Max reuse of existing section components. Two pages (`/getting-started`, `/compa
 
 **File:** `apps/marketing/src/components/sections/CommandsTable.tsx`
 
-Replace the `COMMANDS` array and `Category` type entirely. **All 26 existing commands are removed — this is a full replacement, not an update.** The old `Docs` category and commands like `/x4:docs`, `/x4:plan`, `/x4:ship`, `/x4:add-page`, `/x4:add-schema`, `/x4:add-router`, `/x4:add-table`, `/x4:add-middleware`, `/x4:add-form`, `/x4:add-hook`, `/x4:add-env`, `/x4:add-workflow`, `/x4:add-test`, `/x4:work-batch`, `/x4:review`, `/x4:check-boundaries`, `/x4:llmstxt-update` are retired.
+Replace the `COMMANDS` array and `Category` type entirely. **All 25 existing commands are removed — this is a full replacement, not an update.** The old `Docs` category and commands like `/x4:docs`, `/x4:plan`, `/x4:ship`, `/x4:add-page`, `/x4:add-schema`, `/x4:add-router`, `/x4:add-table`, `/x4:add-middleware`, `/x4:add-form`, `/x4:add-hook`, `/x4:add-env`, `/x4:add-workflow`, `/x4:add-test`, `/x4:work-batch`, `/x4:review`, `/x4:check-boundaries`, `/x4:llmstxt-update` are retired.
 
 **New categories:** `All` | `Setup` | `Planning` | `Build` | `Discovery` | `Announce` | `DevOps` | `Open Source`
 
