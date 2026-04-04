@@ -29,7 +29,7 @@ Max reuse of existing section components. Two pages (`/getting-started`, `/compa
 
 **File:** `apps/marketing/src/components/sections/CommandsTable.tsx`
 
-Replace the `COMMANDS` array and `Category` type entirely.
+Replace the `COMMANDS` array and `Category` type entirely. **All 26 existing commands are removed — this is a full replacement, not an update.** The old `Docs` category and commands like `/x4:docs`, `/x4:plan`, `/x4:ship`, `/x4:add-page`, `/x4:add-schema`, `/x4:add-router`, `/x4:add-table`, `/x4:add-middleware`, `/x4:add-form`, `/x4:add-hook`, `/x4:add-env`, `/x4:add-workflow`, `/x4:add-test`, `/x4:work-batch`, `/x4:review`, `/x4:check-boundaries`, `/x4:llmstxt-update` are retired.
 
 **New categories:** `All` | `Setup` | `Planning` | `Build` | `Discovery` | `Announce` | `DevOps` | `Open Source`
 
@@ -78,13 +78,13 @@ Replace the `COMMANDS` array and `Category` type entirely.
 Two string replacements:
 
 - `metadata.description`: `'25 commands for...'` → `'33 commands for...'`
-- Page body: `<span>25 commands</span>` → `<span>33 commands</span>`
+- Page body: `<span className="gradient-text font-semibold">25 commands</span>` → `<span className="gradient-text font-semibold">33 commands</span>`
 
 ### 3.3 Navbar — add Getting Started
 
 **File:** `apps/marketing/src/components/layout/Navbar.tsx`
 
-Add `{ href: '/getting-started', label: 'Getting Started' }` as the first item in `NAV_LINKS`, before the current first link.
+Add `{ href: '/getting-started', label: 'Getting Started' }` as the first item in `NAV_LINKS`, before the current first link. Only `/getting-started` is added to the navbar. The other three new pages (`/deployment`, `/companion-plugins`, `/announce`) are accessible via direct URL only — no navbar entries for them.
 
 Current:
 
@@ -113,6 +113,7 @@ const NAV_LINKS = [
 
 **File:** `apps/marketing/src/app/getting-started/page.tsx`
 
+- Metadata: `title: 'Getting Started — x4'`, `description: 'From zero to running app in minutes. Install x4, scaffold your project, and start building — all from Claude Code.'`
 - Hero: "From zero to running app in minutes."
 - Sub-headline: "Install x4, scaffold your project, and start building — all from Claude Code."
 - Body: `<PluginInstall />` component (already has the 3-command install block + team config JSON)
@@ -122,6 +123,7 @@ const NAV_LINKS = [
 
 **File:** `apps/marketing/src/app/companion-plugins/page.tsx`
 
+- Metadata: `title: 'Companion Plugins — x4'`, `description: 'x4 relies on a set of companion plugins. Required ones are installed automatically by /x4:onboard.'`
 - Hero: "The plugins that power x4."
 - Sub-headline: "x4 relies on a set of companion plugins. Required ones are installed automatically by `/x4:onboard`."
 - Body: `<CompanionPlugins />` then `<HooksSection />`
@@ -132,11 +134,12 @@ const NAV_LINKS = [
 **File:** `apps/marketing/src/app/deployment/page.tsx`
 **New component:** `apps/marketing/src/components/sections/DeploymentFlow.tsx`
 
+- Metadata: `title: 'Deployment — x4'`, `description: 'One command sets up your entire Railway project — services, domains, and PR previews.'`
 - Hero: "Deploy to Railway. Zero config."
 - Sub-headline: "One command sets up your entire Railway project — services, domains, and PR previews."
 - Body: `<DeploymentFlow />`
 
-**DeploymentFlow component:** 3 command cards in the same style as DayInLifeSection, showing the deployment workflow:
+**DeploymentFlow component:** 3 cards showing the deployment workflow. Cards use the same individual card styling as DayInLifeSection (`border-l-2`, `bg-slate-900/50 border border-slate-800 rounded-lg p-4`), but the container layout is a **vertical stack** (`flex flex-col gap-4`), not DayInLifeSection's horizontal row. Do not copy the chapter container from DayInLifeSection — only copy the individual card `className` and `style`. Layout: max-w-2xl centered. Deployment color: `#3b82f6` (blue). Animation: same `useRef/useInView` pattern.
 
 | Command            | Outcome                                                         |
 | ------------------ | --------------------------------------------------------------- |
@@ -144,18 +147,17 @@ const NAV_LINKS = [
 | Push to main       | Production deploys automatically via GitHub integration         |
 | Open a PR          | Preview environment spins up, URL posted as PR comment          |
 
-Cards use the same `border-l-2` accent pattern. Deployment color: `#3b82f6` (blue). Layout: stacked vertically (`flex flex-col gap-4`), max-w-2xl centered. Animation: same `useRef/useInView` pattern.
-
 ### 3.7 New page: /announce
 
 **File:** `apps/marketing/src/app/announce/page.tsx`
 **New component:** `apps/marketing/src/components/sections/AnnounceCommands.tsx`
 
+- Metadata: `title: 'Email & Announcements — x4'`, `description: 'Five commands. One changelog. Every channel covered — email, LinkedIn, X, and your marketing site.'`
 - Hero: "Tell the world what shipped."
 - Sub-headline: "Five commands. One changelog. Every channel covered."
 - Body: `<AnnounceCommands />`
 
-**AnnounceCommands component:** 5 command cards in a 2-column grid (`grid grid-cols-1 md:grid-cols-2 gap-4`), max-w-3xl centered. Same card style as DayInLifeSection. Amber color (`#f59e0b`) for all cards.
+**AnnounceCommands component:** 5 command cards in a 2-column grid (`grid grid-cols-1 md:grid-cols-2 gap-4`), max-w-3xl centered. Same card style as DayInLifeSection. Amber color (`#f59e0b`) for all cards. Note: four of these five commands also appear in DayInLifeSection Chapter 05 — this is intentional. `/announce` is the dedicated deep-dive page; the homepage chapter is a summary.
 
 | Command                | Outcome                                         |
 | ---------------------- | ----------------------------------------------- |
