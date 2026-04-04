@@ -50,3 +50,6 @@ npm-debug.log*
 bun.lockb
 .vercel
 .worktrees/
+
+# opensrc - source code for packages
+opensrc/
