@@ -60,7 +60,7 @@ export function HeroDescribeApp() {
         className="mb-6"
       >
         <span className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/5 px-4 py-1.5 font-mono text-xs text-violet-400">
-          v3.5.0 · Claude Code Plugin · Apache 2.0
+          v3.10.0 · Claude Code Plugin · Apache 2.0
         </span>
       </motion.div>
 
