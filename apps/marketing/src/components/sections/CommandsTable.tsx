@@ -3,7 +3,15 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
-type Category = 'All' | 'Setup' | 'Planning' | 'Discovery' | 'Build' | 'Docs';
+type Category =
+  | 'All'
+  | 'Setup'
+  | 'Planning'
+  | 'Build'
+  | 'Discovery'
+  | 'Announce'
+  | 'DevOps'
+  | 'Open Source';
 
 interface Command {
   command: string;
@@ -12,121 +20,51 @@ interface Command {
 }
 
 const COMMANDS: Command[] = [
-  {
-    command: '/x4:create',
-    description: 'Scaffold a new full-stack project with preset',
-    category: 'Setup',
-  },
-  {
-    command: '/x4:kickstart',
-    description: 'Guided planning session — vision to PRD backlog',
-    category: 'Planning',
-  },
-  { command: '/x4:plan', description: 'Generate a PRD for a single feature', category: 'Planning' },
-  {
-    command: '/x4:plan-backlog',
-    description: 'Triage and prioritize the feature backlog',
-    category: 'Planning',
-  },
-  {
-    command: '/x4:work',
-    description: 'Dispatch agent team to build next feature',
-    category: 'Build',
-  },
-  {
-    command: '/x4:work-batch',
-    description: 'Build multiple features in sequence',
-    category: 'Build',
-  },
-  {
-    command: '/x4:review',
-    description: 'Review code quality, security, and coverage',
-    category: 'Build',
-  },
-  {
-    command: '/x4:gaps',
-    description: 'Scan app for dead ends and missing flows',
-    category: 'Discovery',
-  },
-  {
-    command: '/x4:dream',
-    description: 'Generate ideas for what to build next',
-    category: 'Discovery',
-  },
-  { command: '/x4:status', description: 'Project health dashboard', category: 'Build' },
-  {
-    command: '/x4:ship',
-    description: 'Branch, commit, and open a pull request',
-    category: 'Build',
-  },
-  {
-    command: '/x4:check-boundaries',
-    description: 'Audit dependency boundary violations',
-    category: 'Build',
-  },
-  {
-    command: '/x4:add-page',
-    description: 'Scaffold a new Next.js App Router page',
-    category: 'Build',
-  },
-  {
-    command: '/x4:add-schema',
-    description: 'Add Zod schemas and inferred types',
-    category: 'Build',
-  },
-  {
-    command: '/x4:add-router',
-    description: 'Add a tRPC router with CRUD procedures',
-    category: 'Build',
-  },
-  {
-    command: '/x4:add-table',
-    description: 'Add a Drizzle database table with migration',
-    category: 'Build',
-  },
-  {
-    command: '/x4:add-middleware',
-    description: 'Add Hono middleware with test file',
-    category: 'Build',
-  },
-  {
-    command: '/x4:add-form',
-    description: 'Add react-hook-form wired to tRPC mutation',
-    category: 'Build',
-  },
-  { command: '/x4:add-hook', description: 'Add a shared React hook', category: 'Build' },
-  {
-    command: '/x4:add-env',
-    description: 'Sync environment variable across all configs',
-    category: 'Build',
-  },
-  {
-    command: '/x4:add-workflow',
-    description: 'Add GitHub Actions workflow scaffold',
-    category: 'Build',
-  },
-  {
-    command: '/x4:add-test',
-    description: 'Generate tests for an existing file',
-    category: 'Build',
-  },
-  { command: '/x4:docs', description: 'Generate or update documentation', category: 'Docs' },
-  { command: '/x4:tour', description: 'Guided walkthrough of the project', category: 'Docs' },
-  {
-    command: '/x4:llmstxt-update',
-    description: 'Refresh llms.txt reference docs',
-    category: 'Docs',
-  },
+  { command: '/x4:create', description: 'Scaffold a new full-stack monorepo with interactive preset', category: 'Setup' },
+  { command: '/x4:onboard', description: 'Check local dev environment and walk through setup', category: 'Setup' },
+  { command: '/x4:add', description: 'Add a new mobile app or web app to an existing project', category: 'Setup' },
+  { command: '/x4:deploy-setup', description: 'One-time Railway deployment wizard — creates project, generates domains', category: 'Setup' },
+  { command: '/x4:env', description: 'Set up or update environment variables for the project', category: 'Setup' },
+  { command: '/x4:init-setup', description: 'Interactive wizard to configure database, hosting, CI, package manager', category: 'Setup' },
+  { command: '/x4:init-agents', description: 'Generate project-specific agent files from templates', category: 'Setup' },
+  { command: '/x4:init-tracker', description: 'Scaffold project tracking files (STATUS.md, BACKLOG.md)', category: 'Setup' },
+  { command: '/x4:e2e-setup', description: 'Scaffold Playwright e2e test suites for x4-mono apps', category: 'Setup' },
+  { command: '/x4:kickstart', description: 'Brainstorm app vision, design UI, batch-generate PRDs', category: 'Planning' },
+  { command: '/x4:plan-backlog', description: 'Triage backlog, brainstorm approaches, create implementation plan', category: 'Planning' },
+  { command: '/x4:idea', description: 'Add an idea or feature to the project backlog', category: 'Planning' },
+  { command: '/x4:work', description: 'Pick up next piece of work, dispatch agent team, and ship it', category: 'Build' },
+  { command: '/x4:run-tests', description: 'Run all configured test commands from agent-team config', category: 'Build' },
+  { command: '/x4:verify-local', description: 'Run all configured checks with auto-fix — mandatory before PRs', category: 'Build' },
+  { command: '/x4:upgrade', description: 'Apply x4 project migrations after a plugin update', category: 'Build' },
+  { command: '/x4:gaps', description: 'Find product gaps — dead ends, missing connections, incomplete flows', category: 'Discovery' },
+  { command: '/x4:dream', description: 'Explore big ideas — bold features and untapped directions', category: 'Discovery' },
+  { command: '/x4:market-update', description: 'Sync marketing site with recently shipped features', category: 'Announce' },
+  { command: '/x4:market-email', description: 'Generate a release email campaign from recent changelog', category: 'Announce' },
+  { command: '/x4:market-linkedin', description: 'Generate a LinkedIn post from recently shipped features', category: 'Announce' },
+  { command: '/x4:market-tweet', description: 'Generate an X/Twitter thread from recently shipped features', category: 'Announce' },
+  { command: '/x4:market-subscribe', description: 'Scaffold an email capture form into the marketing site', category: 'Announce' },
+  { command: '/x4:pr-create', description: 'Create a feature branch, DB branch, push, and open a draft PR', category: 'DevOps' },
+  { command: '/x4:pr-status', description: "Check current branch's PR status — CI checks, preview URLs", category: 'DevOps' },
+  { command: '/x4:pr-cleanup', description: 'Post-merge cleanup — delete DB branch and remove local git branch', category: 'DevOps' },
+  { command: '/x4:doctor', description: 'Diagnose project setup — checks prerequisites, config, env vars', category: 'DevOps' },
+  { command: '/x4:status', description: 'Quick dashboard showing app status, ports, database, git', category: 'DevOps' },
+  { command: '/x4:tour', description: 'Guided post-scaffold tour of your x4-mono project', category: 'DevOps' },
+  { command: '/x4:help', description: 'Show all available commands and contextual next step', category: 'DevOps' },
+  { command: '/x4:opensrc-init', description: 'Set up opensrc — fetches npm package source code for AI agents', category: 'Open Source' },
+  { command: '/x4:opensrc-status', description: 'Check opensrc health — which packages have source fetched', category: 'Open Source' },
+  { command: '/x4:opensrc-update', description: 'Refresh opensrc — add source for new deps, update outdated', category: 'Open Source' },
 ];
 
-const CATEGORIES: Category[] = ['All', 'Setup', 'Planning', 'Discovery', 'Build', 'Docs'];
+const CATEGORIES: Category[] = ['All', 'Setup', 'Planning', 'Build', 'Discovery', 'Announce', 'DevOps', 'Open Source'];
 
 const CATEGORY_STYLES: Record<Exclude<Category, 'All'>, string> = {
   Setup: 'bg-violet-500/15 text-violet-400 ring-1 ring-violet-500/30',
   Planning: 'bg-blue-500/15 text-blue-400 ring-1 ring-blue-500/30',
   Discovery: 'bg-cyan-500/15 text-cyan-400 ring-1 ring-cyan-500/30',
   Build: 'bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30',
-  Docs: 'bg-amber-500/15 text-amber-400 ring-1 ring-amber-500/30',
+  Announce: 'bg-amber-500/15 text-amber-400 ring-1 ring-amber-500/30',
+  DevOps: 'bg-rose-500/15 text-rose-400 ring-1 ring-rose-500/30',
+  'Open Source': 'bg-green-500/15 text-green-400 ring-1 ring-green-500/30',
 };
 
 export function CommandsTable() {
