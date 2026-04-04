@@ -2,6 +2,7 @@
 
 **Date:** 2026-04-04
 **Branch:** feature/marketing-reimagine
+**Base:** All file references are against the `feature/marketing-reimagine` branch — NOT main. This branch contains the previously completed marketing reimagine (HeroDescribeApp, AutoLoopTerminal, DiscoverySection, CTASection, page.tsx wiring 6 sections, etc.). Reviewers and implementers must check out or reference that branch.
 **Scope:** Homepage-only update (Part A). Adds DayInLifeSection, bumps hero version badge, updates CTASection install block. Existing sections unchanged.
 
 ---
