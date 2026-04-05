@@ -289,19 +289,23 @@ Each PRD Section 6 contains a task table with columns: Task #, Description, Esti
 
 Key environment variables (defined in `apps/api/src/lib/env.ts`):
 
-| Variable             | Description                                                    | Required |
-| -------------------- | -------------------------------------------------------------- | -------- |
-| `DATABASE_URL`       | Neon Postgres connection string                                | Yes      |
-| `JWT_SECRET`         | Secret for token signing (min 32 chars)                        | Yes      |
-| `BETTER_AUTH_SECRET` | Secret for auth (min 32 chars)                                 | Yes      |
-| `ANTHROPIC_API_KEY`  | Claude API key (starts with `sk-`)                             | Yes      |
-| `BETTER_AUTH_URL`    | Auth callback URL (default: `http://localhost:3002`)           | No       |
-| `PORT`               | API server port (default: 3002)                                | No       |
-| `WEB_URL`            | Web app URL for CORS (default: `http://localhost:3000`)        | No       |
-| `MARKETING_URL`      | Marketing site URL for CORS (default: `http://localhost:3001`) | No       |
-| `DOCS_URL`           | Docs site URL for CORS (default: `http://localhost:3003`)      | No       |
-| `NODE_ENV`           | `development` / `production` / `test`                          | No       |
-| `APP_VERSION`        | App version string                                             | No       |
+| Variable             | Description                                                                   | Required |
+| -------------------- | ----------------------------------------------------------------------------- | -------- |
+| `DATABASE_URL`       | Neon Postgres connection string                                               | Yes      |
+| `JWT_SECRET`         | Secret for token signing (min 32 chars)                                       | Yes      |
+| `BETTER_AUTH_SECRET` | Secret for auth (min 32 chars)                                                | Yes      |
+| `ANTHROPIC_API_KEY`  | Claude API key (starts with `sk-`)                                            | Yes      |
+| `BETTER_AUTH_URL`    | Auth callback URL (default: `http://localhost:3002`)                          | No       |
+| `PORT_API`           | API server port (default: 3002, overridden by Railway's `PORT` in production) | No       |
+| `PORT_WEB`           | Web app port (default: 3000)                                                  | No       |
+| `PORT_MARKETING`     | Marketing site port (default: 3001)                                           | No       |
+| `PORT_DOCS`          | Docs site port (default: 3003)                                                | No       |
+| `PORT_STORYBOOK`     | Storybook port (default: 6006)                                                | No       |
+| `WEB_URL`            | Web app URL for CORS (default: `http://localhost:3000`)                       | No       |
+| `MARKETING_URL`      | Marketing site URL for CORS (default: `http://localhost:3001`)                | No       |
+| `DOCS_URL`           | Docs site URL for CORS (default: `http://localhost:3003`)                     | No       |
+| `NODE_ENV`           | `development` / `production` / `test`                                         | No       |
+| `APP_VERSION`        | App version string                                                            | No       |
 
 ## Plugins & Developer Tooling
 
