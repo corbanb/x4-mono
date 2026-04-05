@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 import { LiveblocksProvider, RoomProvider } from '@liveblocks/react';
 
 const PUBLIC_KEY = process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY;
