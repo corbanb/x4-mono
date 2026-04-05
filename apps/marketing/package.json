@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3001",
+    "dev": "next dev --port ${PORT_MARKETING:-3001}",
     "build": "next build",
-    "start": "next start --port 3001",
+    "start": "next start --port ${PORT_MARKETING:-3001}",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "test": "echo 'no tests yet'"

@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3003",
+    "dev": "next dev --port ${PORT_DOCS:-3003}",
     "build": "bun run generate-api-docs && next build",
-    "start": "next start --port 3003",
+    "start": "next start --port ${PORT_DOCS:-3003}",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "test": "echo 'no tests yet'",
