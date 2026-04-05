@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   FolderKanban,
   Sparkles,
+  BarChart2,
   Settings,
   LogOut,
   ChevronsUpDown,
@@ -37,6 +38,7 @@ const navItems = [
   { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { title: 'Projects', href: '/projects', icon: FolderKanban },
   { title: 'AI Playground', href: '/ai', icon: Sparkles },
+  { title: 'AI Usage', href: '/ai/usage', icon: BarChart2 },
   { title: 'Settings', href: '/settings', icon: Settings },
 ];
 
@@ -89,7 +91,9 @@ export function AppSidebar() {
                     asChild
                     isActive={
                       pathname === item.href ||
-                      (item.href !== '/dashboard' && pathname.startsWith(item.href))
+                      (item.href !== '/dashboard' &&
+                        item.href !== '/ai' &&
+                        pathname.startsWith(item.href))
                     }
                     tooltip={item.title}
                   >
