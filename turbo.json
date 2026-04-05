@@ -9,7 +9,12 @@
     "MARKETING_URL",
     "ANTHROPIC_API_KEY",
     "DOCS_URL",
-    "NEXT_PUBLIC_API_URL"
+    "NEXT_PUBLIC_API_URL",
+    "PORT_WEB",
+    "PORT_API",
+    "PORT_MARKETING",
+    "PORT_DOCS",
+    "PORT_STORYBOOK"
   ],
   "tasks": {
     "build": {
