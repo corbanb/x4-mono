@@ -54,22 +54,13 @@ export type UserMeta = { id: string; info: { name: string; avatar: string; color
 export type Presence = { cursor: CursorPosition | null };
 ```
 
-**`hooks.ts`** — calls `createRoomContext<Presence, Storage, UserMeta>()` from `@liveblocks/react` to produce typed hook overloads, then re-exports them:
+**`hooks.ts`** — re-exports `useOthers`, `useMyPresence`, `useUpdateMyPresence` directly from `@liveblocks/react`. No `createRoomContext` call — that pattern binds hooks to a context-specific `RoomProvider` which conflicts with `provider.tsx` using the global `RoomProvider`. Plain re-exports work with the global `RoomProvider` and type safety on `user.info` is handled via optional chaining in the components.
 
 ```ts
-import { createRoomContext } from '@liveblocks/react';
-import type { UserMeta, Presence } from './types';
-
-type Storage = Record<string, never>;
-
-export const { useOthers, useMyPresence, useUpdateMyPresence } = createRoomContext<
-  Presence,
-  Storage,
-  UserMeta
->();
+export { useOthers, useMyPresence, useUpdateMyPresence } from '@liveblocks/react';
 ```
 
-These hooks throw when called outside a `RoomProvider` — callers must guard via the inner-component split pattern (see sections 4.6 and 4.8). `AvatarStack` and `LiveCursors` import from `@liveblocks/react` directly for simplicity since type safety on `user.info` is handled via optional chaining — either import path works.
+These hooks throw when called outside a `RoomProvider` — callers must guard via the inner-component split pattern (see sections 4.6 and 4.8).
 
 ### 4.2 `packages/shared/package.json`
 
