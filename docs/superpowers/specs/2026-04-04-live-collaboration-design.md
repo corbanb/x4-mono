@@ -44,23 +44,7 @@ packages/shared/collaboration/
   types.ts              ← UserMeta, Presence, CursorPosition types
 ```
 
-**`provider.tsx`** — wraps `LiveblocksProvider` from `@liveblocks/react`. If `NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY` is falsy, renders children directly (no-op mode).
-
-```tsx
-'use client';
-import { LiveblocksProvider } from '@liveblocks/react';
-
-const PUBLIC_KEY = process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY;
-
-export function CollaborationProvider({ children }: { children: React.ReactNode }) {
-  if (!PUBLIC_KEY) return <>{children}</>;
-  return (
-    <LiveblocksProvider publicApiKey={PUBLIC_KEY} authEndpoint="/api/liveblocks-auth">
-      {children}
-    </LiveblocksProvider>
-  );
-}
-```
+**`provider.tsx`** — See section 4.5 for the final implementation. It wraps both `LiveblocksProvider` and `RoomProvider`, accepts a `roomId` prop, and no-ops entirely when `NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY` is absent.
 
 **`types.ts`**:
 
@@ -92,15 +76,16 @@ Add `@liveblocks/node` to `apps/web/package.json` dependencies (server-only, use
 
 **New file:** `apps/web/src/app/api/liveblocks-auth/route.ts`
 
-`packages/auth/src/server.ts` exports only `auth` (a Better Auth instance). Session retrieval uses `auth.api.getSession({ headers: req.headers })`. `LIVEBLOCKS_SECRET_KEY` is read from the validated env module (`apps/web/src/lib/env.ts`), not raw `process.env`.
+`packages/auth/src/server.ts` exports only `auth` (a Better Auth instance). Session retrieval uses `auth.api.getSession({ headers: req.headers })`. `apps/web` does not have a centralised env validation module (unlike `apps/api`) — `LIVEBLOCKS_SECRET_KEY` is read from `process.env` directly with an existence guard.
 
 ```ts
 import { Liveblocks } from '@liveblocks/node';
 import { auth } from '@x4/auth/server';
-import { env } from '@/lib/env';
 import { NextRequest } from 'next/server';
 
-const liveblocks = new Liveblocks({ secret: env.LIVEBLOCKS_SECRET_KEY! });
+const secret = process.env.LIVEBLOCKS_SECRET_KEY;
+if (!secret) throw new Error('LIVEBLOCKS_SECRET_KEY is not set');
+const liveblocks = new Liveblocks({ secret });
 
 export async function POST(req: NextRequest) {
   const session = await auth.api.getSession({ headers: req.headers });
@@ -332,7 +317,7 @@ Add to env vars table:
 ## 5. Constraints
 
 - `NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY` absent → `CollaborationProvider` is a passthrough, `useOthers` returns `[]`, nothing renders. Zero errors.
-- `@liveblocks/react` and `@liveblocks/node` installed in `packages/shared` and `apps/web` respectively.
+- `@liveblocks/react` and `@liveblocks/client` installed in `packages/shared`. `@liveblocks/node` installed in `apps/web` only (server-side auth handler).
 - `RoomProvider` must be a Client Component — `apps/web/(dashboard)/layout.tsx` already has `'use client'`.
 - Marketing demo is purely visual/animated — no real Liveblocks connection, no env vars required.
 - `LiveCursors` uses `position: fixed` so cursors are viewport-relative and work across any page content.
