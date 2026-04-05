@@ -54,7 +54,22 @@ export type UserMeta = { id: string; info: { name: string; avatar: string; color
 export type Presence = { cursor: CursorPosition | null };
 ```
 
-**`hooks.ts`** — re-exports `useOthers`, `useMyPresence`, `useUpdateMyPresence` from `@liveblocks/react` with the typed overloads. These hooks throw when called outside a `RoomProvider` — callers must guard via the inner-component split pattern (see sections 4.6 and 4.8).
+**`hooks.ts`** — calls `createRoomContext<Presence, Storage, UserMeta>()` from `@liveblocks/react` to produce typed hook overloads, then re-exports them:
+
+```ts
+import { createRoomContext } from '@liveblocks/react';
+import type { UserMeta, Presence } from './types';
+
+type Storage = Record<string, never>;
+
+export const { useOthers, useMyPresence, useUpdateMyPresence } = createRoomContext<
+  Presence,
+  Storage,
+  UserMeta
+>();
+```
+
+These hooks throw when called outside a `RoomProvider` — callers must guard via the inner-component split pattern (see sections 4.6 and 4.8). `AvatarStack` and `LiveCursors` import from `@liveblocks/react` directly for simplicity since type safety on `user.info` is handled via optional chaining — either import path works.
 
 ### 4.2 `packages/shared/package.json`
 
@@ -66,21 +81,29 @@ Add `"./collaboration"` to the `exports` map:
 "./collaboration": "./collaboration/index.ts"
 ```
 
-Also add `collaboration/` to the `eslint` lint script so it is not silently excluded from linting.
+Update the `lint` script in `packages/shared/package.json` to include `collaboration/`:
 
-Also add `collaboration` to the `include` array in `packages/shared/tsconfig.json` so TypeScript checks the new module.
+```json
+"lint": "eslint src/ types/ utils/ api-client/ hooks/ ui/ ai-types/ collaboration/"
+```
+
+Add the following entries to the `include` array in `packages/shared/tsconfig.json` so TypeScript checks the new module (both `.ts` and `.tsx` since `provider.tsx` is a JSX file):
+
+```json
+"collaboration/**/*.ts",
+"collaboration/**/*.tsx"
+```
 
 ### 4.3 `apps/web` — next.config.ts + package.json
 
-**`NEXT_PUBLIC_` env var inlining:** `process.env.NEXT_PUBLIC_*` is inlined at build time by Next.js only for code it compiles directly. Since `provider.tsx` lives in `packages/shared`, Next.js must transpile the package for inlining to work. Add `@x4/shared` to `transpilePackages` in `apps/web/next.config.ts`:
-
-```ts
-transpilePackages: ['@x4/shared'],
-```
+**`NEXT_PUBLIC_` env var inlining:** `process.env.NEXT_PUBLIC_*` is inlined at build time by Next.js only for code it compiles directly. Since `provider.tsx` lives in `packages/shared`, Next.js must transpile the package for inlining to work. `apps/web/next.config.ts` already includes `transpilePackages: ['@x4/shared', '@x4/auth']` — no change required, `@x4/shared` is already present.
 
 **`apps/marketing` does not need `transpilePackages`** — marketing never imports `provider.tsx` or any code from `packages/shared/collaboration`. The marketing demo is a purely static component with no Liveblocks imports. No change required to `apps/marketing/next.config.ts`.
 
-Also add `@liveblocks/node` to `apps/web/package.json` dependencies (server-only, used by the auth route handler). Also add `@liveblocks/react` as a direct dependency in `apps/web/package.json` — `AvatarStack` and `LiveCursors` import hooks directly from it.
+Add `@liveblocks/node` and `@liveblocks/react` to `apps/web/package.json` dependencies:
+
+- `@liveblocks/node` — server-only, used by the auth route handler
+- `@liveblocks/react` — client-side hooks used directly by `AvatarStack` and `LiveCursors`
 
 ### 4.4 `apps/web` — auth endpoint
 
@@ -219,14 +242,16 @@ function AvatarStackInner() {
 
 **Modify:** `apps/web/src/components/dashboard-header.tsx`
 
-Add `<AvatarStack />` between `<ThemeToggle />` and `<UserNav />`:
+Add `<AvatarStack />` before `<ThemeToggle />` inside the existing `flex items-center gap-2` wrapper:
 
 ```tsx
 import { AvatarStack } from '@/components/avatar-stack';
-// ...in the header right section:
-<AvatarStack />
-<ThemeToggle />
-<UserNav />
+// ...in the header right section (inside existing <div className="flex items-center gap-2">):
+<div className="flex items-center gap-2">
+  <AvatarStack />
+  <ThemeToggle />
+  <UserNav />
+</div>;
 ```
 
 ### 4.8 `apps/web` — Live cursors on dashboard page
@@ -291,7 +316,7 @@ function LiveCursorsInner() {
 }
 ```
 
-**Modify:** `apps/web/src/app/(dashboard)/page.tsx` — add `<LiveCursors />` at the top of the page.
+**Modify:** `apps/web/src/app/(dashboard)/dashboard/page.tsx` — add `<LiveCursors />` at the top of the page.
 
 ### 4.9 `apps/web` — no env schema changes needed
 
@@ -309,7 +334,7 @@ Add:
 
 ### 4.11 Marketing site — `<LiveDemoSection />`
 
-**New file:** `apps/marketing/src/components/sections/live-demo-section.tsx`
+**New file:** `apps/marketing/src/components/sections/LiveDemoSection.tsx`
 
 A static visual demo (no real Liveblocks connection needed) showing:
 
