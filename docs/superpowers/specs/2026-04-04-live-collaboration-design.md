@@ -76,19 +76,34 @@ export type Presence = { cursor: CursorPosition | null };
 
 Add `@liveblocks/react` and `@liveblocks/client` as dependencies.
 
-### 4.3 `apps/web` — auth endpoint
+Add `"./collaboration"` to the `exports` map:
+
+```json
+"./collaboration": "./collaboration/index.ts"
+```
+
+Also add `collaboration/` to the `eslint` lint script so it is not silently excluded from linting.
+
+### 4.3 `apps/web` — package.json
+
+Add `@liveblocks/node` to `apps/web/package.json` dependencies (server-only, used by the auth route handler).
+
+### 4.4 `apps/web` — auth endpoint
 
 **New file:** `apps/web/src/app/api/liveblocks-auth/route.ts`
 
+`packages/auth/src/server.ts` exports only `auth` (a Better Auth instance). Session retrieval uses `auth.api.getSession({ headers: req.headers })`. `LIVEBLOCKS_SECRET_KEY` is read from the validated env module (`apps/web/src/lib/env.ts`), not raw `process.env`.
+
 ```ts
 import { Liveblocks } from '@liveblocks/node';
-import { getSession } from '@x4/auth/server';
+import { auth } from '@x4/auth/server';
+import { env } from '@/lib/env';
 import { NextRequest } from 'next/server';
 
-const liveblocks = new Liveblocks({ secret: process.env.LIVEBLOCKS_SECRET_KEY! });
+const liveblocks = new Liveblocks({ secret: env.LIVEBLOCKS_SECRET_KEY! });
 
 export async function POST(req: NextRequest) {
-  const session = await getSession();
+  const session = await auth.api.getSession({ headers: req.headers });
   if (!session?.user) return new Response('Unauthorized', { status: 401 });
 
   const { status, body } = await liveblocks.identifyUser(
@@ -112,28 +127,54 @@ function stringToColor(str: string): string {
 }
 ```
 
-### 4.4 `apps/web` — dashboard layout
+### 4.5 `apps/web` — dashboard layout
 
 **Modify:** `apps/web/src/app/(dashboard)/layout.tsx`
 
-Wrap the layout with `RoomProvider` (scoped to `"room-dashboard"`) and `CollaborationProvider`:
+`RoomProvider` must be inside `CollaborationProvider` so it is skipped when Liveblocks is not configured. Move both into `CollaborationProvider` — update its implementation to also conditionally render `RoomProvider`:
+
+```tsx
+// packages/shared/collaboration/provider.tsx — updated
+'use client';
+import { LiveblocksProvider, RoomProvider } from '@liveblocks/react';
+
+const PUBLIC_KEY = process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY;
+
+export function CollaborationProvider({
+  children,
+  roomId,
+}: {
+  children: React.ReactNode;
+  roomId?: string;
+}) {
+  if (!PUBLIC_KEY) return <>{children}</>;
+  return (
+    <LiveblocksProvider publicApiKey={PUBLIC_KEY} authEndpoint="/api/liveblocks-auth">
+      <RoomProvider id={roomId ?? 'room-default'} initialPresence={{ cursor: null }}>
+        {children}
+      </RoomProvider>
+    </LiveblocksProvider>
+  );
+}
+```
+
+Dashboard layout usage:
 
 ```tsx
 import { CollaborationProvider } from '@x4/shared/collaboration';
-import { RoomProvider } from '@liveblocks/react';
 
 export default function DashboardLayout({ children }) {
   return (
-    <CollaborationProvider>
-      <RoomProvider id="room-dashboard" initialPresence={{ cursor: null }}>
-        <SidebarProvider>...existing layout...</SidebarProvider>
-      </RoomProvider>
+    <CollaborationProvider roomId="room-dashboard">
+      <SidebarProvider>...existing layout...</SidebarProvider>
     </CollaborationProvider>
   );
 }
 ```
 
-### 4.5 `apps/web` — AvatarStack component
+This ensures `useOthers`, `useUpdateMyPresence`, `AvatarStack`, and `LiveCursors` are only mounted inside a valid Liveblocks context. When the env var is absent, `CollaborationProvider` is a passthrough and none of the Liveblocks hooks are ever called.
+
+### 4.6 `apps/web` — AvatarStack component
 
 **New file:** `apps/web/src/components/avatar-stack.tsx`
 
@@ -170,7 +211,7 @@ export function AvatarStack() {
 }
 ```
 
-### 4.6 `apps/web` — DashboardHeader
+### 4.7 `apps/web` — DashboardHeader
 
 **Modify:** `apps/web/src/components/dashboard-header.tsx`
 
@@ -184,7 +225,7 @@ import { AvatarStack } from '@/components/avatar-stack';
 <UserNav />
 ```
 
-### 4.7 `apps/web` — Live cursors on dashboard page
+### 4.8 `apps/web` — Live cursors on dashboard page
 
 **New file:** `apps/web/src/components/live-cursors.tsx`
 
@@ -239,7 +280,7 @@ export function LiveCursors() {
 
 **Modify:** `apps/web/src/app/(dashboard)/page.tsx` — add `<LiveCursors />` at the top of the page.
 
-### 4.8 `apps/web/src/lib/env.ts`
+### 4.9 `apps/web/src/lib/env.ts`
 
 Add two env vars:
 
@@ -249,7 +290,7 @@ LIVEBLOCKS_SECRET_KEY: z.string().optional(),
 
 `NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY` is a Next.js public env var — no server-side validation needed.
 
-### 4.9 Root `.env.example`
+### 4.10 Root `.env.example`
 
 Add:
 
@@ -259,7 +300,7 @@ Add:
 # LIVEBLOCKS_SECRET_KEY=sk_dev_xxxxx
 ```
 
-### 4.10 Marketing site — `<LiveDemoSection />`
+### 4.11 Marketing site — `<LiveDemoSection />`
 
 **New file:** `apps/marketing/src/components/sections/LiveDemoSection.tsx`
 
@@ -277,7 +318,7 @@ Hero + `<LiveDemoSection />`. Metadata: `title: 'Live Collaboration — x4'`.
 
 **Modify:** `apps/marketing/src/components/layout/Navbar.tsx` — no navbar entry (accessible via direct URL, linked from homepage if desired).
 
-### 4.11 `CLAUDE.md`
+### 4.12 `CLAUDE.md`
 
 Add to env vars table:
 
