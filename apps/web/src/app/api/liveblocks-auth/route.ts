@@ -10,17 +10,22 @@ export async function POST(req: NextRequest) {
   if (!session?.user) return new Response('Unauthorized', { status: 401 });
 
   const liveblocks = new Liveblocks({ secret });
-  const { status, body } = await liveblocks.identifyUser(
-    { userId: session.user.id, groupIds: [] },
-    {
-      userInfo: {
-        name: session.user.name ?? 'Anonymous',
-        avatar: session.user.image ?? '',
-        color: stringToColor(session.user.id),
+  try {
+    const { status, body } = await liveblocks.identifyUser(
+      { userId: session.user.id, groupIds: [] },
+      {
+        userInfo: {
+          name: session.user.name ?? 'Anonymous',
+          avatar: session.user.image ?? '',
+          color: stringToColor(session.user.id),
+        },
       },
-    },
-  );
-  return new Response(body, { status });
+    );
+    return new Response(body, { status });
+  } catch (err) {
+    console.error('[liveblocks-auth] identifyUser failed', err);
+    return new Response('Collaboration service unavailable', { status: 503 });
+  }
 }
 
 function stringToColor(str: string): string {
