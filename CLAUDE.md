@@ -306,6 +306,8 @@ Key environment variables (defined in `apps/api/src/lib/env.ts`):
 | `DOCS_URL`           | Docs site URL for CORS (default: `http://localhost:3003`)                     | No       |
 | `NODE_ENV`           | `development` / `production` / `test`                                         | No       |
 | `APP_VERSION`        | App version string                                                            | No       |
+| `LIVEBLOCKS_SECRET_KEY` | Liveblocks server key for presence auth (optional) | No |
+| `NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY` | Liveblocks public key for client (optional) | No |
 
 ## Plugins & Developer Tooling
 
