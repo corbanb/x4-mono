@@ -43,8 +43,8 @@ export function CostOverTimeChart({ data }: ChartProps) {
       <BarChart data={data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-        <YAxis tick={{ fontSize: 12 }} tickFormatter={(v: number) => `$${v.toFixed(4)}`} />
-        <Tooltip formatter={(v: number) => [`$${v.toFixed(4)}`, 'Cost']} />
+        <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => `$${Number(v).toFixed(4)}`} />
+        <Tooltip formatter={(v) => [`$${Number(v).toFixed(4)}`, 'Cost']} />
         <Bar dataKey="cost" fill="#6366f1" />
       </BarChart>
     </ResponsiveContainer>
