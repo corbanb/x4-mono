@@ -45,6 +45,8 @@ describe('ai.usage.summary', () => {
     expect(result.totalCost).toBe(0);
     expect(result.avgCostPerRequest).toBe(0);
     expect(isNaN(result.totalCost)).toBe(false);
+    expect(result.byModel[0].pct).toBe(0);
+    expect(isNaN(result.byModel[0].pct)).toBe(false);
   });
 
   test('respects from/to date filters (passes without error)', async () => {
