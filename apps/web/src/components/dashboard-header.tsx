@@ -11,6 +11,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { AvatarStack } from '@/components/avatar-stack';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { UserNav } from '@/components/user-nav';
 
@@ -51,6 +52,7 @@ export function DashboardHeader() {
         </BreadcrumbList>
       </Breadcrumb>
       <div className="flex items-center gap-2">
+        <AvatarStack />
         <ThemeToggle />
         <UserNav />
       </div>
