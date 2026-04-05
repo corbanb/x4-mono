@@ -27,7 +27,7 @@ A developer edits only the root `.env` file to change any app's port. Existing b
 
 ### 4.1 Root `.env.example`
 
-Add a port section:
+Replace the existing `PORT=3002` line with the full `PORT_*` block:
 
 ```env
 # App ports (override in .env to change local dev ports)
@@ -73,7 +73,7 @@ port: Number(process.env.PORT ?? env.PORT_API),
 | `apps/docs`      | `start`         | `next start --port 3003` | `next start --port ${PORT_DOCS:-3003}`      |
 | `apps/storybook` | `storybook:dev` | `storybook dev -p 6006`  | `storybook dev -p ${PORT_STORYBOOK:-6006}`  |
 
-`apps/web` has no `start` script (Vercel handles production); no change needed there.
+`apps/web` has a `start` script (`next start`) but no `--port` flag — Next.js defaults to 3000 without one, matching `PORT_WEB`'s default. No port flag change needed there.
 
 ### 4.5 `turbo.json` — `globalEnv`
 
@@ -98,9 +98,17 @@ Add all five vars so Turbo busts cache when ports change:
 ]
 ```
 
-### 4.6 `CLAUDE.md`
+### 4.6 `apps/api/.env.example`
 
-Update the environment variables table: rename `PORT` row to `PORT_API`, update description to match.
+A per-app `.env.example` exists at `apps/api/.env.example` with `PORT=3002`. Replace that line with `PORT_API=3002`.
+
+### 4.7 `apps/api/src/__tests__/env.test.ts`
+
+The env test file references `PORT` by name (passes `PORT: '8080'` and asserts `result.PORT`). Rename all occurrences of `PORT` → `PORT_API` throughout the test file to match the schema rename.
+
+### 4.8 `CLAUDE.md`
+
+Update the environment variables table: rename `PORT` row to `PORT_API`, keep `Required: No` and update the description to "API server port (default: 3002, overridden by Railway's `PORT` in production)".
 
 ---
 
@@ -109,7 +117,8 @@ Update the environment variables table: rename `PORT` row to `PORT_API`, update 
 - Shell fallback `${VAR:-default}` preserves existing behavior when vars are not set — no developer action required after pulling.
 - `.env` is gitignored — only `.env.example` is committed.
 - Railway injects `PORT` at runtime; `index.ts` must read `process.env.PORT` first so production is unaffected by the rename.
-- No per-app `.env.example` files exist in this repo — only the root one needs updating.
+- `apps/api/.env.example` exists and also needs `PORT` → `PORT_API` updated.
+- Shell fallback syntax `${VAR:-default}` is POSIX-only. Windows is out of scope for this repo (all CI runs on Linux, contributors are expected to use macOS/Linux or WSL).
 
 ---
 
