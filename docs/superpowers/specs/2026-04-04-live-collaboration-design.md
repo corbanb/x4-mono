@@ -54,7 +54,7 @@ export type UserMeta = { id: string; info: { name: string; avatar: string; color
 export type Presence = { cursor: CursorPosition | null };
 ```
 
-**`hooks.ts`** — re-exports `useOthers`, `useMyPresence`, `useUpdateMyPresence` from `@liveblocks/react` with the typed overloads.
+**`hooks.ts`** — re-exports `useOthers`, `useMyPresence`, `useUpdateMyPresence` from `@liveblocks/react` with the typed overloads. These hooks throw when called outside a `RoomProvider` — callers must guard via the inner-component split pattern (see sections 4.6 and 4.8).
 
 ### 4.2 `packages/shared/package.json`
 
@@ -78,9 +78,9 @@ Also add `collaboration` to the `include` array in `packages/shared/tsconfig.jso
 transpilePackages: ['@x4/shared'],
 ```
 
-Do the same in `apps/marketing/next.config.ts`.
+**`apps/marketing` does not need `transpilePackages`** — marketing never imports `provider.tsx` or any code from `packages/shared/collaboration`. The marketing demo is a purely static component with no Liveblocks imports. No change required to `apps/marketing/next.config.ts`.
 
-Also add `@liveblocks/node` to `apps/web/package.json` dependencies (server-only, used by the auth route handler).
+Also add `@liveblocks/node` to `apps/web/package.json` dependencies (server-only, used by the auth route handler). Also add `@liveblocks/react` as a direct dependency in `apps/web/package.json` — `AvatarStack` and `LiveCursors` import hooks directly from it.
 
 ### 4.4 `apps/web` — auth endpoint
 
@@ -175,12 +175,21 @@ This ensures `useOthers`, `useUpdateMyPresence`, `AvatarStack`, and `LiveCursors
 
 Uses `useOthers()` to render up to 5 user avatars. Renders nothing when Liveblocks is not configured or no others are present.
 
+Uses the inner-component split pattern so hooks are never called outside a `RoomProvider` context: the outer `AvatarStack` guards on the env var and returns null early; the inner `AvatarStackInner` is only rendered (and thus only calls hooks) when a valid context exists.
+
 ```tsx
 'use client';
 import { useOthers } from '@liveblocks/react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
+const PUBLIC_KEY = process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY;
+
 export function AvatarStack() {
+  if (!PUBLIC_KEY) return null;
+  return <AvatarStackInner />;
+}
+
+function AvatarStackInner() {
   const others = useOthers();
   if (others.length === 0) return null;
   const visible = others.slice(0, 5);
@@ -226,12 +235,21 @@ import { AvatarStack } from '@/components/avatar-stack';
 
 Tracks mouse position via `useUpdateMyPresence`, renders other users' cursors via `useOthers`.
 
+Uses the same inner-component split pattern as `AvatarStack`: the outer `LiveCursors` guards on the env var; the inner `LiveCursorsInner` is only rendered when a valid `RoomProvider` context exists.
+
 ```tsx
 'use client';
 import { useOthers, useUpdateMyPresence } from '@liveblocks/react';
 import { useEffect } from 'react';
 
+const PUBLIC_KEY = process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY;
+
 export function LiveCursors() {
+  if (!PUBLIC_KEY) return null;
+  return <LiveCursorsInner />;
+}
+
+function LiveCursorsInner() {
   const others = useOthers();
   const updatePresence = useUpdateMyPresence();
 
@@ -291,7 +309,7 @@ Add:
 
 ### 4.11 Marketing site — `<LiveDemoSection />`
 
-**New file:** `apps/marketing/src/components/sections/LiveDemoSection.tsx`
+**New file:** `apps/marketing/src/components/sections/live-demo-section.tsx`
 
 A static visual demo (no real Liveblocks connection needed) showing:
 
@@ -320,7 +338,7 @@ Add to env vars table:
 
 ## 5. Constraints
 
-- `NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY` absent → `CollaborationProvider` is a passthrough, `useOthers` returns `[]`, nothing renders. Zero errors.
+- `NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY` absent → `CollaborationProvider` is a passthrough, `AvatarStack` and `LiveCursors` return null early (inner-component split pattern prevents hooks from being called outside `RoomProvider` context), nothing renders. Zero errors.
 - `@liveblocks/react` and `@liveblocks/client` installed in `packages/shared`. `@liveblocks/node` installed in `apps/web` only (server-side auth handler).
 - `RoomProvider` must be a Client Component — `apps/web/(dashboard)/layout.tsx` already has `'use client'`.
 - Marketing demo is purely visual/animated — no real Liveblocks connection, no env vars required.
