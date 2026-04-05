@@ -18,7 +18,9 @@
     "hooks/**/*.tsx",
     "ui/**/*.ts",
     "ui/**/*.tsx",
-    "ai-types/**/*.ts"
+    "ai-types/**/*.ts",
+    "collaboration/**/*.ts",
+    "collaboration/**/*.tsx"
   ],
   "exclude": ["node_modules", "dist", "**/*.stories.tsx", "**/*.stories.ts"]
 }

@@ -9,16 +9,19 @@
     "./api-client": "./api-client/index.ts",
     "./hooks": "./hooks/index.ts",
     "./ui": "./ui/index.ts",
-    "./ai": "./ai-types/index.ts"
+    "./ai": "./ai-types/index.ts",
+    "./collaboration": "./collaboration/index.ts"
   },
   "scripts": {
     "dev": "echo 'no dev server'",
     "build": "echo 'no build step'",
-    "lint": "eslint src/ types/ utils/ api-client/ hooks/ ui/ ai-types/",
+    "lint": "eslint src/ types/ utils/ api-client/ hooks/ ui/ ai-types/ collaboration/",
     "type-check": "tsc --noEmit",
     "test": "bun test"
   },
   "dependencies": {
+    "@liveblocks/client": "^2.0.0",
+    "@liveblocks/react": "^2.0.0",
     "@trpc/client": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
     "@tanstack/react-query": "^5.60.0",

@@ -13,7 +13,7 @@ export function CollaborationProvider({
 }) {
   if (!PUBLIC_KEY) return <>{children}</>;
   return (
-    <LiveblocksProvider publicApiKey={PUBLIC_KEY} authEndpoint="/api/liveblocks-auth">
+    <LiveblocksProvider publicApiKey={PUBLIC_KEY}>
       <RoomProvider id={roomId ?? 'room-default'} initialPresence={{ cursor: null }}>
         {children}
       </RoomProvider>
