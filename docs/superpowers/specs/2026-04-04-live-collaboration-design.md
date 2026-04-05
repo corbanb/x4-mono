@@ -24,7 +24,7 @@ Ship a presence layer that:
 
 ## 3. Architecture
 
-`packages/shared/collaboration/` contains the Liveblocks provider and hooks. Both `apps/web` and `apps/marketing` install `@liveblocks/react` and import from this package.
+`packages/shared/collaboration/` contains the Liveblocks provider and hooks. `apps/web` uses it for real presence. `apps/marketing` uses only the static `<LiveDemoSection />` component — no real Liveblocks connection, no Liveblocks packages installed directly in marketing.
 
 A Next.js Route Handler at `apps/web/src/app/api/liveblocks-auth/route.ts` signs room tokens server-side using `LIVEBLOCKS_SECRET_KEY`. The client uses `NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY` to identify the project.
 
@@ -68,9 +68,19 @@ Add `"./collaboration"` to the `exports` map:
 
 Also add `collaboration/` to the `eslint` lint script so it is not silently excluded from linting.
 
-### 4.3 `apps/web` — package.json
+Also add `collaboration` to the `include` array in `packages/shared/tsconfig.json` so TypeScript checks the new module.
 
-Add `@liveblocks/node` to `apps/web/package.json` dependencies (server-only, used by the auth route handler).
+### 4.3 `apps/web` — next.config.ts + package.json
+
+**`NEXT_PUBLIC_` env var inlining:** `process.env.NEXT_PUBLIC_*` is inlined at build time by Next.js only for code it compiles directly. Since `provider.tsx` lives in `packages/shared`, Next.js must transpile the package for inlining to work. Add `@x4/shared` to `transpilePackages` in `apps/web/next.config.ts`:
+
+```ts
+transpilePackages: ['@x4/shared'],
+```
+
+Do the same in `apps/marketing/next.config.ts`.
+
+Also add `@liveblocks/node` to `apps/web/package.json` dependencies (server-only, used by the auth route handler).
 
 ### 4.4 `apps/web` — auth endpoint
 
@@ -83,14 +93,14 @@ import { Liveblocks } from '@liveblocks/node';
 import { auth } from '@x4/auth/server';
 import { NextRequest } from 'next/server';
 
-const secret = process.env.LIVEBLOCKS_SECRET_KEY;
-if (!secret) throw new Error('LIVEBLOCKS_SECRET_KEY is not set');
-const liveblocks = new Liveblocks({ secret });
-
 export async function POST(req: NextRequest) {
+  const secret = process.env.LIVEBLOCKS_SECRET_KEY;
+  if (!secret) return new Response('Liveblocks not configured', { status: 503 });
+
   const session = await auth.api.getSession({ headers: req.headers });
   if (!session?.user) return new Response('Unauthorized', { status: 401 });
 
+  const liveblocks = new Liveblocks({ secret });
   const { status, body } = await liveblocks.identifyUser(
     { userId: session.user.id },
     {
@@ -265,15 +275,9 @@ export function LiveCursors() {
 
 **Modify:** `apps/web/src/app/(dashboard)/page.tsx` — add `<LiveCursors />` at the top of the page.
 
-### 4.9 `apps/web/src/lib/env.ts`
+### 4.9 `apps/web` — no env schema changes needed
 
-Add two env vars:
-
-```ts
-LIVEBLOCKS_SECRET_KEY: z.string().optional(),
-```
-
-`NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY` is a Next.js public env var — no server-side validation needed.
+`apps/web` does not have a centralised Zod env validation module (unlike `apps/api`). Both Liveblocks vars are accessed via `process.env` directly — `LIVEBLOCKS_SECRET_KEY` is read inside the POST handler with an existence guard (section 4.4), and `NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY` is inlined by Next.js at build time.
 
 ### 4.10 Root `.env.example`
 
