@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import type { ReactNode } from 'react';
 import { LiveblocksProvider, RoomProvider } from '@liveblocks/react';
 
 const PUBLIC_KEY = process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY;
@@ -8,7 +8,7 @@ export function CollaborationProvider({
   children,
   roomId,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   roomId?: string;
 }) {
   if (!PUBLIC_KEY) return <>{children}</>;
