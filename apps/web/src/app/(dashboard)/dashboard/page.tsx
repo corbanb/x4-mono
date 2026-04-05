@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatsCards } from '@/components/stats-cards';
 import { RecentProjects } from '@/components/recent-projects';
+import { LiveCursors } from '@/components/live-cursors';
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -23,6 +24,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      <LiveCursors />
       {/* Welcome Banner */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
