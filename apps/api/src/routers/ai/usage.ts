@@ -1,3 +1,4 @@
+import { TRPCError } from '@trpc/server';
 import { and, eq, gte, lte, sql, aiUsageLog } from '@x4/database';
 import { DateRangeInput } from '@x4/shared/types';
 import { router, protectedProcedure } from '../../trpc';
@@ -43,6 +44,7 @@ export const usageRouter = router({
         })),
       };
     } catch (err) {
+      if (err instanceof TRPCError) throw err;
       throw Errors.internal('Failed to fetch usage summary').toTRPCError();
     }
   }),
@@ -72,6 +74,7 @@ export const usageRouter = router({
         count: parseInt(row.count ?? '0', 10),
       }));
     } catch (err) {
+      if (err instanceof TRPCError) throw err;
       throw Errors.internal('Failed to fetch usage history').toTRPCError();
     }
   }),
