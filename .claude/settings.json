@@ -62,6 +62,7 @@
     "security-guidance@claude-plugins-official": true,
     "plugin-dev@claude-plugins-official": true,
     "hookify@claude-plugins-official": true,
-    "greptile@claude-plugins-official": true
+    "greptile@claude-plugins-official": true,
+    "x4@x4-agent-plugins": true
   }
 }
