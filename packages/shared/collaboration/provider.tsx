@@ -12,8 +12,10 @@ export function CollaborationProvider({
   roomId?: string;
 }) {
   if (!PUBLIC_KEY) return <>{children}</>;
+  // authEndpoint and publicApiKey are mutually exclusive in Liveblocks v2.
+  // Use authEndpoint for token-based auth; PUBLIC_KEY is only a feature gate.
   return (
-    <LiveblocksProvider publicApiKey={PUBLIC_KEY}>
+    <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
       <RoomProvider id={roomId ?? 'room-default'} initialPresence={{ cursor: null }}>
         {children}
       </RoomProvider>
