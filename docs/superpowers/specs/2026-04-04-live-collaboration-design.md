@@ -91,10 +91,7 @@ Add the following entries to the `include` array in `packages/shared/tsconfig.js
 
 **`apps/marketing` does not need `transpilePackages`** — marketing never imports `provider.tsx` or any code from `packages/shared/collaboration`. The marketing demo is a purely static component with no Liveblocks imports. No change required to `apps/marketing/next.config.ts`.
 
-Add `@liveblocks/node` and `@liveblocks/react` to `apps/web/package.json` dependencies:
-
-- `@liveblocks/node` — server-only, used by the auth route handler
-- `@liveblocks/react` — client-side hooks used directly by `AvatarStack` and `LiveCursors`
+Add only `@liveblocks/node` to `apps/web/package.json` dependencies (server-only, used by the auth route handler). Do NOT add `@liveblocks/react` to `apps/web` — `AvatarStack` and `LiveCursors` must import hooks from `@x4/shared/collaboration` (the re-exports in `hooks.ts`) to avoid two separate module instances of `@liveblocks/react`. Having two copies would make the `RoomProvider` registered in `packages/shared`'s copy invisible to hooks resolved from a different copy, causing "No RoomProvider found" errors at runtime.
 
 ### 4.4 `apps/web` — auth endpoint
 
@@ -193,7 +190,7 @@ Uses the inner-component split pattern so hooks are never called outside a `Room
 
 ```tsx
 'use client';
-import { useOthers } from '@liveblocks/react';
+import { useOthers } from '@x4/shared/collaboration';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const PUBLIC_KEY = process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY;
@@ -255,7 +252,7 @@ Uses the same inner-component split pattern as `AvatarStack`: the outer `LiveCur
 
 ```tsx
 'use client';
-import { useOthers, useUpdateMyPresence } from '@liveblocks/react';
+import { useOthers, useUpdateMyPresence } from '@x4/shared/collaboration';
 import { useEffect } from 'react';
 
 const PUBLIC_KEY = process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY;
