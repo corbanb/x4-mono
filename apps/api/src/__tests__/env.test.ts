@@ -5,7 +5,7 @@ import { z } from 'zod';
 // by defining the same schema here (env.ts validates eagerly on import)
 
 const envSchema = z.object({
-  PORT: z.coerce.number().default(3002),
+  PORT_API: z.coerce.number().default(3002),
   DATABASE_URL: z.string().url('DATABASE_URL must be a valid URL'),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
   ANTHROPIC_API_KEY: z.string().startsWith('sk-', "ANTHROPIC_API_KEY must start with 'sk-'"),
@@ -31,7 +31,7 @@ describe('Environment validation schema', () => {
       JWT_SECRET: 'a'.repeat(32),
       ANTHROPIC_API_KEY: 'sk-ant-test-key',
     });
-    expect(result.PORT).toBe(3002);
+    expect(result.PORT_API).toBe(3002);
     expect(result.WEB_URL).toBe('http://localhost:3000');
     expect(result.MARKETING_URL).toBe('http://localhost:3001');
     expect(result.NODE_ENV).toBe('development');
@@ -63,14 +63,14 @@ describe('Environment validation schema', () => {
     expect(result.success).toBe(false);
   });
 
-  test('coerces PORT to number', () => {
+  test('coerces PORT_API to number', () => {
     const result = envSchema.parse({
       DATABASE_URL: 'postgresql://user:pass@host/db',
       JWT_SECRET: 'a'.repeat(32),
       ANTHROPIC_API_KEY: 'sk-ant-test-key',
-      PORT: '8080',
+      PORT_API: '8080',
     });
-    expect(result.PORT).toBe(8080);
+    expect(result.PORT_API).toBe(8080);
   });
 
   test('validates NODE_ENV enum values', () => {
