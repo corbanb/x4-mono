@@ -35,6 +35,13 @@ Thumbs.db
 .claude-old/
 .claude/docs/
 .claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# Superpowers
+.superpowers/
+
+# Fumadocs generated source
+apps/docs/.source/
 
 # Plans
 docs/plans/
