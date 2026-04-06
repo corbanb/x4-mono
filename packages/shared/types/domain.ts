@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export type UserRole = 'user' | 'admin';
 
 export type User = {
@@ -20,3 +22,10 @@ export type Project = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export const DateRangeInput = z.object({
+  from: z.coerce.date().optional(),
+  to: z.coerce.date().optional(),
+});
+
+export type DateRange = z.infer<typeof DateRangeInput>;
