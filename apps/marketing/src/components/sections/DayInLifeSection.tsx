@@ -85,9 +85,7 @@ export function DayInLifeSection() {
           className="mb-16 text-center"
         >
           <h2 className="text-3xl font-bold sm:text-4xl">A day in the life.</h2>
-          <p className="mt-4 text-muted-foreground">
-            From zero to shipped app — with one plugin.
-          </p>
+          <p className="mt-4 text-muted-foreground">From zero to shipped app — with one plugin.</p>
         </motion.div>
 
         {/* Chapters */}

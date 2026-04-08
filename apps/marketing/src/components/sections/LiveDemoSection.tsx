@@ -44,10 +44,7 @@ export function LiveDemoSection() {
               className="ml-auto inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium"
               style={{ backgroundColor: '#14b8a614', color: '#14b8a6' }}
             >
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ backgroundColor: '#14b8a6' }}
-              />
+              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: '#14b8a6' }} />
               live
             </span>
           </div>
@@ -79,12 +76,7 @@ export function LiveDemoSection() {
                   delay: i * 1.5,
                 }}
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill={USERS[i]!.color}
-                >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill={USERS[i]!.color}>
                   <path d="M0 0L16 6L8 8L6 16Z" />
                 </svg>
                 <span
