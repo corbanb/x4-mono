@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
-type Category = 'All' | 'Setup' | 'Planning' | 'Discovery' | 'Build' | 'Docs';
+type Category = 'All' | 'Setup' | 'Planning' | 'Discovery' | 'Agents' | 'Sources' | 'Utility';
 
 interface Command {
   command: string;
@@ -12,121 +12,213 @@ interface Command {
 }
 
 const COMMANDS: Command[] = [
+  // Scaffolding & Setup
   {
-    command: '/x4:create',
-    description: 'Scaffold a new full-stack project with preset',
+    command: '/x4:onboard',
+    description: 'Check tools, accounts, CLIs, companion plugins — set up your dev environment',
     category: 'Setup',
   },
   {
+    command: '/x4:create',
+    description: 'Scaffold a new project (presets: full-stack, saas, landing, api-only)',
+    category: 'Setup',
+  },
+  {
+    command: '/x4:tour',
+    description: 'Guided walkthrough — explore apps, test login, try AI chat, set up git',
+    category: 'Setup',
+  },
+  {
+    command: '/x4:add',
+    description: 'Add a mobile or web app to an existing project',
+    category: 'Setup',
+  },
+  {
+    command: '/x4:env',
+    description: 'Set up environment variables (database, auth, AI keys)',
+    category: 'Setup',
+  },
+  {
+    command: '/x4:status',
+    description: 'Quick project health dashboard — apps, ports, database, git, plugins',
+    category: 'Setup',
+  },
+  // Project Planning
+  {
     command: '/x4:kickstart',
-    description: 'Guided planning session — vision to PRD backlog',
+    description: 'Brainstorm features, design UI, prioritize, and batch-generate PRDs',
     category: 'Planning',
   },
-  { command: '/x4:plan', description: 'Generate a PRD for a single feature', category: 'Planning' },
+  {
+    command: '/x4:idea',
+    description: 'Capture a feature idea to the backlog',
+    category: 'Planning',
+  },
   {
     command: '/x4:plan-backlog',
-    description: 'Triage and prioritize the feature backlog',
+    description: 'Triage backlog → brainstorm → implementation plan → write PRD',
     category: 'Planning',
   },
   {
-    command: '/x4:work',
-    description: 'Dispatch agent team to build next feature',
-    category: 'Build',
+    command: '/x4:plan-bridge',
+    description: 'Convert any planning session into a PRD',
+    category: 'Planning',
   },
   {
-    command: '/x4:work-batch',
-    description: 'Build multiple features in sequence',
-    category: 'Build',
+    command: '/x4:init-tracker',
+    description: 'Scaffold STATUS.md, BACKLOG.md, planning folders',
+    category: 'Planning',
   },
-  {
-    command: '/x4:review',
-    description: 'Review code quality, security, and coverage',
-    category: 'Build',
-  },
+  // Discovery
   {
     command: '/x4:gaps',
-    description: 'Scan app for dead ends and missing flows',
+    description: 'Find product gaps — dead ends, missing connections, incomplete flows',
     category: 'Discovery',
   },
   {
     command: '/x4:dream',
-    description: 'Generate ideas for what to build next',
+    description:
+      'Explore big ideas — bold features, natural evolutions, untapped tech stack capabilities',
     category: 'Discovery',
   },
-  { command: '/x4:status', description: 'Project health dashboard', category: 'Build' },
+  // Agent Team Ops
   {
-    command: '/x4:ship',
-    description: 'Branch, commit, and open a pull request',
-    category: 'Build',
+    command: '/x4:work',
+    description: '7-phase pipeline with auto-loop: Orient → Build → Review → Ship → Next',
+    category: 'Agents',
   },
   {
-    command: '/x4:check-boundaries',
-    description: 'Audit dependency boundary violations',
-    category: 'Build',
+    command: '/x4:run-tests',
+    description: 'Run configured test commands — app-type-aware for e2e (web, marketing, desktop)',
+    category: 'Agents',
   },
   {
-    command: '/x4:add-page',
-    description: 'Scaffold a new Next.js App Router page',
-    category: 'Build',
+    command: '/x4:e2e-setup',
+    description: 'One-time Playwright scaffold wizard for monorepo apps',
+    category: 'Agents',
   },
   {
-    command: '/x4:add-schema',
-    description: 'Add Zod schemas and inferred types',
-    category: 'Build',
+    command: '/x4:init-setup',
+    description: 'Interactive wizard for database, hosting, CI, tests, tracker, opensrc',
+    category: 'Agents',
   },
   {
-    command: '/x4:add-router',
-    description: 'Add a tRPC router with CRUD procedures',
-    category: 'Build',
+    command: '/x4:init-agents',
+    description: 'Generate project-specific agent files from templates',
+    category: 'Agents',
   },
   {
-    command: '/x4:add-table',
-    description: 'Add a Drizzle database table with migration',
-    category: 'Build',
+    command: '/x4:verify-local',
+    description: 'Run all checks with auto-fix — mandatory ship gate',
+    category: 'Agents',
   },
   {
-    command: '/x4:add-middleware',
-    description: 'Add Hono middleware with test file',
-    category: 'Build',
+    command: '/x4:pr-create',
+    description: 'Create branch + DB branch + draft PR',
+    category: 'Agents',
   },
   {
-    command: '/x4:add-form',
-    description: 'Add react-hook-form wired to tRPC mutation',
-    category: 'Build',
-  },
-  { command: '/x4:add-hook', description: 'Add a shared React hook', category: 'Build' },
-  {
-    command: '/x4:add-env',
-    description: 'Sync environment variable across all configs',
-    category: 'Build',
+    command: '/x4:pr-status',
+    description: 'Check CI, preview URLs, review state',
+    category: 'Agents',
   },
   {
-    command: '/x4:add-workflow',
-    description: 'Add GitHub Actions workflow scaffold',
-    category: 'Build',
+    command: '/x4:pr-cleanup',
+    description: 'Post-merge cleanup',
+    category: 'Agents',
   },
   {
-    command: '/x4:add-test',
-    description: 'Generate tests for an existing file',
-    category: 'Build',
+    command: '/x4:debt-scan',
+    description:
+      'Post-build technical debt audit — TODOs, dead code, complexity hotspots, dependency drift',
+    category: 'Agents',
   },
-  { command: '/x4:docs', description: 'Generate or update documentation', category: 'Docs' },
-  { command: '/x4:tour', description: 'Guided walkthrough of the project', category: 'Docs' },
   {
-    command: '/x4:llmstxt-update',
-    description: 'Refresh llms.txt reference docs',
-    category: 'Docs',
+    command: '/x4:deploy-setup',
+    description: 'One-time Railway wizard — detect services, generate railway.toml, sync env vars',
+    category: 'Agents',
+  },
+  // Source Code References
+  {
+    command: '/x4:opensrc-init',
+    description: 'One-time setup: clone runtime dependency sources via opensrc, update CLAUDE.md',
+    category: 'Sources',
+  },
+  {
+    command: '/x4:opensrc-update',
+    description: 'Diff package.json vs sources.json, fetch new/updated packages, remove orphans',
+    category: 'Sources',
+  },
+  {
+    command: '/x4:opensrc-status',
+    description:
+      'Read-only report: fetched packages, version freshness vs lockfile, missing coverage',
+    category: 'Sources',
+  },
+  // Utility
+  {
+    command: '/x4:help',
+    description:
+      'Contextual plugin guide — detects project state, shows all commands, suggests next step',
+    category: 'Utility',
+  },
+  {
+    command: '/x4:doctor',
+    description:
+      'Project health diagnostic — prerequisites, config, agents, env vars, database, version, plugins',
+    category: 'Utility',
+  },
+  {
+    command: '/x4:upgrade',
+    description: 'Apply x4 project migrations after updating the plugin',
+    category: 'Utility',
+  },
+  {
+    command: '/x4:market-update',
+    description: 'Sync marketing site with shipped features',
+    category: 'Utility',
+  },
+  {
+    command: '/x4:market-subscribe',
+    description: 'Scaffold email capture form + /api/subscribe route into the marketing site',
+    category: 'Utility',
+  },
+  {
+    command: '/x4:market-email',
+    description:
+      'Generate release email from changelog — subject line, preview text, body, Resend snippet',
+    category: 'Utility',
+  },
+  {
+    command: '/x4:market-linkedin',
+    description: 'Generate LinkedIn post from changelog — hook, body, hashtags, clipboard',
+    category: 'Utility',
+  },
+  {
+    command: '/x4:market-tweet',
+    description:
+      'Generate X/Twitter thread from changelog — 280-char enforced, clipboard or --post',
+    category: 'Utility',
   },
 ];
 
-const CATEGORIES: Category[] = ['All', 'Setup', 'Planning', 'Discovery', 'Build', 'Docs'];
+const CATEGORIES: Category[] = [
+  'All',
+  'Setup',
+  'Planning',
+  'Discovery',
+  'Agents',
+  'Sources',
+  'Utility',
+];
 
 const CATEGORY_STYLES: Record<Exclude<Category, 'All'>, string> = {
   Setup: 'bg-violet-500/15 text-violet-400 ring-1 ring-violet-500/30',
   Planning: 'bg-blue-500/15 text-blue-400 ring-1 ring-blue-500/30',
   Discovery: 'bg-cyan-500/15 text-cyan-400 ring-1 ring-cyan-500/30',
-  Build: 'bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30',
-  Docs: 'bg-amber-500/15 text-amber-400 ring-1 ring-amber-500/30',
+  Agents: 'bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30',
+  Sources: 'bg-orange-500/15 text-orange-400 ring-1 ring-orange-500/30',
+  Utility: 'bg-amber-500/15 text-amber-400 ring-1 ring-amber-500/30',
 };
 
 export function CommandsTable() {

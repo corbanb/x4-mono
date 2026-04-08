@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
-import { Server, Monitor, GitPullRequest, TestTube2, Zap } from 'lucide-react';
+import { Server, Monitor, GitPullRequest, ShieldAlert, TestTube2, Zap } from 'lucide-react';
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
@@ -32,8 +32,15 @@ const AGENTS: AgentCard[] = [
   {
     name: 'Reviewer',
     icon: GitPullRequest,
-    scope: 'Code review, architecture decisions, security checks',
+    scope:
+      'Code review, architecture decisions, quality audits — delegates to Security Reviewer for sensitive changes',
     companionBadge: 'code-review',
+  },
+  {
+    name: 'Security Reviewer',
+    icon: ShieldAlert,
+    scope:
+      'tRPC auth, session/token handling, API key exposure, input validation, CORS, SQL injection, XSS — auto-spawned by Reviewer',
   },
   {
     name: 'Tester',
@@ -114,7 +121,7 @@ export default function AgentPluginShowcase() {
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl font-bold sm:text-4xl">
-            Five specialists. <span className="gradient-text">One pipeline.</span>
+            Six specialists. <span className="gradient-text">One pipeline.</span>
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
             Each agent owns its domain. None can touch what isn&apos;t theirs.

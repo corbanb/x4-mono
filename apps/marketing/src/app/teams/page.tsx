@@ -28,13 +28,23 @@ const BENEFIT_CARDS = [
 
 const COMPANION_PLUGINS = [
   {
+    name: 'superpowers',
+    role: 'TDD, debugging, planning, and code review workflows',
+    required: 'Required',
+  },
+  {
+    name: 'code-simplifier',
+    role: 'Automatically simplifies and cleans up generated code',
+    required: 'Required',
+  },
+  {
     name: 'frontend-design',
-    role: 'Enhances Frontend agent with design patterns',
-    required: 'Recommended',
+    role: 'Enhances Frontend agent with design patterns and accessibility',
+    required: 'Required',
   },
   {
     name: 'code-review',
-    role: 'Enhances Reviewer agent with review checklists',
+    role: 'Enhances Reviewer agent with structured review checklists',
     required: 'Recommended',
   },
   {
@@ -42,12 +52,22 @@ const COMPANION_PLUGINS = [
     role: 'Enhances Tester agent with E2E test patterns',
     required: 'Recommended',
   },
-  { name: 'neon-plugin', role: 'Database management with MCP tools', required: 'Recommended' },
-  { name: 'vercel', role: 'Deployment integration', required: 'Recommended' },
-  { name: 'stripe', role: 'Stripe API patterns and test cards', required: 'Recommended' },
-  { name: 'security-guidance', role: 'Auto-warns on security anti-patterns', required: 'Required' },
-  { name: 'ralph-loop', role: 'Autonomous iteration loops', required: 'Recommended' },
-  { name: 'pr-review-toolkit', role: 'PR review automation', required: 'Recommended' },
+  {
+    name: 'typescript-lsp',
+    role: 'Type checking and diagnostics via language server',
+    required: 'Recommended',
+  },
+  { name: 'commit-commands', role: 'Streamlined git commit workflows', required: 'Recommended' },
+  {
+    name: 'github',
+    role: 'GitHub CLI integration for PRs, issues, and actions',
+    required: 'Recommended',
+  },
+  {
+    name: 'railway',
+    role: 'Railway deployment integration and service management',
+    required: 'Recommended',
+  },
 ];
 
 const SETTINGS_JSON = `{
