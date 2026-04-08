@@ -11,11 +11,11 @@
     "lint": "eslint src/",
     "type-check": "tsc --noEmit",
     "test": "bun test src/",
-    "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push",
-    "db:migrate": "bun run src/migrate.ts",
-    "db:seed": "bun run src/seed.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:generate": "bun --env-file=../../.env --env-file=../../.env.local x drizzle-kit generate",
+    "db:push": "bun --env-file=../../.env --env-file=../../.env.local x drizzle-kit push",
+    "db:migrate": "bun --env-file=../../.env --env-file=../../.env.local run src/migrate.ts",
+    "db:seed": "bun --env-file=../../.env --env-file=../../.env.local run src/seed.ts",
+    "db:studio": "bun --env-file=../../.env --env-file=../../.env.local x drizzle-kit studio"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
