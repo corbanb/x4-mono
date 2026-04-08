@@ -46,8 +46,7 @@ jobs:
 
       - name: Deploy to Vercel (Production)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: npx vercel@latest deploy --prod --token "$VERCEL_TOKEN" --yes
-        working-directory: ./apps/web
+        run: npx vercel@latest deploy apps/web --prod --token "$VERCEL_TOKEN" --yes
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
@@ -55,9 +54,8 @@ jobs:
         if: github.event_name == 'pull_request'
         id: preview
         run: |
-          PREVIEW_URL=$(npx vercel@latest deploy --token "$VERCEL_TOKEN" --yes 2>&1 | grep -o 'https://[^ ]*\.vercel\.app' | tail -1)
+          PREVIEW_URL=$(npx vercel@latest deploy apps/web --token "$VERCEL_TOKEN" --yes 2>&1 | grep -o 'https://[^ ]*\.vercel\.app' | tail -1)
           echo "preview-url=$PREVIEW_URL" >> $GITHUB_OUTPUT
-        working-directory: ./apps/web
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
