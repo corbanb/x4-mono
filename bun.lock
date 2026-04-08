@@ -41,7 +41,7 @@
         "@x4/database": "workspace:*",
         "@x4/shared": "workspace:*",
         "hono": "^4.7.0",
-        "trpc-to-openapi": "3.2.0",
+        "trpc-to-openapi": "2.4.0",
         "zod": "^3.23.0",
         "zod-openapi": "4.2.4",
       },
@@ -3618,7 +3618,7 @@
 
     "trough": ["trough@2.2.0", "", {}, "sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw=="],
 
-    "trpc-to-openapi": ["trpc-to-openapi@3.2.0", "", { "dependencies": { "co-body": "6.2.0", "h3": "1.15.1", "openapi3-ts": "4.4.0" }, "optionalDependencies": { "@rollup/rollup-linux-x64-gnu": "4.6.1" }, "peerDependencies": { "@trpc/server": "^11.1.0", "zod": "^4.0.0", "zod-openapi": "^5.0.1" } }, "sha512-nRexppGtL7og73dI4900xnfiGoOAx9PppAi7CVNeh8JfRHXUJ3lDe4JCjHgDAvC3FPHmwJAGDJ0b0BbRll98YA=="],
+    "trpc-to-openapi": ["trpc-to-openapi@2.4.0", "", { "dependencies": { "co-body": "6.2.0", "h3": "1.15.1", "openapi3-ts": "4.4.0" }, "optionalDependencies": { "@rollup/rollup-linux-x64-gnu": "4.6.1" }, "peerDependencies": { "@trpc/server": "^11.1.0", "zod": "^3.23.8", "zod-openapi": "4.2.4" } }, "sha512-B6xrwOC3Ab0q1BWD/QbJzK4OUpCLoT02hAzshSUXEuIZGcJZkMG/OJ4/3gd20dyr8aI+CrFirpWKRIo7JmHbMQ=="],
 
     "truncate-utf8-bytes": ["truncate-utf8-bytes@1.0.2", "", { "dependencies": { "utf8-byte-length": "^1.0.1" } }, "sha512-95Pu1QXQvruGEhv62XCMO3Mm90GscOCClvrIUwCM0PYOXK3kaF3l3sIHxx71ThJfcbM2O5Au6SO3AWCSEfW4mQ=="],
 
@@ -4435,8 +4435,6 @@
     "terser/commander": ["commander@2.20.3", "", {}, "sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ=="],
 
     "terser-webpack-plugin/jest-worker": ["jest-worker@27.5.1", "", { "dependencies": { "@types/node": "*", "merge-stream": "^2.0.0", "supports-color": "^8.0.0" } }, "sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg=="],
-
-    "trpc-to-openapi/zod": ["zod@4.3.6", "", {}, "sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg=="],
 
     "tsx/esbuild": ["esbuild@0.27.7", "", { "optionalDependencies": { "@esbuild/aix-ppc64": "0.27.7", "@esbuild/android-arm": "0.27.7", "@esbuild/android-arm64": "0.27.7", "@esbuild/android-x64": "0.27.7", "@esbuild/darwin-arm64": "0.27.7", "@esbuild/darwin-x64": "0.27.7", "@esbuild/freebsd-arm64": "0.27.7", "@esbuild/freebsd-x64": "0.27.7", "@esbuild/linux-arm": "0.27.7", "@esbuild/linux-arm64": "0.27.7", "@esbuild/linux-ia32": "0.27.7", "@esbuild/linux-loong64": "0.27.7", "@esbuild/linux-mips64el": "0.27.7", "@esbuild/linux-ppc64": "0.27.7", "@esbuild/linux-riscv64": "0.27.7", "@esbuild/linux-s390x": "0.27.7", "@esbuild/linux-x64": "0.27.7", "@esbuild/netbsd-arm64": "0.27.7", "@esbuild/netbsd-x64": "0.27.7", "@esbuild/openbsd-arm64": "0.27.7", "@esbuild/openbsd-x64": "0.27.7", "@esbuild/openharmony-arm64": "0.27.7", "@esbuild/sunos-x64": "0.27.7", "@esbuild/win32-arm64": "0.27.7", "@esbuild/win32-ia32": "0.27.7", "@esbuild/win32-x64": "0.27.7" }, "bin": { "esbuild": "bin/esbuild" } }, "sha512-IxpibTjyVnmrIQo5aqNpCgoACA/dTKLTlhMHihVHhdkxKyPO1uBBthumT0rdHmcsk9uMonIWS0m4FljWzILh3w=="],
 
