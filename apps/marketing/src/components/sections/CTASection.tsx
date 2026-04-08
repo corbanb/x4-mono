@@ -63,7 +63,7 @@ export function CTASection() {
 
         {/* Footer line */}
         <p className="mt-8 font-mono text-xs text-muted-foreground/60">
-          v3.10.0 · Apache 2.0 · studiox4/x4-agent-plugins
+          v3.15.0 · Apache 2.0 · studiox4/x4-agent-plugins
         </p>
       </motion.div>
     </section>

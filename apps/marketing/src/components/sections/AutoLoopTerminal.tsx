@@ -7,6 +7,7 @@ const AGENT_PILLS = [
   { label: 'Backend', color: '#4ade80' },
   { label: 'Frontend', color: '#4ade80' },
   { label: 'Reviewer', color: '#f59e0b' },
+  { label: 'Security', color: '#ef4444' },
   { label: 'Tester', color: '#3b82f6' },
   { label: 'Performance', color: '#8b5cf6' },
 ] as const;
@@ -40,7 +41,7 @@ const LINE_COLORS: Record<TerminalLineType, string> = {
 
 const STATS = [
   { value: '6', label: 'PRs merged' },
-  { value: '5', label: 'agents active' },
+  { value: '6', label: 'agents active' },
   { value: '0', label: 'manual PRs' },
 ] as const;
 

@@ -48,17 +48,19 @@ interface PlanningMode {
 const PLANNING_MODES: PlanningMode[] = [
   {
     name: 'Kickstart',
-    description: 'Full guided session. Best for new projects.',
+    description:
+      'Full guided session — vision, brainstorm, UI design, batch PRDs. Best for new projects.',
     highlighted: true,
   },
   {
     name: 'Incremental',
-    description: 'Add features one at a time via /x4:work',
+    description:
+      'Capture ideas with /x4:idea, triage with /x4:plan-backlog. Best for ongoing work.',
     highlighted: false,
   },
   {
     name: 'Discovery',
-    description: 'Let x4 scan your app and suggest next steps',
+    description: "Use /x4:gaps + /x4:dream to find dead ends and explore what's next.",
     highlighted: false,
   },
 ];

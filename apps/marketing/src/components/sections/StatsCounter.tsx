@@ -57,10 +57,10 @@ function AnimatedStat({ value, suffix = '', label, delay = 0 }: StatProps) {
 }
 
 const STATS = [
-  { value: 351, suffix: '+', label: 'Tests Passing' },
-  { value: 16, label: 'PRDs Completed' },
-  { value: 9, label: 'Packages' },
-  { value: 3, label: 'Platforms' },
+  { value: 35, label: 'Commands' },
+  { value: 6, label: 'AI Agents' },
+  { value: 4, label: 'Project Presets' },
+  { value: 7, label: 'Build Phases' },
 ];
 
 export function StatsCounter() {

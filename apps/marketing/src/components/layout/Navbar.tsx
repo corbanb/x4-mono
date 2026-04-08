@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 const NAV_LINKS = [
   { href: '/#how-it-works', label: 'How It Works' },
   { href: '/kickstart', label: 'Kickstart' },
+  { href: '/discovery', label: 'Discovery' },
   { href: '/commands', label: 'Commands' },
   { href: '/teams', label: 'For Teams' },
 ];

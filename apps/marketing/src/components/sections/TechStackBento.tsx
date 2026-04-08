@@ -5,13 +5,17 @@ import { motion, useInView } from 'motion/react';
 
 const TECH_ITEMS = [
   'Next.js 15',
+  'React 19',
+  'Tailwind CSS 4',
   'Hono',
   'tRPC 11',
-  'Drizzle',
+  'Drizzle ORM',
   'Neon',
   'Better Auth',
   'Vercel AI SDK',
+  'Claude',
   'Expo 52',
+  'Electron',
   'Turborepo',
   'Bun',
 ];
