@@ -2,6 +2,8 @@ import { Liveblocks } from '@liveblocks/node';
 import { auth } from '@x4/auth/server';
 import { NextRequest } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   const secret = process.env.LIVEBLOCKS_SECRET_KEY;
   if (!secret) return new Response('Liveblocks not configured', { status: 503 });
