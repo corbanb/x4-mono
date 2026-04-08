@@ -1,7 +1,12 @@
 import { generateFiles } from 'fumadocs-openapi';
+import { createOpenAPI } from 'fumadocs-openapi/server';
+
+const server = createOpenAPI({
+  input: ['../../apps/api/openapi.json'],
+});
 
 void generateFiles({
-  input: ['../../apps/api/openapi.json'],
+  input: server,
   output: './content/docs/api-reference',
   includeDescription: true,
   groupBy: 'tag',
