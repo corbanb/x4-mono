@@ -21,46 +21,50 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy Web to Vercel
+    name: Deploy Web to Railway
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-    env:
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_WEB }}
     steps:
       - uses: actions/checkout@v6
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: '1.3.8'
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli@latest
 
-      - uses: actions/cache@v5
-        with:
-          path: ~/.bun/install/cache
-          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-          restore-keys: bun-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Deploy to Vercel (Production)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: npx vercel@latest deploy apps/web --prod --token "$VERCEL_TOKEN" --yes
+      - name: Link Railway project
+        run: railway link --project-id b3cce76b-e8e6-4323-943f-47799019db15
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
-      - name: Deploy to Vercel (Preview)
+      - name: Deploy to Railway (Production)
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: railway up --service web --detach
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Deploy to Railway (Preview)
         if: github.event_name == 'pull_request'
         id: preview
-        run: |
-          PREVIEW_URL=$(npx vercel@latest deploy apps/web --token "$VERCEL_TOKEN" --yes 2>&1 | grep -o 'https://[^ ]*\.vercel\.app' | tail -1)
-          echo "preview-url=$PREVIEW_URL" >> $GITHUB_OUTPUT
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          railway environment create "pr-web-${PR_NUMBER}" --project-id b3cce76b-e8e6-4323-943f-47799019db15 2>/dev/null || true
+          railway up \
+            --service web \
+            --environment "pr-web-${PR_NUMBER}" \
+            --detach
+          URL=$(railway domain \
+            --service web \
+            --environment "pr-web-${PR_NUMBER}" \
+            2>/dev/null | grep -o 'https://[^ ]*' | head -1 || echo "")
+          if [[ -z "$URL" ]]; then
+            URL="https://web-pr-${PR_NUMBER}.up.railway.app"
+          fi
+          echo "preview-url=$URL" >> $GITHUB_OUTPUT
 
       - name: Comment preview URL on PR
-        if: github.event_name == 'pull_request' && steps.preview.outputs.preview-url
+        if: github.event_name == 'pull_request' && steps.preview.outputs.preview-url != ''
         uses: actions/github-script@v8
         with:
           script: |
