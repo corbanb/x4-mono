@@ -40,8 +40,6 @@ Thumbs.db
 # Superpowers
 .superpowers/
 
-# Fumadocs generated source
-apps/docs/.source/
 
 # Plans
 docs/plans/
