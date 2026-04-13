@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "@x4/shared": "workspace:*",
-    "ai": "6.0.152",
-    "@ai-sdk/anthropic": "^3.0.68",
+    "ai": "6.0.159",
+    "@ai-sdk/anthropic": "^3.0.69",
     "@ai-sdk/openai": "^3.0.52"
   }
 }
