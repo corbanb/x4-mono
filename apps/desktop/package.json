@@ -18,13 +18,13 @@
     "@tanstack/react-query": "^5.60.0",
     "@trpc/client": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
-    "react": "^19.0.0",
+    "react": "^19.2.6",
     "better-auth": "^1.2.0",
-    "react-dom": "^19.0.0",
+    "react-dom": "^19.2.6",
     "zod": "^3.23.0"
   },
   "devDependencies": {
-    "@types/react": "^19.2.14",
+    "@types/react": "^19.2.15",
     "@types/react-dom": "^19.0.0",
     "electron": "^33.0.0",
     "electron-builder": "^25.0.0",
