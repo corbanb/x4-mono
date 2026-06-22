@@ -28,7 +28,7 @@ jobs:
       marketing: ${{ steps.filter.outputs.marketing }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v4
         id: filter
         with:
@@ -95,7 +95,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.quality == 'true'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -141,7 +141,7 @@ jobs:
             echo "Neon secrets not configured — skipping branch creation"
           fi
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: steps.check-secrets.outputs.available == 'true'
 
       - name: Create Neon Branch
@@ -163,7 +163,7 @@ jobs:
     env:
       DATABASE_URL: ${{ needs.neon-branch.outputs.db-url }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -193,7 +193,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.shared == 'true'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -222,7 +222,7 @@ jobs:
     env:
       DATABASE_URL: ${{ needs.neon-branch.outputs.db-url || '' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -251,7 +251,7 @@ jobs:
     env:
       DATABASE_URL: ${{ needs.neon-branch.outputs.db-url || '' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -280,7 +280,7 @@ jobs:
     env:
       DATABASE_URL: ${{ needs.neon-branch.outputs.db-url || '' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -305,7 +305,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.create-x4 == 'true'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -365,7 +365,7 @@ jobs:
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install Railway CLI
         run: npm install -g @railway/cli@latest
