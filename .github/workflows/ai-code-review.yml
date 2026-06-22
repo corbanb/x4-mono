@@ -27,7 +27,7 @@ jobs:
             echo "ANTHROPIC_API_KEY not configured — skipping AI review"
           fi
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: steps.check-key.outputs.available == 'true'
         with:
           fetch-depth: 0

@@ -17,7 +17,7 @@ jobs:
     # Skip if this push is already a release commit
     if: "!startsWith(github.event.head_commit.message, 'chore(create-x4): release')"
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
