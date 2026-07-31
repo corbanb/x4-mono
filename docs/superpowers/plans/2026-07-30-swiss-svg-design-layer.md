@@ -21,6 +21,8 @@
 - **Three greys + one accent.** `border` / `muted-foreground` / `foreground`, plus violet **only** on the active/terminal/changed element. If a diagram has no such element it renders fully greyscale. (§4.3)
 - **Motion never oscillates.** No spring, no bounce, no overshoot. Draw ~0.8s, stagger 0.06s, linear easing. (§4.5)
 - **`prefers-reduced-motion: reduce` renders the final drawn state on first paint**, enforced in exactly one place: the `[data-x4-diagram]` CSS rule in `globals.css`. Primitives carry no reduced-motion logic. (§4.6)
+- **Never hand-roll an `<svg>` element.** Always go through `<Diagram>`. The reduced-motion guarantee keys off the `data-x4-diagram` marker `Diagram` emits, so a bare `<svg>` silently opts out of it.
+- **All motion inside a Diagram is path-draw motion** — animate `pathLength` via `DrawPath`, nothing else. The CSS rule pins `stroke-dasharray`/`stroke-dashoffset` only, so an opacity or transform animation inside a Diagram would run for reduced-motion visitors and nothing would catch it. A primitive that needs non-draw motion **stops and reports** so the rule can be extended deliberately.
 - **Labels stay in HTML** except grid-registered numerals and ticks. (§4.4)
 - **Do not touch** `glow` / `glass` / `noise` / gradient utilities, the other five surfaces, or `packages/shared`. (§10)
 
@@ -1199,6 +1201,8 @@ Replace the `<div className="relative mt-16">` block:
         </p>
 ```
 
+**Known limitation, deliberately not fixed here.** Those `motion.div` text entries sit _outside_ the `Diagram`, so the `[data-x4-diagram]` CSS rule does not cover them — reduced-motion visitors still get the opacity/x fade on the milestone text. This is the animation the component already has, carried over verbatim; §10 scopes out retrofitting the existing site's unconditional animations (`shimmer`, `animate-pulse`, the marquee), and this is the same class of gap. The SVG axis itself is fully covered. Do not expand scope to fix it in this task — it is recorded in the Follow-ups section.
+
 Add the imports: `import { Axis } from '@/components/svg/Axis';` and `import { units } from '@/components/svg/grid';`
 
 The `cn` import may now be unused — if so, remove it, since lint will flag it.
@@ -1368,4 +1372,5 @@ unlinked route has no reason to ship."
 - **Hero port** (§7). `Axis` already supports a variable station count; the remaining requirement is an input feed at station 1. Needs its own plan once Task 8 confirms the primitives held.
 - **Token reskin** (§10). The deliberate seam between square SVG and `0.75rem` cards is the evidence for or against it. Decide after looking at the shipped pilots, not before.
 - **Reduced motion on the existing site.** `shimmer`, `animate-pulse`, and the marquee `scroll` keyframes remain unconditional. Out of scope here, but now inconsistent with the new layer.
+- **Reduced motion for HTML-level motion in the pilot surfaces.** The `[data-x4-diagram]` rule covers SVG inside a `Diagram` only. The `motion.div` text entries in `Timeline` (and the section fades in both surfaces) sit outside it and still animate for reduced-motion visitors. Carried over verbatim from the existing components rather than introduced, so it belongs with the item above — but note it is now the _only_ uncovered motion on the two pages this plan touches, which makes it cheaper to finish than it looks.
 - **CLAUDE.md correction.** It lists `@testing-library/react` as the component test pattern for `apps/web`. It is not installed anywhere in the monorepo.
