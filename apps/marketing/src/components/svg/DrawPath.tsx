@@ -11,6 +11,18 @@ interface DrawPathProps {
    * (see grid.ts and marks.tsx).
    */
   d: string;
+  /**
+   * Defaults to `hairline`, which is what every path in this design layer draws
+   * at: the spine, the ticks, the nodes and the terminal's serpentine.
+   *
+   * `primary` is the heavier of the two authored weights and is reserved for a
+   * path that is the SUBJECT of a diagram rather than its structure. Defaulting
+   * to it is what this component did first, and since every call site inside
+   * svg/ passes `hairline` explicitly, the only paths that would ever have
+   * received 1.5 are the ones a future surface forgets to weight — which is
+   * exactly backwards. The default is the common case; the emphasis is opted
+   * into.
+   */
   weight?: StrokeWeight;
   /** Seconds to delay the draw. Derive from normalized axis position, not array index. */
   delay?: number;
@@ -30,7 +42,7 @@ interface DrawPathProps {
  */
 export function DrawPath({
   d,
-  weight = 'primary',
+  weight = 'hairline',
   delay = 0,
   duration = 0.8,
   className,

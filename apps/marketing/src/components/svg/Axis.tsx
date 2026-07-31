@@ -47,6 +47,13 @@ interface AxisProps {
    * sits off the grid.
    *
    * Within the legal range it is a real knob: raise it and the ticks grow.
+   *
+   * Defaults to units(8), which leaves the ticks units(2) long — the length
+   * marks.tsx itself defaults to. units(6) is the FLOOR, not a sensible default:
+   * it leaves one unit of room, so the ticks come out units(1), which reads as a
+   * speck beside a label rather than as the mark that registers it to the axis.
+   * Both pilot surfaces overrode units(6) to units(8) on exactly that ground
+   * before this was the default.
    */
   thickness?: number;
   className?: string;
@@ -108,7 +115,7 @@ export function Axis({
   count,
   filled = [],
   terminal = false,
-  thickness = units(6),
+  thickness = units(8),
   className,
 }: AxisProps) {
   const horizontal = orientation === 'horizontal';

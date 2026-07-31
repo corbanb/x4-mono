@@ -1,5 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'bun:test';
+import { createElement, type ReactNode } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Diagram } from './Diagram';
+import { DrawPath } from './DrawPath';
 import {
   snap,
   units,
@@ -276,10 +280,10 @@ describe('constants', () => {
  * test while silently reverting the fix — and Tasks 4-5 are explicitly invited
  * to tune these values, so a typo is a live risk. No jsdom, no renderer.
  */
-describe('stroke scale compensation', () => {
-  const globalsCss = readFileSync(`${import.meta.dir}/../../styles/globals.css`, 'utf8');
-  const diagramSource = readFileSync(`${import.meta.dir}/Diagram.tsx`, 'utf8');
+const globalsCss = readFileSync(`${import.meta.dir}/../../styles/globals.css`, 'utf8');
+const diagramSource = readFileSync(`${import.meta.dir}/Diagram.tsx`, 'utf8');
 
+describe('stroke scale compensation', () => {
   test('globals.css scales every stroke weight through --x4-stroke-scale', () => {
     for (const weight of Object.values(STROKE)) {
       const literal = String(weight).replace('.', '\\.');
@@ -319,5 +323,117 @@ describe('stroke scale compensation', () => {
     // multiplier above 1.5 / 0.922 makes mobile strokes HEAVIER than desktop and
     // lighter as the window widens past 640 — which reads as a rendering bug.
     expect(widest('base')).toBeLessThanOrEqual(1.63);
+  });
+});
+
+/**
+ * The reduced-motion guarantee, which is the more important of the two contracts
+ * this file pins as text — and the one with the least to hold it together.
+ *
+ * It has three halves and no runtime link between any of them: Diagram emits an
+ * attribute, globals.css selects on that attribute inside a
+ * `prefers-reduced-motion: reduce` block and pins the dash properties, and
+ * DrawPath has to encode its undrawn state in exactly those properties and no
+ * others. Break any one — rename the attribute on one side, delete the block, or
+ * add `initial={{ opacity: 0 }}` to DrawPath — and the app type-checks, lints and
+ * passes every other test while reduced motion silently reverts, for exactly the
+ * visitors it exists to protect.
+ *
+ * So these assertions are deliberately NOT written against literals repeated from
+ * the source. The attribute name is read OUT of the CSS selector and then looked
+ * for in Diagram's rendered markup, so renaming it in one file fails; and the
+ * properties DrawPath animates are compared against the property names the CSS
+ * block declares, so animating anything the block does not pin fails.
+ *
+ * Rendered rather than read as text: `renderToStaticMarkup` gives the actual
+ * first-paint markup, which is the thing the CSS rule has to match. No DOM and no
+ * new dependency — react-dom already ships with the app.
+ */
+describe('reduced motion guarantee', () => {
+  /** The one rule that pins a diagram to its drawn state: selector, then body. */
+  const rule = globalsCss.match(
+    /@media\s*\(\s*prefers-reduced-motion:\s*reduce\s*\)\s*\{\s*([^{}]+?)\s*\{([^}]*)\}/,
+  );
+
+  // Destructured with empty fallbacks rather than thrown on: a throw in a
+  // describe body is an "unhandled error between tests" that reports zero
+  // failures, so deleting the block outright — the exact mutation this exists to
+  // catch — would name nothing. Empty strings fail every assertion below by name.
+  const [, selector = '', body = ''] = rule ?? [];
+
+  /** Declared property names, in source order: ['stroke-dasharray', ...]. */
+  const pinned = [...body.matchAll(/([a-z-]+)\s*:/g)].map(([, property]) => property);
+
+  /** The attribute the rule selects on, taken from the rule rather than assumed. */
+  const attribute = selector.match(/^\[([a-z0-9-]+)\]/)?.[1] ?? '';
+
+  function markup(children: ReactNode): string {
+    return renderToStaticMarkup(
+      createElement(Diagram, { width: units(12), height: units(6), children }),
+    );
+  }
+
+  /** Attribute name -> value for the first element matching `tag` in some markup. */
+  function attributesOf(html: string, tag: string): Record<string, string> {
+    const open = html.match(new RegExp(`<${tag}\\b([^>]*)>`));
+    if (!open) throw new Error(`no <${tag}> in ${html}`);
+    return Object.fromEntries(
+      [...open[1].matchAll(/([a-zA-Z][\w-]*)="([^"]*)"/g)].map(([, name, value]) => [name, value]),
+    );
+  }
+
+  test('the rule pins both dash properties, on every descendant of the diagram', () => {
+    expect(rule).not.toBeNull();
+    // The descendant combinator is the load-bearing part of the selector: the
+    // dash properties live on the PATHS, not on the svg, so a rule narrowed to
+    // `[data-x4-diagram] { ... }` matches an element that has nothing to pin and
+    // leaves every path animating.
+    expect(selector).toMatch(/^\[[a-z0-9-]+\]\s+\*$/);
+    expect(pinned.sort()).toEqual(['stroke-dasharray', 'stroke-dashoffset']);
+    expect(body).toMatch(/stroke-dasharray:\s*none/);
+    expect(body).toMatch(/stroke-dashoffset:\s*0/);
+    // Presentation attributes are the lowest tier of the cascade and motion sets
+    // them with setAttribute, so !important is not strictly needed today — it is
+    // what keeps the rule winning if a future version switches to inline styles.
+    expect(body).toMatch(/stroke-dasharray:\s*none\s*!important/);
+  });
+
+  test('Diagram emits the attribute the rule selects on', () => {
+    // Read out of the CSS, not written here twice: renaming the attribute in
+    // Diagram.tsx alone leaves the rule selecting something nothing emits.
+    expect(attribute).not.toBe('');
+    const svg = attributesOf(markup(null), 'svg');
+    expect(Object.keys(svg)).toContain(attribute);
+  });
+
+  test('a path inside a Diagram animates only what the rule pins', () => {
+    // Everything else on the element is authored and static, so whatever is left
+    // is the animation — and every one of those has to be a property the rule
+    // above overrides. `initial={{ opacity: 0 }}` adds an `opacity` attribute
+    // here, a transform adds `style`, and either survives reduced motion.
+    const AUTHORED = new Set([
+      'd',
+      'pathLength',
+      'stroke',
+      'stroke-width',
+      'fill',
+      'stroke-linecap',
+      'stroke-linejoin',
+      'class',
+    ]);
+
+    const path = attributesOf(
+      markup(createElement(DrawPath, { d: 'M 8 24 L 88 24', className: 'text-border' })),
+      'path',
+    );
+    const animated = Object.keys(path).filter((name) => !AUTHORED.has(name));
+    expect(animated.sort()).toEqual([...pinned].sort());
+
+    // And the undrawn first frame really is a dash offset — an empty dash array
+    // over the normalized pathLength of 1, which is what `stroke-dasharray: none`
+    // reverts to a solid line.
+    expect(path['stroke-dasharray']).toBe('0 1');
+    expect(path['stroke-dashoffset']).toBe('0');
+    expect(path.pathLength).toBe('1');
   });
 });

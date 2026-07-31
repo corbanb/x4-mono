@@ -171,7 +171,7 @@ describe('KickstartFlow label columns fit their container', () => {
  * was actually handed, which catches a thickness change that forgets the margin,
  * and once hand-enumerated, which catches a wrong derivation.
  *
- * Tailwind's spacing step is 4px, so `-ml-8` is 32px.
+ * Tailwind's spacing step is 4px, so `-mt-4` is 16px.
  */
 describe('KickstartFlow offsets are keyed to the axis box', () => {
   /** Half the axis box: the axis centres its spine, so this much of it is empty. */
@@ -187,8 +187,13 @@ describe('KickstartFlow offsets are keyed to the axis box', () => {
 
     const wrappers = TREE.filter((n) => n.kind === 'div' && classOf(n).includes('shrink-0'));
     expect(wrappers).toHaveLength(1);
-    expect(classOf(wrappers[0]).split(' ')).toContain(`-ml-${cross / 4}`);
-    expect(classOf(wrappers[0]).split(' ')).toContain('-ml-8');
+    expect(styleOf(wrappers[0]).marginLeft).toBe(-cross);
+    expect(styleOf(wrappers[0]).marginLeft).toBe(-32);
+
+    // And no Tailwind margin class left behind to fight it. `-ml-8` is what this
+    // was — the same 32px, written as a literal that a thickness change could
+    // not move, which is the form Timeline's own comment argues against.
+    expect(classOf(wrappers[0])).not.toMatch(/(^|\s)-?ml-/);
   });
 
   test('pulls the label row up through half the canvas below the horizontal spine', () => {

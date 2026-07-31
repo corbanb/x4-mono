@@ -136,8 +136,29 @@ function tickSpan(p: Path): { axis: 'x' | 'y'; from: number; to: number } {
     : { axis: 'x', from: x, to: run.args[0] };
 }
 
-const HORIZONTAL = { orientation: 'horizontal', length: units(120), count: 6 } as const;
-const VERTICAL = { orientation: 'vertical', length: units(56), count: 8 } as const;
+/**
+ * Both fixtures state `thickness` explicitly, and state the FLOOR — units(6) —
+ * not the default, which is units(8).
+ *
+ * Every cross-axis number enumerated below (the spine at 24, ticks running
+ * 16 -> 8, a 48-tall horizontal box) is the floor geometry, which is the case
+ * worth pinning by hand: it is where the tick is shortest and where clipping
+ * against the viewBox edge would first show. The default is pinned separately
+ * and once, in `Axis defaults` — so flipping it moves one assertion rather than
+ * silently re-enumerating this whole file.
+ */
+const HORIZONTAL = {
+  orientation: 'horizontal',
+  length: units(120),
+  count: 6,
+  thickness: units(6),
+} as const;
+const VERTICAL = {
+  orientation: 'vertical',
+  length: units(56),
+  count: 8,
+  thickness: units(6),
+} as const;
 
 describe('Axis stations', () => {
   test('spaces six stations 192 apart along a 960 axis', () => {
@@ -202,6 +223,7 @@ describe('Axis stations', () => {
       orientation: 'horizontal',
       length: units(120),
       count: 3,
+      thickness: units(6),
       filled: [true, false, true],
     });
     // A solid mark is outline + serpentine; a hollow one is outline alone.
@@ -413,6 +435,44 @@ describe('Axis terminal', () => {
 });
 
 /**
+ * The one place the default thickness is pinned.
+ *
+ * It was units(6) — the floor — and BOTH pilot surfaces overrode it to units(8)
+ * with the same reasoning: at the floor the leftover room makes a tick units(1)
+ * long, a speck beside a label rather than the mark that registers it. A default
+ * every consumer rejects is the wrong default, so it is now units(8) and the
+ * pilots pass the same value they derive their own layout from.
+ *
+ * Enumerated from the geometry rather than from `units(8)`, so a change to
+ * either the default or the tick derivation fails here deliberately instead of
+ * agreeing with itself.
+ */
+describe('Axis defaults', () => {
+  test('defaults the thickness to the value both pilots ask for', () => {
+    const { diagram, paths } = render({ orientation: 'horizontal', length: units(120), count: 6 });
+
+    // units(8) = 64, so the spine sits at 32 with 32 of canvas either side.
+    expect(diagram.height).toBe(64);
+    expect(paths[0].d).toBe('M 8 32 L 968 32');
+
+    // And the reason for the value: cross 32, less a unit of gap and a unit of
+    // margin, is a units(2) tick — the length marks.tsx itself defaults to.
+    // At the units(6) floor this is units(1).
+    const tick = paths.filter(isTick)[0];
+    expect(tick.d).toBe('M 8 24 V 8');
+    const { from, to } = tickSpan(tick);
+    expect(Math.abs(from - to)).toBe(units(2));
+  });
+
+  test('a vertical axis defaults to the same box, so tick weight survives rotation', () => {
+    const { diagram, paths } = render({ orientation: 'vertical', length: units(56), count: 8 });
+    expect(diagram.width).toBe(64);
+    expect(paths[0].d).toBe('M 32 8 L 32 456');
+    expect(paths.filter(isTick)[0].d).toBe('M 40 8 H 56');
+  });
+});
+
+/**
  * Both size inputs are normalized rather than documented, because documenting
  * them failed: the first two call sites written against this component broke
  * both rules, and one of them asked for a thickness that renders stations with
@@ -466,7 +526,12 @@ describe('Axis input normalization', () => {
     // stations land at 8, 56 and 104. Untreated, the spine ended at 108 while
     // the last station snapped to 112 — a terminal station four pixels off the
     // end of the line it terminates.
-    const { diagram, paths } = render({ orientation: 'horizontal', length: 100, count: 3 });
+    const { diagram, paths } = render({
+      orientation: 'horizontal',
+      length: 100,
+      count: 3,
+      thickness: units(6),
+    });
     expect(paths[0].d).toBe('M 8 24 L 104 24');
     expect(paths.filter(isSquare).map((p) => squareCentre(p)[0])).toEqual([8, 56, 104]);
     expect(diagram.width).toBe(112);

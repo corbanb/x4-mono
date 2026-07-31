@@ -1,5 +1,5 @@
 import { Axis } from '@/components/svg/Axis';
-import { axisMetrics, units } from '@/components/svg/grid';
+import { axisMetrics, axisThickness, units } from '@/components/svg/grid';
 
 interface FlowStep {
   number: number;
@@ -72,6 +72,24 @@ const AXIS_LENGTH_MOBILE = units(70);
  * value in both orientations so tick weight does not change at the breakpoint.
  */
 const AXIS_THICKNESS = units(8);
+
+/**
+ * Half the axis box: the empty canvas on the far side of a rotated spine.
+ *
+ * A vertical Axis centres its spine in its box and draws its ticks to the RIGHT,
+ * so this much of the left edge is blank. Pulling the axis back by all of it puts
+ * the SPINE on the content rail — the same rail the `/x4:work` rule and the cells
+ * below already sit on.
+ *
+ * Derived from the exported `axisThickness` rather than written as the `-ml-8`
+ * class this used to be, for the reason Timeline states for the identical
+ * relationship: the number is half of a value the Axis normalizes internally and
+ * does not export, so a hard-coded class would let a thickness change slide the
+ * spine off the rail with nothing failing. It resolves to the same 32px — this is
+ * the same distance in a form that cannot go stale. Exact at every viewport,
+ * since a vertical Axis is not fluid and renders 1:1 with CSS px.
+ */
+const AXIS_CROSS = axisThickness(AXIS_THICKNESS) / 2;
 
 /** Three greys, no accent: the axis is structure, the terminal supplies the one accent. */
 const AXIS_COLOR = 'text-muted-foreground';
@@ -207,17 +225,16 @@ export function KickstartFlow() {
         {/* Below md the axis ROTATES rather than falling back to a horizontal
             scroll trap. Same primitive, one prop. */}
         <div className="flex md:hidden" style={{ gap: LABEL_GAP }}>
-          {/* A vertical Axis is centred in its box, so half its width is empty
-              canvas to the left of the line. Pulling back by units(4) puts the
-              SPINE on the content edge, which is the line the /x4:work rule and
-              the cells below already sit on — so the axis, its terminal and the
-              command it terminates at all share one left rail.
-              The empty canvas then starts 8px left of the viewport origin.
-              That is overflow toward the start edge, which is unreachable in a
+          {/* Pulled back by AXIS_CROSS — the whole empty half of the box — so the
+              SPINE lands on the content edge, which is the line the /x4:work rule
+              and the cells below already sit on. The axis, its terminal and the
+              command it terminates at then share one left rail.
+              The empty canvas starts 8px left of the viewport origin. That is
+              overflow toward the start edge, which is unreachable in a
               left-to-right document and adds nothing to scrollWidth; the 375
               check confirms it. Nothing drawn is out there — the spine is the
               leftmost ink. */}
-          <div className="-ml-8 shrink-0">
+          <div className="shrink-0" style={{ marginLeft: -AXIS_CROSS }}>
             <Axis
               orientation="vertical"
               length={AXIS_LENGTH_MOBILE}
