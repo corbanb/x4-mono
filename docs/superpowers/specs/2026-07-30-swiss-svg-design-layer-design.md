@@ -67,8 +67,15 @@ New directory: `apps/marketing/src/components/svg/`. Marketing-only — nothing 
 ### 4.2 Stroke
 
 - **Exactly two weights:** `1` (hairline — structure, rules, axes) and `1.5` (primary path).
-- `vector-effect="non-scaling-stroke"` on every stroked element, so hairlines stay hairlines
-  when the viewBox scales.
+- ~~`vector-effect="non-scaling-stroke"` on every stroked element~~ — **retracted during
+  implementation.** The Task 3 spike found it incompatible with the `stroke-dasharray` path
+  drawing this design depends on: both Chromium and WebKit take the dash magnitude from user
+  space but spend it in device pixels, so at a 0.36 scale (a 960-unit diagram on a 390px
+  viewport) the dash exceeds the whole rendered path and the line is solid from ~37% of the
+  animation onward — no draw at all on mobile. Measured identically in both engines, so not a
+  WebKit quirk. Stroke weight is instead kept legible at small scales by a per-breakpoint
+  `--x4-stroke-scale` correction that `Diagram` sets. The `1 : 1.5` ratio is preserved exactly;
+  the absolute weights vary with viewport, which is the cost of the fallback.
 - **`stroke-linecap="butt"`, `stroke-linejoin="miter"`, corner radius `0`.** This is the single
   biggest visual tell separating Swiss line art from generic friendly-startup illustration.
   Rounded caps are a review failure.
