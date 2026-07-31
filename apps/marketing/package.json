@@ -8,7 +8,7 @@
     "start": "next start --port ${PORT_MARKETING:-3001}",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "test": "echo 'no tests yet'"
+    "test": "bun test"
   },
   "dependencies": {
     "clsx": "2.1.1",
