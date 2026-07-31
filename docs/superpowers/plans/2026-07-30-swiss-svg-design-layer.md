@@ -58,7 +58,9 @@ This is deliberate. Do not write assertion-free "tests" against React components
 | `apps/marketing/src/components/sections/Timeline.tsx`      | Rewritten as a vertical milestone axis.                                                                                       | 7    |
 | `apps/marketing/package.json`                              | `"test": "bun test"`.                                                                                                         | 1    |
 
-**Task 5 is the freeze point.** Tasks 6 and 7 are independent and may run in parallel; they only _read_ `svg/`. Per §8, a surface agent that needs a primitive change **stops and reports** rather than editing `svg/` or inlining a one-off.
+**Task 5 is the freeze point.** Tasks 6 and 7 are independent and only _read_ `svg/`. Per §8, a surface agent that needs a primitive change **stops and reports** rather than editing `svg/` or inlining a one-off.
+
+**Run Tasks 6 and 7 sequentially, not in parallel** (decided during execution). The blocker is not file conflicts — it is that both verify through one browser, and viewport size and `emulateMedia` are per-context global state. Concurrent agents would silently corrupt each other's checks: one resizes to 375 while the other screenshots "1440," or one's reduced-motion emulation leaks into the other's normal-motion pass, making an already-drawn axis look like proof the animation works. Task 2 hit that leak and had to reset `emulateMedia` explicitly; two concurrent agents have no such handshake. A wrong visual check is indistinguishable from a right one in a report, and the tasks are two single-file rewrites whose wall-clock is dominated by verification that serializes anyway.
 
 **Hero is not in this plan.** §7 specs it as a later phase; §8 step 3 mentions porting to it. §7 governs — the hero becomes a follow-up plan once Task 8 confirms the primitives held.
 
@@ -294,8 +296,8 @@ Create `apps/marketing/src/components/svg/Diagram.tsx`:
 
 import { createContext, useContext, useRef, type ReactNode } from 'react';
 import { useInView } from 'motion/react';
-import { viewBox } from './grid';
 import { cn } from '@/lib/utils';
+import { viewBox } from './grid';
 
 interface DiagramState {
   /**
@@ -311,7 +313,9 @@ interface DiagramState {
 
 /**
  * Default is deliberately "already drawn" so a primitive rendered outside a
- * Diagram degrades to its final state rather than staying invisible.
+ * Diagram degrades to its final state rather than staying invisible. Note it
+ * degrades to drawn, not to reduced-motion-safe: outside a Diagram there is no
+ * data-x4-diagram marker, so the CSS rule does not apply there either.
  */
 const DiagramContext = createContext<DiagramState>({ drawn: true });
 
@@ -473,13 +477,16 @@ Expected: exit 0 for both.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add apps/marketing/src/components/svg/Diagram.tsx apps/marketing/src/app/svg-lab/page.tsx
+git add apps/marketing/src/components/svg/Diagram.tsx apps/marketing/src/app/svg-lab/page.tsx apps/marketing/src/styles/globals.css
 git commit -m "feat(marketing): add Diagram SVG wrapper and dev lab route
 
-Diagram is the single place viewport state and reduced-motion preference
-are resolved, so individual surfaces cannot forget either. Context
-defaults to already-drawn so a primitive rendered outside a Diagram
-degrades to its final state rather than staying invisible.
+Diagram resolves viewport state and emits the data-x4-diagram marker that
+the reduced-motion CSS rule selects. Reduced motion is enforced in CSS
+rather than JS because useReducedMotion() returns null during SSR, so a
+JS-derived value would render an undrawn first frame for reduced-motion
+visitors. Context defaults to already-drawn so a primitive rendered
+outside a Diagram degrades to its final state rather than staying
+invisible.
 
 The lab route is unlinked and noindex; it exists to verify primitives
 before any surface consumes them and is removed once both pilots land."
@@ -647,6 +654,20 @@ Cross-browser spike on non-scaling-stroke combined with dasharray:
 
 - Consumes: `STROKE`, `STROKE_ATTRS`, `units` from `./grid`.
 - Produces: `<Tick x y length orientation weight className />`, `<Node x y size filled className />`, `<Terminal x y size className />`, `<Junction x y size className />`. All take grid-snapped user-space coordinates; none animate — compose them with `DrawPath` when motion is wanted.
+
+**UNRESOLVED — settle this during Task 4, before Task 5 builds on it.** Surfaced by the Task 2 re-review. §5 and §6 both say each station's mark "fires as the draw front passes it," but Task 5's `Axis` code renders `Tick` and `Node` statically with no delay, so every station would appear at once while only the spine draws. The spec and the plan's code disagree, and `marks.tsx` is where the capability has to exist.
+
+This cannot be solved with an opacity fade — that violates the "all motion inside a Diagram is path-draw motion" constraint, which exists because the reduced-motion CSS rule pins dash properties only.
+
+The complication: a `Tick` is a line and a hollow `Node` is a stroked square, so both draw cleanly via `pathLength`. A **filled** `Node` cannot — SVG renders `fill` regardless of `stroke-dasharray`, so a filled node would show its fill at t=0 while its outline draws. `Timeline` depends on filled nodes to express `status: 'complete'` (§6).
+
+Options, to be decided with the implementer's read of what actually looks right:
+
+1. **Ticks draw, nodes stay static.** Cheapest, but nodes pop in ahead of the line reaching them — the exact thing that reads as broken.
+2. **Fold the ticks into the spine path.** One polyline that runs along the axis and jogs out at each station, so a single `DrawPath` produces the stagger geometrically with no delay math at all. Elegant; needs nodes solved separately.
+3. **Express complete/incomplete with stroke rather than fill** — e.g. a crossed square versus an empty one. Fully drawable, arguably more Swiss than a filled dot, but changes what §6 specified.
+
+Do not silently pick one and move on: whichever is chosen, say so in the report so the Task 5 brief matches.
 
 - [ ] **Step 1: Write the marks**
 
