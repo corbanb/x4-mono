@@ -657,21 +657,15 @@ Cross-browser spike on non-scaling-stroke combined with dasharray:
 **Interfaces:**
 
 - Consumes: `STROKE`, `STROKE_ATTRS`, `units` from `./grid`.
-- Produces: `<Tick x y length orientation weight className />`, `<Node x y size filled className />`, `<Terminal x y size className />`, `<Junction x y size className />`. All take grid-snapped user-space coordinates; none animate — compose them with `DrawPath` when motion is wanted.
+- Produces: `<Tick x y length orientation delay duration className />`, `<Node x y size filled delay duration className />`, `<Terminal x y size delay duration className />`, `<Junction x y size delay duration className />`, plus `MARK_DURATION` (0.25) and the `Orientation` type. All take grid-snapped user-space coordinates. **Every mark animates**, via `DrawPath` internally — `delay` defaults to 0, `duration` to `MARK_DURATION`. Import `Orientation` rather than redeclaring the union.
 
-**UNRESOLVED — settle this during Task 4, before Task 5 builds on it.** Surfaced by the Task 2 re-review. §5 and §6 both say each station's mark "fires as the draw front passes it," but Task 5's `Axis` code renders `Tick` and `Node` statically with no delay, so every station would appear at once while only the spine draws. The spec and the plan's code disagree, and `marks.tsx` is where the capability has to exist.
+**RESOLVED during Task 4 — a fourth option.** §5 and §6 say each station's mark "fires as the draw front passes it," but the originally planned `Axis` rendered marks statically. The obstacle was that a **filled** `Node` cannot draw: SVG paints `fill` regardless of `stroke-dasharray`, so a filled node would show its fill at t=0 — and `Timeline` needs filled nodes for `status: 'complete'`. An opacity fade was unavailable, since the reduced-motion CSS rule pins dash properties only.
 
-This cannot be solved with an opacity fade — that violates the "all motion inside a Diagram is path-draw motion" constraint, which exists because the reduced-motion CSS rule pins dash properties only.
+The resolution removes the obstacle rather than working around it: **nothing in the mark vocabulary uses `fill` at all.** A solid square is a stroked serpentine at half-unit pitch — a plotter fill — so it draws exactly like every other mark. Every mark is a `DrawPath` with a `delay`.
 
-The complication: a `Tick` is a line and a hollow `Node` is a stroked square, so both draw cleanly via `pathLength`. A **filled** `Node` cannot — SVG renders `fill` regardless of `stroke-dasharray`, so a filled node would show its fill at t=0 while its outline draws. `Timeline` depends on filled nodes to express `status: 'complete'` (§6).
+This keeps §6's `filled = complete` verbatim (no spec change), adds no third authored stroke weight, and adds no second motion site. The rejected options: option 3 (express completion with stroke instead of fill) does not solve `Terminal`, which is always solid; option 2 (fold ticks into the spine path) leaves nodes unsolved and becomes redundant once marks own a delay.
 
-Options, to be decided with the implementer's read of what actually looks right:
-
-1. **Ticks draw, nodes stay static.** Cheapest, but nodes pop in ahead of the line reaching them — the exact thing that reads as broken.
-2. **Fold the ticks into the spine path.** One polyline that runs along the axis and jogs out at each station, so a single `DrawPath` produces the stagger geometrically with no delay math at all. Elegant; needs nodes solved separately.
-3. **Express complete/incomplete with stroke rather than fill** — e.g. a crossed square versus an empty one. Fully drawable, arguably more Swiss than a filled dot, but changes what §6 specified.
-
-Do not silently pick one and move on: whichever is chosen, say so in the report so the Task 5 brief matches.
+Consequence for Task 5: a solid `Node`/`Terminal` renders **two** `<path>` elements (outline plus serpentine), not one.
 
 - [ ] **Step 1: Write the marks**
 
@@ -906,15 +900,21 @@ export function Axis({
    * grows to fit. Shrinking the station span to make room instead would leave a
    * consumer's evenly distributed labels no longer lining up with the stations
    * they name.
+   *
+   * PAD exists because the first and last stations sit at t=0 and t=1, i.e. on
+   * the canvas edges, where a node centred on the axis would clip by half its
+   * size. One grid unit clears a default node (size units(1), so half is 4) and
+   * keeps every coordinate on the 8-grid.
    */
-  const terminalAt = length + units(2);
-  const extent = terminal ? length + units(4) : length;
+  const PAD = units(1);
+  const terminalAt = PAD + length + units(2);
+  const extent = PAD + length + (terminal ? units(4) : PAD);
 
   const at = (t: number) =>
-    horizontal ? { x: length * t, y: cross } : { x: cross, y: length * t };
+    horizontal ? { x: PAD + length * t, y: cross } : { x: cross, y: PAD + length * t };
   const spine = horizontal
-    ? `M 0 ${cross} L ${length} ${cross}`
-    : `M ${cross} 0 L ${cross} ${length}`;
+    ? `M ${PAD} ${cross} L ${PAD + length} ${cross}`
+    : `M ${cross} ${PAD} L ${cross} ${PAD + length}`;
 
   return (
     <Diagram
@@ -927,10 +927,12 @@ export function Axis({
 
       {offsets.map((t, i) => {
         const { x, y } = at(t);
+        // Timing follows geometry: each station fires as the draw front reaches it.
+        const delay = DRAW_DURATION * t;
         return (
           <g key={i}>
-            <Tick x={x} y={y} orientation={orientation} />
-            <Node x={x} y={y} filled={filled[i] ?? false} />
+            <Tick x={x} y={y} orientation={orientation} delay={delay} />
+            <Node x={x} y={y} filled={filled[i] ?? false} delay={delay} />
           </g>
         );
       })}
@@ -939,6 +941,7 @@ export function Axis({
         <Terminal
           x={horizontal ? terminalAt : cross}
           y={horizontal ? cross : terminalAt}
+          delay={DRAW_DURATION}
           className={ACCENT_CLASS}
         />
       )}
@@ -946,6 +949,13 @@ export function Axis({
   );
 }
 ```
+
+**Resolve visually in the browser before committing:** a `Tick` starts at the station centre and runs perpendicular, so it passes through the interior of the `Node` drawn at the same point, leaving a visible stub inside a hollow square. Found during Task 4 and left for this task because it is a composition question, not a mark defect. Two approaches, both on-grid — pick whichever reads better and say which in your report:
+
+1. Start the tick one full unit off the axis (`units(1)`), leaving a deliberate 4-unit gap between node edge and tick. Gaps of that kind are idiomatic in Swiss diagramming, so this may read as intentional rather than as a fix.
+2. Move the node to the tick's outer end so the two never overlap, leaving the axis itself unmarked at the station.
+
+Do not use a half-unit offset — `units(0.5)` is 4, which violates the 8-grid constraint.
 
 - [ ] **Step 2: Add both orientations to the lab**
 
