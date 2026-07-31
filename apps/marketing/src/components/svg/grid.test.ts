@@ -78,4 +78,12 @@ describe('constants', () => {
     expect(STROKE_ATTRS.strokeLinejoin).toBe('miter');
     expect(STROKE_ATTRS.fill).toBe('none');
   });
+
+  test('stroke attrs omit non-scaling-stroke', () => {
+    // Deliberate: non-scaling-stroke breaks stroke-dasharray path drawing in both
+    // Chromium and WebKit at any viewBox scale below 1 — the drawn length is
+    // evaluated in device px from a user-space magnitude, so a scaled-down
+    // diagram renders solid instead of drawing. See the STROKE_ATTRS comment.
+    expect(STROKE_ATTRS).not.toHaveProperty('vectorEffect');
+  });
 });

@@ -200,6 +200,38 @@
   }
 }
 
+/* Stroke weight compensation for scaled diagrams.
+
+   STROKE_ATTRS cannot carry vector-effect: non-scaling-stroke — it breaks the
+   stroke-dasharray path drawing DrawPath depends on, identically in Chromium and
+   WebKit (see the comment on STROKE_ATTRS in components/svg/grid.ts). Without
+   it, stroke width scales with the viewBox, so a 960-unit diagram at a 390px
+   viewport draws its 1.5 primary at 0.53 CSS px.
+
+   The correction is deliberately PARTIAL, not 1/scale. Full compensation would
+   restore 1.5 device px onto artwork drawn at 36% size — a stroke 2.8x heavier
+   relative to its own geometry, which is precisely the over-inked look Swiss
+   line art is not. These multipliers land the primary near 1 CSS px on mobile
+   while keeping the 1 : 1.5 hairline-to-primary ratio exact at every breakpoint.
+
+   Applied to the [data-x4-diagram] subtree by stroke-width value rather than by
+   a per-element opt-in, so the lab's raw <line>, DrawPath, and every future
+   primitive inherit it without any call site referencing it. The two selectors
+   correspond exactly to the two weights in STROKE; adding a third weight is a
+   spec change, not a styling one.
+
+   The default lives in the var() fallback rather than a [data-x4-diagram] rule:
+   an attribute selector ties with a utility class on specificity and this file
+   loads after Tailwind, so a rule here would silently beat the breakpoint
+   utilities Diagram sets and pin every diagram to 1. */
+[data-x4-diagram] [stroke-width='1'] {
+  stroke-width: calc(1px * var(--x4-stroke-scale, 1));
+}
+
+[data-x4-diagram] [stroke-width='1.5'] {
+  stroke-width: calc(1.5px * var(--x4-stroke-scale, 1));
+}
+
 /* Reduced motion: pin every diagram to its final drawn state.
 
    This lives in CSS rather than in the SVG primitives because motion's

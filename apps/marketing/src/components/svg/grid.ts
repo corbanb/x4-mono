@@ -21,14 +21,23 @@ export type StrokeWeight = keyof typeof STROKE;
  *
  * Butt caps and miter joins are the tell that separates Swiss line art from
  * generic friendly-startup illustration — centralized here so no call site can
- * quietly opt out. non-scaling-stroke keeps hairlines hairline as the viewBox
- * scales.
+ * quietly opt out.
+ *
+ * vector-effect: non-scaling-stroke is deliberately ABSENT. It is incompatible
+ * with the stroke-dasharray path drawing DrawPath uses: with it applied, both
+ * Chromium and WebKit evaluate the dash lengths in device pixels while taking
+ * their magnitude from user space, so the drawn length pins at roughly
+ * (progress x viewBox width) device px no matter what the viewBox is scaled to.
+ * At a 0.36 scale — a 960-unit diagram on a 390px viewport — that exceeds the
+ * whole path and the line renders solid from about 37% of the animation onward,
+ * i.e. no draw at all on mobile. Measured identically in both engines; this is
+ * not a WebKit quirk. Stroke weight is instead kept legible at small scales by
+ * the --x4-stroke-scale compensation Diagram sets (see globals.css).
  */
 export const STROKE_ATTRS = {
   fill: 'none',
   strokeLinecap: 'butt',
   strokeLinejoin: 'miter',
-  vectorEffect: 'non-scaling-stroke',
 } as const;
 
 /** Round a coordinate to the nearest grid unit. */

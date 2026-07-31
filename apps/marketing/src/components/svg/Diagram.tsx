@@ -56,6 +56,17 @@ interface DiagramProps {
  *
  * aria-hidden because all meaningful labels live in HTML (spec section 4.4) —
  * the SVG carries geometry, not content a screen reader needs.
+ *
+ * --x4-stroke-scale is the replacement for vector-effect: non-scaling-stroke,
+ * which had to be dropped from STROKE_ATTRS because it breaks stroke-dasharray
+ * path drawing in every engine (see grid.ts). It is a partial correction keyed
+ * to the breakpoint, applied by globals.css across the whole subtree so no
+ * primitive has to opt in. Non-fluid diagrams render at their authored size, so
+ * their scale is 1 by construction and they need no correction at all.
+ *
+ * The fluid multipliers assume a diagram spanning the page content column. A
+ * diagram in a narrower column is slightly under-corrected — tolerable because
+ * the correction is partial by design rather than an exact 1/scale.
  */
 export function Diagram({ width, height, fluid = true, className, children }: DiagramProps) {
   const ref = useRef<SVGSVGElement>(null);
@@ -69,7 +80,13 @@ export function Diagram({ width, height, fluid = true, className, children }: Di
         viewBox={viewBox(width, height)}
         width={fluid ? undefined : width}
         height={fluid ? undefined : height}
-        className={cn('block', fluid && 'h-auto w-full', className)}
+        className={cn(
+          'block',
+          fluid
+            ? 'h-auto w-full [--x4-stroke-scale:1.8] sm:[--x4-stroke-scale:1.3] md:[--x4-stroke-scale:1]'
+            : '[--x4-stroke-scale:1]',
+          className,
+        )}
         preserveAspectRatio="xMidYMid meet"
         aria-hidden="true"
         focusable="false"
