@@ -1333,6 +1333,14 @@ the present rather than trailing off."
 - Delete: `apps/marketing/src/app/svg-lab/page.tsx`
 - Modify: whichever surface fails review, if any
 
+- [ ] **Step 0: Reconcile the drift between the two pilots**
+
+Found in Task 7's review. Both surfaces are otherwise one system — same `AXIS_THICKNESS`, same `AXIS_COLOR`, both server components, both positioning labels from `fractions` over `extent`, both applying the same label-lift rule correctly to different leading elements (Timeline pulls −16 for a 32px title line box; KickstartFlow's mobile branch pulls −8 for a 16px mono numeral). That is a system, not a coincidence. Three things did drift:
+
+1. **Vertical label gap.** `KickstartFlow`'s vertical branch uses `gap-4` (16px) between axis box and label column; `Timeline` uses 8px — and Timeline's own comment argues that at 16px "the tick reads as a floating dash rather than as the mark the line of type hangs off". Same orientation, same thickness, same `units(2)` tick, two different distances, on a stated rationale that one of them is wrong. Pick one and apply it to both. Neither task could fix this: each was scoped to its own file.
+2. **Accent continuation rail.** `KickstartFlow`'s sits on the spine rail; `Timeline`'s sits on the label column (spine + 40). Timeline's reads as the next entry in the list, which is arguably better — but pick one deliberately.
+3. **Duplicated `percent()` helper**, verbatim in both pilots. It cannot be hoisted without touching frozen `grid.ts`, so leave it and note it for the unfreeze.
+
 - [ ] **Step 1: Apply the §3 quality bar to both surfaces**
 
 For `/kickstart` and `/about`, answer in writing: **if the diagram were deleted, what information would be lost?**
