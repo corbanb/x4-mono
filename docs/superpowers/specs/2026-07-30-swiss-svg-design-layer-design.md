@@ -119,8 +119,16 @@ deliberate visual seam, which is the evidence for or against the follow-up token
 
 - Labels stay in **HTML** wherever possible: selectable, accessible, no font-loading race,
   no duplicated type scale.
-- SVG `<text>` only where a label must register to the grid (station numerals, axis ticks):
-  10–11px, uppercase, `tracking-widest`, geist mono.
+- ~~SVG `<text>` only where a label must register to the grid (station numerals, axis ticks):
+  10–11px, uppercase, `tracking-widest`, geist mono.~~ **Retracted — the layer ships zero
+  `<text>` elements and cannot ship any.** Two reasons, found only once both pilots existed:
+  `Axis` has no text capability at all (no `<text>`, no numeral prop, no slot), so this was
+  never declined by a consumer — it was foreclosed by the primitive; and `Diagram` sets
+  `aria-hidden="true"`, so SVG `<text>` inside a diagram would be invisible to assistive
+  technology, contradicting the accessibility rationale this very section gives for keeping
+  labels in HTML. Station numerals are HTML, which is what the rest of this section already
+  argues for. Re-adding SVG text means giving `Axis` a text slot **and** revisiting
+  `aria-hidden` — a primitive change, not a consumer choice.
 - Accepted cost: labels cannot hug geometry as tightly as they could if all type lived in the
   SVG. Worth it for accessibility and for keeping one type scale.
 
@@ -129,7 +137,7 @@ deliberate visual seam, which is the evidence for or against the follow-up token
 | File           | Responsibility                                                                                                                                                 | Depends on               |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
 | `grid.ts`      | `UNIT`, stroke-width constants, `snap()`, viewBox helpers. Pure — no React, no JSX.                                                                            | nothing                  |
-| `Diagram.tsx`  | Responsive `<svg>` wrapper. Owns the `useInView({ once: true })` trigger **and** the `prefers-reduced-motion` check; publishes both via context.               | `grid.ts`                |
+| `Diagram.tsx`  | Responsive `<svg>` wrapper. Owns the `useInView({ once: true })` trigger and emits the `data-x4-diagram` marker the reduced-motion CSS rule selects. Publishes viewport state only — reduced motion never enters JS (see §4.6). | `grid.ts`                |
 | `DrawPath.tsx` | Animated path primitive. `pathLength="1"` normalization so dasharray math is scale-independent; animates `strokeDashoffset` 1 → 0. Consumes `Diagram` context. | `grid.ts`, `Diagram.tsx` |
 | `marks.tsx`    | Node vocabulary: `Node`, `Junction`, `Terminal`, `Tick`. Grid-registered, square, hairline.                                                                    | `grid.ts`                |
 | `Axis.tsx`     | The station axis. `orientation: 'horizontal' \| 'vertical'`, a station array, and an optional accent terminal. Both pilots and the hero are instances of this. | all of the above         |
@@ -185,7 +193,7 @@ one of 6 hardcoded hexes; below, a `/x4:work` command chip and a 3-cell "Three w
 **Redesigned as a plotted process axis:**
 
 - One hairline baseline spanning the grid width, with 6 stations snapped to it.
-- Each station: a vertical tick + grid-registered numeral (SVG) + name and description (HTML,
+- Each station: a vertical tick + grid-registered numeral (**HTML — see the §4.4 retraction**) + name and description (HTML,
   below the axis).
 - All 6 stations render greyscale. The rainbow is deleted.
 - The axis **terminates** at `/x4:work`, marked in accent — the one violet element. Reading:
