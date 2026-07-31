@@ -163,12 +163,29 @@ describe('axisMetrics', () => {
     }
   });
 
+  test('floors the pitch at one unit, so stations never stack on each other', () => {
+    // 10 across 6 stations is a gap of 2, which snaps to ZERO — every station
+    // would land on 8, the span would be 0, and every fraction would be 0.5.
+    const m = axisMetrics(10, 6);
+    expect(m.pitch).toBe(8);
+    expect(m.stations).toEqual([8, 16, 24, 32, 40, 48]);
+    expect(m.span).toBe(40);
+    expect(m.extent).toBe(56);
+    // Distinct positions, which an all-zero pitch would not give.
+    expect(new Set(m.stations).size).toBe(6);
+    expect(new Set(m.fractions).size).toBe(6);
+  });
+
   test('every station is grid-aligned and evenly spaced, whatever the length', () => {
-    for (let length = 40; length <= 1200; length += 7) {
+    for (let length = 1; length <= 1200; length += 7) {
       for (const count of [2, 3, 5, 6, 8, 11]) {
         const m = axisMetrics(length, count);
         const gaps = m.stations.slice(1).map((s, i) => s - m.stations[i]);
         expect(new Set(gaps).size).toBe(1);
+        // A zero pitch passes the uniformity check above — every gap is equally
+        // zero — so the floor has to be asserted separately.
+        expect(m.pitch).toBeGreaterThanOrEqual(UNIT);
+        expect(gaps[0]).toBeGreaterThanOrEqual(UNIT);
         for (const s of m.stations) expect(s % UNIT).toBe(0);
       }
     }

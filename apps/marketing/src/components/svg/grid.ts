@@ -124,9 +124,15 @@ export interface AxisMetrics {
    *   axis, so `y / extent` is again the container fraction — user space is 1:1
    *   with CSS px.
    *
-   * A third rendering mode (letterboxed, cropped, or a preserveAspectRatio other
-   * than the current one) would break that equivalence, and whoever adds one has
-   * to revisit this field rather than assume it still holds.
+   * Two things break that equivalence:
+   *
+   * - A third rendering mode — letterboxed, cropped, or a preserveAspectRatio
+   *   other than the current one. Whoever adds one revisits this field.
+   * - **Passing a sizing class through `className`.** `cn()` puts consumer
+   *   classes last, so `<Axis className="h-24" />` beats the `h-auto` a fluid
+   *   Axis sets, and under `xMidYMid meet` the artwork letterboxes inside a box
+   *   that no longer matches the viewBox. Every fraction is then silently wrong.
+   *   Use `className` for colour, and let the Axis size itself.
    */
   fractions: number[];
   /** Terminal coordinate along the axis, or null when there is no terminal. */
@@ -177,7 +183,10 @@ export interface AxisMetrics {
  * Axis derives its own geometry from this function, so the two cannot drift.
  */
 export function axisMetrics(length: number, count: number, terminal = false): AxisMetrics {
-  const pitch = count > 1 ? snap(length / (count - 1)) : 0;
+  // Floored at one unit for the same reason axisThickness has a floor: below
+  // 4px per gap the snap returns 0, which would silently stack every station on
+  // top of the first with a span of 0 and every fraction at 0.5.
+  const pitch = count > 1 ? Math.max(UNIT, snap(length / (count - 1))) : 0;
   const span = count > 1 ? pitch * (count - 1) : snap(length);
   const extent = AXIS_PAD + span + (terminal ? AXIS_TERMINAL_ROOM : AXIS_PAD);
   const stations = stationOffsets(count).map((_, i) => AXIS_PAD + pitch * i);

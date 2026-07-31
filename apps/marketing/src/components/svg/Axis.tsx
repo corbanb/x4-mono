@@ -115,10 +115,17 @@ export function Axis({
   const offsets = stationOffsets(count);
 
   /**
-   * Stations span the full `length`; the terminal sits beyond it and the canvas
-   * grows to fit. Shrinking the station span to make room instead would leave a
-   * consumer's evenly distributed labels no longer lining up with the stations
-   * they name.
+   * The station layout, and the ONLY correct source for a consumer's labels.
+   *
+   * Stations are inset from the canvas edge by one unit and spaced by a snapped
+   * `pitch`, so they span `span` — which is not `length`, since the pitch snap
+   * rebuilds it — and the canvas grows past the last station when `terminal` is
+   * set, so `extent` is not `span` either.
+   *
+   * A consumer therefore positions labels from `axisMetrics().fractions`, which
+   * are over `extent`. Distributing labels evenly over the axis — a
+   * `justify-between` row, or anything measured against `length` or `span` — is
+   * wrong at both ends and wrong by a different amount depending on `terminal`.
    */
   const { start, span, extent, stations, terminalAt } = axisMetrics(length, count, terminal);
 
