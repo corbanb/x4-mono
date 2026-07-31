@@ -111,6 +111,7 @@ deliberate visual seam, which is the evidence for or against the follow-up token
   the honest state, not a hidden compromise — the fix is a dedicated structure token
   somewhere between `border` and `muted-foreground`, which is a token-layer change and
   therefore belongs with the follow-up reskin (§10), not here.
+
 - One accent (violet, existing `--color-violet-glow` token) applied **only** to the active,
   terminal, or changed element. If a diagram has no such element, it renders fully greyscale.
 
