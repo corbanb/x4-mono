@@ -1460,6 +1460,13 @@ unlinked route has no reason to ship."
 
 ## Follow-ups (not this plan)
 
+- **Hero port** (§7) — **unfreeze `svg/` deliberately BEFORE planning it, not reactively during.** The final review found the one §7 requirement this branch did not deliver: §7 demands a variable station count **and an input feed at station 1**, "without a rewrite." Count is satisfied and tested to nine. The input feed has **no mechanism at all** — `AxisProps` has no `children`, no slot, no per-station render hook, and `Axis` returns a closed `<Diagram>`. Stack that against the four changes already queued (`align`, `terminalOffset`, exposing the accent, hoisting `percent()`) and that is five API changes; absorbing them reactively mid-port is how the primitive layer would get rewritten under a finished surface. §8's escape hatch already dictates the mechanics: primitive changes serialize back through step 1.
+
+  Three more things land specifically on the hero:
+  - **The `align` gap bites hardest here.** The hero is a horizontal *fluid* axis — the orientation whose negative-margin correction drifts with viewport. `KickstartFlow`'s `-mt-4` is a tuned approximation against fluid geometry, not an exact correction, and the hero is taller and more prominent.
+  - **`LABEL_TRAIL` / `LABEL_COLUMN`** — the trailing-reserve derivation in `KickstartFlow` is non-obvious, correct, and the hero needs it verbatim. A third consumer needing both it and `percent()` is the strongest argument for unfreezing `grid.ts` before the hero rather than after.
+  - **`filled` has two vocabularies** — "not shipped" in `Timeline`, "nothing in particular" in `KickstartFlow`. The hero's stations are pipeline *phases*, where hollow most naturally means "not yet reached" — a third reading. Pick one.
+
 - **Hero port** (§7). `Axis` already supports a variable station count; the remaining requirement is an input feed at station 1. Needs its own plan once Task 8 confirms the primitives held.
 - **Token reskin** (§10). The deliberate seam between square SVG and `0.75rem` cards is the evidence for or against it. Decide after looking at the shipped pilots, not before.
 - **Reduced motion on the existing site.** `shimmer`, `animate-pulse`, and the marquee `scroll` keyframes remain unconditional. Out of scope here, but now inconsistent with the new layer.
