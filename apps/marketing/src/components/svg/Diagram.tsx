@@ -6,9 +6,17 @@ import { cn } from '@/lib/utils';
 import { viewBox } from './grid';
 
 interface DiagramState {
-  /** True once the diagram has scrolled into view. Latches — never returns to false. */
-  active: boolean;
-  /** True when the visitor asked for reduced motion. */
+  /**
+   * True when children should render their final, fully-drawn state.
+   *
+   * Already folds in the reduced-motion preference, which is why the raw
+   * in-view flag is deliberately NOT exposed: a primitive that gated on
+   * "has it scrolled into view" alone would animate for a visitor who asked
+   * for no animation. There is no way to read the un-folded value, so there
+   * is no way to forget (spec section 4.6).
+   */
+  drawn: boolean;
+  /** True when the visitor asked for reduced motion — suppress the transition. */
   reduced: boolean;
 }
 
@@ -16,7 +24,7 @@ interface DiagramState {
  * Defaults are deliberately "already drawn, no motion" so a primitive rendered
  * outside a Diagram degrades to its final state rather than staying invisible.
  */
-const DiagramContext = createContext<DiagramState>({ active: true, reduced: true });
+const DiagramContext = createContext<DiagramState>({ drawn: true, reduced: true });
 
 export function useDiagram(): DiagramState {
   return useContext(DiagramContext);
@@ -49,11 +57,11 @@ interface DiagramProps {
  */
 export function Diagram({ width, height, fluid = true, className, children }: DiagramProps) {
   const ref = useRef<SVGSVGElement>(null);
-  const active = useInView(ref, { once: true, margin: '-50px' });
+  const inView = useInView(ref, { once: true, margin: '-50px' });
   const reduced = useReducedMotion() ?? false;
 
   return (
-    <DiagramContext.Provider value={{ active, reduced }}>
+    <DiagramContext.Provider value={{ drawn: reduced || inView, reduced }}>
       <svg
         ref={ref}
         viewBox={viewBox(width, height)}
