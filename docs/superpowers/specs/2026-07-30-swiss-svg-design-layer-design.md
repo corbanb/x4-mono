@@ -66,7 +66,11 @@ New directory: `apps/marketing/src/components/svg/`. Marketing-only — nothing 
 
 ### 4.2 Stroke
 
-- **Exactly two weights:** `1` (hairline — structure, rules, axes) and `1.5` (primary path).
+- **Exactly two weights:** `1` (hairline — structure, rules, axes) and `1.5` (primary path), authored
+  in user space. With `non-scaling-stroke` retracted (below), rendered CSS-pixel width varies with
+  viewport, so the enforceable rule is two authored values in a fixed `1 : 1.5` ratio, with rendered
+  weight monotonic in viewport width — never lighter as the viewport grows. Within any single
+  viewport the reader still sees exactly two weights, which is what the rule was always for.
 - ~~`vector-effect="non-scaling-stroke"` on every stroked element~~ — **retracted during
   implementation.** The Task 3 spike found it incompatible with the `stroke-dasharray` path
   drawing this design depends on: both Chromium and WebKit take the dash magnitude from user

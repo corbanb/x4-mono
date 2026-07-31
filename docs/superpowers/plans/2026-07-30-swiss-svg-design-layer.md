@@ -16,7 +16,7 @@
 - **No hex literals in SVG markup, ever.** All color is `currentColor` driven by Tailwind text utilities. (§4.3)
 - **Every primitive accepts and forwards `className`.** That pass-through _is_ the color mechanism. (§4.5)
 - **`stroke-linecap="butt"`, `stroke-linejoin="miter"`, corner radius `0`.** Rounded caps are a review failure. (§4.2)
-- **Exactly two stroke weights:** `1` hairline, `1.5` primary. (§4.2)
+- **Exactly two stroke weights:** `1` hairline, `1.5` primary — **authored in user space**. Since Task 3 retracted `non-scaling-stroke` (see §4.2), the _rendered_ CSS-pixel width varies with viewport, so the enforceable form of this rule is: exactly two authored values, always in a `1 : 1.5` ratio, and rendered weight must be **monotonic in viewport width** — never lighter as the viewport grows. Any third authored weight is still a review failure. (§4.2)
 - **Every coordinate is a multiple of `UNIT = 8`.** Off-grid coordinates are a review failure. (§4.1)
 - **Three greys + one accent.** `border` / `muted-foreground` / `foreground`, plus violet **only** on the active/terminal/changed element. If a diagram has no such element it renders fully greyscale. (§4.3)
 - **Motion never oscillates.** No spring, no bounce, no overshoot. Draw ~0.8s, stagger 0.06s, linear easing. (§4.5)
