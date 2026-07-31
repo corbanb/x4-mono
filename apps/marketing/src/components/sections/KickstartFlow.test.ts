@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { KickstartFlow } from './KickstartFlow';
 import { Diagram } from '../svg/Diagram';
 import { DrawPath } from '../svg/DrawPath';
+import { UNIT, axisThickness } from '../svg/grid';
 
 /**
  * Same technique as Axis.test.ts: the surface is a plain function returning an
@@ -155,6 +156,89 @@ describe('KickstartFlow label columns fit their container', () => {
     const column = parseFloat(String(styleOf(H_LABELS[5]).width)) / 100;
     const reserve = parseFloat(String(padding)) / 100;
     expect((last + column) * (1 - reserve)).toBeCloseTo(1, 5);
+  });
+});
+
+/**
+ * The two negative margins are the only geometry in this file that does NOT come
+ * from METRICS. They correct for the axis's CROSS-axis layout, which Axis.tsx
+ * keeps private and does not export ("nothing outside the diagram needs it"), so
+ * nothing but these tests connects them to the thickness they depend on: change
+ * AXIS_THICKNESS and both become wrong silently, with the mobile spine sliding
+ * off the rail the whole composition is built on.
+ *
+ * Each expectation is asserted twice — once derived from the thickness the Axis
+ * was actually handed, which catches a thickness change that forgets the margin,
+ * and once hand-enumerated, which catches a wrong derivation.
+ *
+ * Tailwind's spacing step is 4px, so `-ml-8` is 32px.
+ */
+describe('KickstartFlow offsets are keyed to the axis box', () => {
+  /** Half the axis box: the axis centres its spine, so this much of it is empty. */
+  function crossOf(axis: Emitted): number {
+    return axisThickness(Number(axis.props.thickness)) / 2;
+  }
+
+  test('pulls the rotated axis back by its whole empty half, putting the spine on the rail', () => {
+    const cross = crossOf(AXES[1]);
+    // units(8) = 64, halved.
+    expect(cross).toBe(32);
+    expect(cross % UNIT).toBe(0);
+
+    const wrappers = TREE.filter((n) => n.kind === 'div' && classOf(n).includes('shrink-0'));
+    expect(wrappers).toHaveLength(1);
+    expect(classOf(wrappers[0]).split(' ')).toContain(`-ml-${cross / 4}`);
+    expect(classOf(wrappers[0]).split(' ')).toContain('-ml-8');
+  });
+
+  test('pulls the label row up through half the canvas below the horizontal spine', () => {
+    // Nothing is drawn below the spine — the ticks run upward — so the whole
+    // lower half of the box, `box - cross`, is empty. Taking half of it back
+    // leaves the labels clear of the spine without touching it.
+    const cross = crossOf(AXES[0]);
+    const belowSpine = axisThickness(Number(AXES[0].props.thickness)) - cross;
+    expect(belowSpine).toBe(32);
+    expect(belowSpine % UNIT).toBe(0);
+
+    const rows = TREE.filter((n) => n.kind === 'div' && classOf(n).includes('relative -mt-'));
+    expect(rows).toHaveLength(1);
+    expect(classOf(rows[0]).split(' ')).toContain(`-mt-${belowSpine / 2 / 4}`);
+    expect(classOf(rows[0]).split(' ')).toContain('-mt-4');
+  });
+});
+
+/**
+ * The single most important thing spec section 5 asked for: below md the axis
+ * ROTATES, rather than the md:overflow-x-auto horizontal-scroll fallback it
+ * replaced. Asserting the two orientations alone does not pin it — both axes
+ * rendering at every breakpoint, or the two gates swapped, leaves the
+ * orientations unchanged.
+ */
+describe('KickstartFlow rotates at the breakpoint', () => {
+  function axesUnder(gate: string): Emitted[] {
+    const branches = TREE.filter((n) => n.kind === 'div' && classOf(n).split(' ').includes(gate));
+    expect(branches).toHaveLength(1);
+    return emitted(branches[0].props.children).filter((n) => n.kind === 'Axis');
+  }
+
+  test('shows only the horizontal axis at md and up', () => {
+    const branch = axesUnder('md:block');
+    expect(branch.map((a) => a.props.orientation)).toEqual(['horizontal']);
+  });
+
+  test('shows only the rotated axis below md', () => {
+    const branch = axesUnder('md:hidden');
+    expect(branch.map((a) => a.props.orientation)).toEqual(['vertical']);
+  });
+
+  test('gates every axis, so neither breakpoint renders both', () => {
+    // The two branches partition the axes: one each, two in total.
+    expect(axesUnder('md:block').length + axesUnder('md:hidden').length).toBe(AXES.length);
+    expect(AXES).toHaveLength(2);
+  });
+
+  test('never falls back to a horizontal scroll', () => {
+    for (const node of TREE) expect(classOf(node)).not.toMatch(/overflow-x/);
   });
 });
 
