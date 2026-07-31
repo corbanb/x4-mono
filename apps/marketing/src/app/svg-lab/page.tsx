@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import type { Metadata } from 'next';
+import { Axis } from '@/components/svg/Axis';
 import { Diagram } from '@/components/svg/Diagram';
 import { DrawPath } from '@/components/svg/DrawPath';
 import { STROKE, STROKE_ATTRS, stationOffsets, units } from '@/components/svg/grid';
@@ -84,6 +85,36 @@ export default function SvgLabPage() {
           ))}
           <Terminal x={units(112)} y={units(5)} delay={0.8} className="text-violet-glow" />
         </Diagram>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+          Axis — horizontal, six stations, accent terminal
+        </h2>
+        <Axis
+          orientation="horizontal"
+          length={units(120)}
+          count={6}
+          terminal
+          className="text-border"
+        />
+      </section>
+
+      <section className="max-w-xs space-y-4">
+        <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+          Axis — vertical, eight stations, all filled
+        </h2>
+        {/* 448 across 8 stations is 64 exactly. The brief's units(60) would snap
+            to a 72/64/72/64 rhythm — evenly spaced stations require
+            length / (count - 1) to be a multiple of UNIT. */}
+        <Axis
+          orientation="vertical"
+          length={units(56)}
+          count={8}
+          filled={Array(8).fill(true)}
+          terminal
+          className="text-border"
+        />
       </section>
     </main>
   );
