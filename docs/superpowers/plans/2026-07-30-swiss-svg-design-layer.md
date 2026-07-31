@@ -37,6 +37,15 @@ Verification therefore splits by what each unit actually is:
 
 This is deliberate. Do not write assertion-free "tests" against React components to satisfy a TDD habit — a test that renders a component and asserts nothing verifies nothing, and for a visual redesign the browser _is_ the test.
 
+**Amended after Task 4 — this section was too pessimistic.** A component in this layer is a pure function returning an element tree, so you can **call it directly and walk the returned tree**, asserting on the elements and props it emits. That needs no jsdom, no testing-library, and no new dependency, and it caught two mutations that source-text assertions let through. Where a primitive's output is geometry, the strongest form is to export the pure geometry function (as Task 4 did with `fillPath`) and assert on the path data it emits.
+
+Two rules learned the hard way there, both of which produced tests that passed against broken code:
+
+- **Never derive an expected value from the same expression the implementation uses.** Hand-enumerate it. A test that recomputes `Math.round(size / FILL_PITCH) + 1` catches nothing.
+- **Never assert on source text** — a regex over the file passes while the emitted output is wrong. Assert on what the component or function actually returns.
+
+Browser verification is still required for anything visual (layout, colour, stagger, reduced motion). These tests complement it; they do not replace it.
+
 **Dev server (§9):** dependencies are already installed per-workspace (`apps/marketing/node_modules/.bin/next` exists) — do not run `bun install`. The sandbox blocks port listening, so the dev server must be started with `dangerouslyDisableSandbox: true`. The user approved this during brainstorming.
 
 **Port 3011, not the usual 3001.** Discovered during Task 2: port 3001 — this app's normal `PORT_MARKETING` default — is held on this machine by an unrelated local project's API, which answers requests rather than refusing them. Pointing a browser check at 3001 would silently verify against the wrong server. Every task in this plan uses **3011**.
