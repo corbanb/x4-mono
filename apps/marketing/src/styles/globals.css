@@ -199,3 +199,21 @@
     transform: translateX(-50%);
   }
 }
+
+/* Reduced motion: pin every diagram to its final drawn state.
+
+   This lives in CSS rather than in the SVG primitives because motion's
+   useReducedMotion() returns null during SSR, so a JS-derived value renders an
+   undrawn first frame for reduced-motion visitors and creates a server/client
+   hydration mismatch for exactly those users. A media query is present in the
+   server HTML with zero JS, so the drawn state is correct on first paint.
+
+   This overrides motion's path drawing, which is applied via setAttribute() —
+   presentation attributes, the lowest tier of the cascade. !important is
+   belt-and-braces in case a future version switches to inline styles. */
+@media (prefers-reduced-motion: reduce) {
+  [data-x4-diagram] * {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}

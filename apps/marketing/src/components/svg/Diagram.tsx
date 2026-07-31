@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useRef, type ReactNode } from 'react';
-import { useInView, useReducedMotion } from 'motion/react';
+import { useInView } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { viewBox } from './grid';
 
@@ -9,22 +9,19 @@ interface DiagramState {
   /**
    * True when children should render their final, fully-drawn state.
    *
-   * Already folds in the reduced-motion preference, which is why the raw
-   * in-view flag is deliberately NOT exposed: a primitive that gated on
-   * "has it scrolled into view" alone would animate for a visitor who asked
-   * for no animation. There is no way to read the un-folded value, so there
-   * is no way to forget (spec section 4.6).
+   * Purely a viewport signal. Reduced motion is deliberately NOT folded in here
+   * and is not exposed at all — it is handled entirely in CSS (see the
+   * data-x4-diagram rule in globals.css). Primitives therefore carry no
+   * reduced-motion logic and cannot forget a rule they never touch.
    */
   drawn: boolean;
-  /** True when the visitor asked for reduced motion — suppress the transition. */
-  reduced: boolean;
 }
 
 /**
  * Defaults are deliberately "already drawn, no motion" so a primitive rendered
  * outside a Diagram degrades to its final state rather than staying invisible.
  */
-const DiagramContext = createContext<DiagramState>({ drawn: true, reduced: true });
+const DiagramContext = createContext<DiagramState>({ drawn: true });
 
 export function useDiagram(): DiagramState {
   return useContext(DiagramContext);
@@ -48,22 +45,27 @@ interface DiagramProps {
 }
 
 /**
- * Responsive SVG wrapper and the single place viewport state and reduced-motion
- * preference are resolved (spec section 4.6), so an individual surface cannot
- * forget to honor either.
+ * Responsive SVG wrapper and the single place viewport state is resolved (spec
+ * section 4.6), so an individual surface cannot forget to honor it.
+ *
+ * The data-x4-diagram attribute is load-bearing, not a test hook: it is the
+ * selector the reduced-motion rule in globals.css targets. Reduced motion is
+ * handled in CSS rather than here because motion's useReducedMotion() returns
+ * null during SSR, so a JS-derived value would render an undrawn first frame
+ * for exactly the visitors who asked not to see motion.
  *
  * aria-hidden because all meaningful labels live in HTML (spec section 4.4) —
  * the SVG carries geometry, not content a screen reader needs.
  */
 export function Diagram({ width, height, fluid = true, className, children }: DiagramProps) {
   const ref = useRef<SVGSVGElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-50px' });
-  const reduced = useReducedMotion() ?? false;
+  const drawn = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <DiagramContext.Provider value={{ drawn: reduced || inView, reduced }}>
+    <DiagramContext.Provider value={{ drawn }}>
       <svg
         ref={ref}
+        data-x4-diagram=""
         viewBox={viewBox(width, height)}
         width={fluid ? undefined : width}
         height={fluid ? undefined : height}
