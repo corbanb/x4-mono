@@ -83,7 +83,7 @@ export function Diagram({ width, height, fluid = true, className, children }: Di
         className={cn(
           'block',
           fluid
-            ? 'h-auto w-full [--x4-stroke-scale:1.8] sm:[--x4-stroke-scale:1.3] md:[--x4-stroke-scale:1]'
+            ? 'h-auto w-full [--x4-stroke-scale:1.6] sm:[--x4-stroke-scale:1.3] md:[--x4-stroke-scale:1]'
             : '[--x4-stroke-scale:1]',
           className,
         )}
