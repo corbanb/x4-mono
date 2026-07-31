@@ -282,17 +282,34 @@ describe('Timeline offsets are keyed to the axis box', () => {
     }
   });
 
-  test('sets the terminal line on the same rail as the labels', () => {
-    // The label column starts one gap past the axis box, and the box extends
-    // `cross` past the spine: 32 + 8. The terminal line is in normal flow rather
-    // than positioned, so it reaches that column through padding instead.
+  test('starts the terminal line on the spine rail, not on the label column', () => {
+    // The axis wrapper is pulled back by the whole empty half of its box, so the
+    // spine — and the accented terminal drawn ON the spine — sit on the
+    // container's own content edge. The terminal line continues that accent, so
+    // it starts from the same edge: no left offset of any kind.
+    //
+    // It used to be indented by `cross + gap` onto the label column, which read
+    // as the next entry in the list of milestones but put the one accented line
+    // of type 40px to the RIGHT of the accented mark it continues. Pinned here
+    // because it is the rule KickstartFlow's `/x4:work` rail follows too, and
+    // the two surfaces drifted apart on exactly this once already.
     const [gap] = TREE.filter((n) => 'gap' in styleOf(n)).map((n) => Number(styleOf(n).gap));
     expect(gap).toBe(8);
+    expect(gap % UNIT).toBe(0);
 
     const accent = accentLine(TREE);
-    expect(styleOf(accent).paddingLeft).toBe(cross + gap);
-    expect(styleOf(accent).paddingLeft).toBe(40);
-    expect(Number(styleOf(accent).paddingLeft) % UNIT).toBe(0);
+    expect(styleOf(accent).paddingLeft).toBeUndefined();
+    expect(styleOf(accent).marginLeft).toBeUndefined();
+
+    // Nor through a class — `mt-*` is vertical and allowed, any left inset is not.
+    const inset = classOf(accent)
+      .split(' ')
+      .filter((c) => /^-?(p|m)[lsx]-/.test(c));
+    expect(inset).toEqual([]);
+
+    // The rail it lands on is the one the axis wrapper pulls the spine onto.
+    const [wrapper] = TREE.filter((n) => n.kind === 'div' && classOf(n).includes('shrink-0'));
+    expect(styleOf(wrapper).marginLeft).toBe(-cross);
   });
 });
 

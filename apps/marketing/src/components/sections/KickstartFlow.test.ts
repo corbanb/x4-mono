@@ -205,6 +205,32 @@ describe('KickstartFlow offsets are keyed to the axis box', () => {
     expect(classOf(rows[0]).split(' ')).toContain(`-mt-${belowSpine / 2 / 4}`);
     expect(classOf(rows[0]).split(' ')).toContain('-mt-4');
   });
+
+  test('sets the rotated label gap to one unit, matching Timeline', () => {
+    // The axis box runs `cross` past the spine while the ticks stop one unit
+    // short of its edge, so a gap of units(1) leaves the type units(2) clear of
+    // the tick end. This was `gap-4` — units(2), so units(3) of clearance —
+    // against Timeline's units(1) for the same orientation, the same thickness
+    // and the same units(2) tick. Compared side by side at 375, the wider value
+    // makes the tick read as a floating dash between two rails instead of the
+    // mark the line of type hangs off, so Timeline's value won.
+    //
+    // Pinned as a style rather than a class on purpose: the number is one unit
+    // inside a clearance the Axis derives from `thickness`, so it has to move
+    // when the thickness does, and a `gap-2` class would silently stay put.
+    const rows = TREE.filter((n) => 'gap' in styleOf(n));
+    expect(rows).toHaveLength(1);
+    expect(classOf(rows[0]).split(' ')).toContain('md:hidden');
+    expect(Number(styleOf(rows[0]).gap)).toBe(UNIT);
+    expect(Number(styleOf(rows[0]).gap)).toBe(8);
+
+    // And no Tailwind gap class left behind to fight it.
+    expect(
+      classOf(rows[0])
+        .split(' ')
+        .filter((c) => /^gap-/.test(c)),
+    ).toEqual([]);
+  });
 });
 
 /**

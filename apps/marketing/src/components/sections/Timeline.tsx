@@ -226,8 +226,22 @@ export function Timeline({ milestones = MILESTONES }: TimelineProps = {}) {
             which is exported and would place it exactly on the mark — the mark
             sits units(2) past the final station, which is INSIDE the final label
             block, so registering the type there would drop it on top of the
-            milestone it follows. Left edge on the label column instead, from the
-            same two constants the column is built from.
+            milestone it follows.
+
+            Flush to the content rail, which is the SPINE rail: the axis is
+            pulled back by `AXIS_CROSS` above, so the spine and the terminal
+            square drawn on it both sit on this same left edge, as does the
+            heading. This used to be indented to the label column
+            (`AXIS_CROSS + LABEL_GAP`), which read as the next entry in the list
+            of milestones — defensible, but it put the one accented line of type
+            40px to the RIGHT of the accented mark it continues, so the accent
+            jumped sideways at exactly the moment it is meant to carry through.
+            KickstartFlow's `/x4:work` rule was already on its spine rail, and
+            that is the rail this rule now states for both surfaces: the accent
+            continuation starts where the spine starts, because the terminal it
+            continues is drawn on the spine. It is also the only rail that
+            survives the axis rotating — a horizontal axis has a label row, not
+            a label column, so there is no column edge to align to at md and up.
 
             The margin carries an assumption worth stating, because it is not
             derived: labels are absolutely positioned, so they do not size their
@@ -238,10 +252,7 @@ export function Timeline({ milestones = MILESTONES }: TimelineProps = {}) {
             margin is not the fix: the label column needs a min-height, or the
             caption needs the terminal room a `terminalOffset` prop would give
             it. Nothing in the copy is near that today. */}
-        <p
-          className="mt-12 font-mono text-xs uppercase tracking-widest text-violet-glow"
-          style={{ paddingLeft: AXIS_CROSS + LABEL_GAP }}
-        >
+        <p className="mt-12 font-mono text-xs uppercase tracking-widest text-violet-glow">
           {shipped} shipped · you are here
         </p>
       </div>

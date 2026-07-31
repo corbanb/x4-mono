@@ -76,6 +76,28 @@ const AXIS_THICKNESS = units(8);
 /** Three greys, no accent: the axis is structure, the terminal supplies the one accent. */
 const AXIS_COLOR = 'text-muted-foreground';
 
+/**
+ * Space between the vertical axis box and the label column.
+ *
+ * The box extends units(4) past the spine while the ticks stop units(3) past it,
+ * so this is one unit narrower than the clearance it buys: at units(1) the type
+ * starts units(2) after the tick ends.
+ *
+ * This was `gap-4` — units(2), so type units(3) clear of the tick — while
+ * Timeline used units(1) for the same orientation, the same thickness and the
+ * same units(2) tick. Two distances for one relationship, and only one of them
+ * argued. Compared side by side at 375: at units(2) the tick reads as a floating
+ * dash between two rails, at units(1) it reads as the mark the line of type
+ * hangs off, which is the one thing this label has to do. Timeline's value, and
+ * Timeline's reasoning, applied here.
+ *
+ * Written as a unit multiple rather than a `gap-2` class for the same reason
+ * Timeline writes it that way: the number is one unit inside a clearance the
+ * Axis derives from `thickness`, so a thickness change has to move it, and a
+ * Tailwind spacing class would silently stay put.
+ */
+const LABEL_GAP = units(1);
+
 const METRICS = axisMetrics(AXIS_LENGTH, FLOW_STEPS.length, true);
 const METRICS_MOBILE = axisMetrics(AXIS_LENGTH_MOBILE, FLOW_STEPS.length, true);
 
@@ -184,7 +206,7 @@ export function KickstartFlow() {
 
         {/* Below md the axis ROTATES rather than falling back to a horizontal
             scroll trap. Same primitive, one prop. */}
-        <div className="flex gap-4 md:hidden">
+        <div className="flex md:hidden" style={{ gap: LABEL_GAP }}>
           {/* A vertical Axis is centred in its box, so half its width is empty
               canvas to the left of the line. Pulling back by units(4) puts the
               SPINE on the content edge, which is the line the /x4:work rule and
