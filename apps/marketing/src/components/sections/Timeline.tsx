@@ -92,10 +92,19 @@ function axisLength(count: number): number {
 }
 
 /**
- * units(8) rather than the units(6) default, matching KickstartFlow so tick
- * weight is identical across the two pilot surfaces. It leaves the ticks units(2)
- * long — the length marks.tsx itself defaults to — where units(6) leaves them
- * units(1), a speck against a two-line label.
+ * units(8), matching KickstartFlow so tick weight is identical across the two
+ * pilot surfaces — and matching what Axis now defaults to, since both surfaces
+ * overrode the old units(6) floor on the same ground and the default moved to
+ * meet them. It leaves the ticks units(2) long, the length marks.tsx itself
+ * defaults to, where the floor leaves them units(1): a speck against a two-line
+ * label.
+ *
+ * Stated explicitly rather than left to the default because this surface DERIVES
+ * from it: AXIS_CROSS below is half of this value, so the pull-back that puts
+ * the spine on the content rail and the box the Axis actually draws come from
+ * one input. Dropping the prop would leave the two agreeing by coincidence, and
+ * a later default change would slide the spine off the rail with nothing
+ * failing.
  */
 const AXIS_THICKNESS = units(8);
 

@@ -65,11 +65,20 @@ const AXIS_LENGTH = units(120);
 const AXIS_LENGTH_MOBILE = units(70);
 
 /**
- * units(8) rather than the units(6) default, so the ticks come out units(2)
- * long — the length marks.tsx itself defaults to. At units(6) the leftover room
- * makes them units(1), and a 8px tick under a 200px label column reads as a
- * speck rather than as the mark that registers the label to the axis. Same
- * value in both orientations so tick weight does not change at the breakpoint.
+ * units(8), which is also what Axis now defaults to — this surface and Timeline
+ * both overrode the old units(6) floor on the same ground, so the default moved
+ * to meet them. At the floor the leftover room makes a tick units(1) long, and
+ * an 8px tick under a 200px label column reads as a speck rather than as the
+ * mark that registers the label to the axis; units(8) leaves it units(2), the
+ * length marks.tsx itself defaults to.
+ *
+ * Stated explicitly rather than left to the default because this surface DERIVES
+ * from it: AXIS_CROSS below is half of this value, so the pull-back that puts
+ * the spine on the content rail and the box the Axis actually draws come from
+ * one input. Dropping the prop would leave the two agreeing by coincidence, and
+ * a later default change would slide the spine off the rail with nothing
+ * failing. Same value in both orientations, so tick weight does not change at
+ * the breakpoint.
  */
 const AXIS_THICKNESS = units(8);
 
