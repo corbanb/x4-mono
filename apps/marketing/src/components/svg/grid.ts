@@ -1,8 +1,15 @@
 /**
  * Swiss grid constants and coordinate math.
  *
- * Every SVG coordinate in this design layer is a multiple of UNIT. Authoring
- * sites call snap() rather than rounding by hand so the rule holds in one place.
+ * Every station and layout coordinate in this design layer — the positions marks
+ * and paths are placed AT — is a multiple of UNIT. Authoring sites call snap()
+ * rather than rounding by hand so the rule holds in one place.
+ *
+ * The rule governs anchors, not every number inside a path's `d`. A mark's
+ * internal geometry is sub-unit by necessity: a square centered on an anchor
+ * starts at `x - size / 2`, and the serpentine that inks a solid square steps by
+ * half a unit so its runs overlap (see marks.tsx). Snapping those to the 8-grid
+ * would collapse the shape — do not "fix" them.
  */
 
 /** Base grid unit, in user-space px. */

@@ -59,8 +59,12 @@ function squarePath(x: number, y: number, size: number): string {
  * a set of lines blinking on in sequence. Coordinates here are sub-unit by
  * necessity; the multiple-of-UNIT rule governs where a mark is anchored, not the
  * internal geometry that renders it (the same way `x - size / 2` is off-grid).
+ *
+ * Exported for its tests rather than for call sites: it is a pure
+ * (x, y, size) => string, so its geometry — run count, pitch, span, and where
+ * the last run lands — can be asserted directly from the emitted path data.
  */
-function fillPath(x: number, y: number, size: number): string {
+export function fillPath(x: number, y: number, size: number): string {
   const half = size / 2;
   const left = x - half;
   const right = x + half;
@@ -135,10 +139,16 @@ interface NodeProps extends MarkTiming {
  * doing the same job a circle would, and circles are not in this vocabulary.
  *
  * The solid variant is the outline plus the serpentine fill, both on the same
- * clock, so the square inks in as its edge is drawn. Outline and fill have
- * identical outer bounds (a hairline overhangs the perimeter by half its width,
- * and the serpentine's first and last runs overhang by the same amount), so a
- * solid node and a hollow one are exactly the same size.
+ * clock, so the square inks in as its edge is drawn.
+ *
+ * A solid node and a hollow one are exactly the same size because the solid one
+ * always renders the outline too, and the outline is what sets the bounds. The
+ * serpentine alone would be narrower: its runs terminate flush at the left and
+ * right edges with butt caps, so it spans exactly `size` horizontally, while the
+ * outline's stroke overhangs the perimeter by half a hairline on every side.
+ * Vertically the two agree — the serpentine's first and last runs overhang by
+ * that same half hairline, which is why the fill reaches the outline's top and
+ * bottom edges rather than stopping short of them.
  */
 export function Node({
   x,

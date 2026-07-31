@@ -5,7 +5,11 @@ import { STROKE, STROKE_ATTRS, type StrokeWeight } from './grid';
 import { useDiagram } from './Diagram';
 
 interface DrawPathProps {
-  /** SVG path data. All coordinates must be grid-snapped. */
+  /**
+   * SVG path data. The anchors a path is placed at must be grid-snapped; the
+   * geometry inside the path need not be, and for marks it deliberately is not
+   * (see grid.ts and marks.tsx).
+   */
   d: string;
   weight?: StrokeWeight;
   /** Seconds to delay the draw. Derive from normalized axis position, not array index. */
