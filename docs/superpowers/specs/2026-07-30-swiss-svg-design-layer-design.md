@@ -102,6 +102,17 @@ deliberate visual seam, which is the evidence for or against the follow-up token
 | `Diagram.tsx`  | Responsive `<svg>` wrapper. Owns the `useInView({ once: true })` trigger **and** the `prefers-reduced-motion` check; publishes both via context.               | `grid.ts`                |
 | `DrawPath.tsx` | Animated path primitive. `pathLength="1"` normalization so dasharray math is scale-independent; animates `strokeDashoffset` 1 → 0. Consumes `Diagram` context. | `grid.ts`, `Diagram.tsx` |
 | `marks.tsx`    | Node vocabulary: `Node`, `Junction`, `Terminal`, `Tick`. Grid-registered, square, hairline.                                                                    | `grid.ts`                |
+| `Axis.tsx`     | The station axis. `orientation: 'horizontal' \| 'vertical'`, a station array, and an optional accent terminal. Both pilots and the hero are instances of this. | all of the above         |
+
+`Axis.tsx` is the reason step 1 in §8 is serial. Both pilot surfaces are axes and so is the
+hero: if the axis is not a step-1 primitive, Agent A builds a horizontal one inside
+`KickstartFlow`, Agent B builds a vertical one inside `Timeline`, and the hero extracts a third —
+exactly the "agents inventing separate grids" failure §8 exists to prevent. It must be built and
+browser-verified before the fan-out contract is frozen.
+
+**Every primitive accepts `className`.** Since all color is `currentColor` driven by Tailwind
+text utilities (§4.3), `className` pass-through _is_ the color mechanism — a primitive that
+swallows it cannot be recolored.
 
 **Motion characteristics:** draw ~0.8s, stagger 0.06s between elements, linear-ish easing.
 **No spring, no bounce, no overshoot** — Swiss motion does not oscillate.
@@ -133,8 +144,10 @@ one of 6 hardcoded hexes; below, a `/x4:work` command chip and a 3-cell "Three w
   `rounded-2xl` cards become hairline-ruled grid cells.
 
 **Animation:** on enter, the baseline draws left→right; each station's tick fires as the draw
-front passes it. Stagger is derived from **x-position, not array index** — the animation follows
-the geometry, so reordering or adding a station cannot desync it.
+front passes it. Stagger is derived from **normalized position along the axis (0→1), not array
+index** — the animation follows the geometry, so reordering or adding a station cannot desync it.
+Position-along-axis rather than raw x-coordinate, because the vertical mobile variant below gives
+every station the same x.
 
 **Mobile:** the current `md:overflow-x-auto` is a horizontal-scroll shrug. Instead the axis
 **rotates** — vertical baseline below `md`, identical primitives, draw runs top→bottom. Same
@@ -171,14 +184,14 @@ primitive from §5, with the typed phrase feeding station 1 and the accent marki
 terminal. The current fake input and green plan card are replaced by a diagram carrying the same
 information.
 
-Requirement this places on §4: the horizontal axis primitive must support a variable station
-count and an input feed at station 1 without a rewrite.
+Requirement this places on §4: `Axis.tsx` must support a variable station count and an input feed
+at station 1 without a rewrite.
 
 ## 8. Build order
 
 The serial/parallel split matters — this is the instruction for any agent fan-out.
 
-1. **Serial — primitives.** The four files in §4.5, built and _rendered in a browser_ before
+1. **Serial — primitives.** The five files in §4.5, built and _rendered in a browser_ before
    anything consumes them. The frozen API is the hand-off contract.
 2. **Parallel — two agents, one per surface.** Agent A: `KickstartFlow`. Agent B: `Timeline`.
    Zero file overlap; both only _read_ `svg/`. This is the safe fan-out.
@@ -187,19 +200,39 @@ The serial/parallel split matters — this is the instruction for any agent fan-
 **Do not parallelize step 3.** Four agents inventing four grids is the failure mode; the hero's
 entire value is reusing what steps 1–2 proved.
 
+**Escape hatch — the rule that keeps step 2 safe.** "Both only read `svg/`" holds only while the
+frozen API is sufficient. The realistic failure is a surface agent hitting a missing primitive
+mid-task and either editing `svg/` (creating the write conflict this split rules out) or inlining
+a one-off (defeating the point of the pilot). Neither is allowed: **a surface agent that needs a
+primitive change stops and reports it; primitive changes serialize back through step 1.**
+
 ## 9. Verification
 
 Visual work that is never rendered is the failure mode. "It type-checks" verifies nothing about
 a redesign.
 
-**Environment constraint:** this sandbox blocks both `bun install` and port listening (EPERM).
-Resolved during brainstorming: **the dev server runs with `dangerouslyDisableSandbox`**, then
-Playwright MCP drives `localhost:3001`.
+**Environment constraint:** this sandbox blocks port listening (EPERM). Resolved during
+brainstorming: **the dev server runs with `dangerouslyDisableSandbox`**, then Playwright MCP
+drives `localhost:3001`.
+
+Dependencies are **already installed** in this workspace (verified 2026-07-30), per-workspace
+rather than hoisted — `apps/marketing/node_modules/.bin/next` exists. So the sandbox's `bun
+install` restriction does not block verification, and no install step is needed. This breaks if
+someone adds a dependency, which §2 decision 6 forbids anyway.
+
+**Step-1 spike, before either surface agent starts.** §4.2 stacks `pathLength="1"` +
+`stroke-dasharray`/`strokeDashoffset` + `vector-effect="non-scaling-stroke"` on the same elements.
+`pathLength` + dasharray is well-supported; `non-scaling-stroke` + dasharray is where
+cross-browser inconsistency lives, because the dash pattern is computed in user space but stroked
+in device space. Verify one `DrawPath` **in Safari specifically** during step 1. If it misbehaves,
+the fallback is dropping `non-scaling-stroke` and scaling `stroke-width` per breakpoint instead —
+a call to make once in the primitive, not twice in two surfaces.
 
 Per surface, before it is called done:
 
 - Screenshot at **1440** and **375**.
-- Reduced-motion pass — confirm the final drawn state renders with no animation.
+- Reduced-motion pass — confirm the final drawn state renders with no animation. Emulated via
+  Playwright `emulateMedia({ reducedMotion: 'reduce' })`.
 - Confirm the `whileInView` trigger actually fires on scroll (not already-fired on load).
 
 Repo gates: `bun turbo type-check` and `bun turbo lint` (the `eslint-plugin-boundaries` step)
