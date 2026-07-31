@@ -4,7 +4,7 @@
 
 **Goal:** Build a Swiss-influenced SVG design language for `apps/marketing` and prove it on two surfaces — `KickstartFlow` and `Timeline`.
 
-**Architecture:** Five primitives in `apps/marketing/src/components/svg/` (grid math, an SVG wrapper owning viewport + reduced-motion state, an animated path, a mark vocabulary, and a station axis). Two pilot surfaces consume them. Primitives are built serially and frozen before the surfaces fan out, because both surfaces and the future hero are all instances of the same axis.
+**Architecture:** Five primitives in `apps/marketing/src/components/svg/` (grid math, an SVG wrapper owning viewport state, an animated path, a mark vocabulary, and a station axis). Two pilot surfaces consume them. Primitives are built serially and frozen before the surfaces fan out, because both surfaces and the future hero are all instances of the same axis.
 
 **Tech Stack:** Next.js 15 App Router, React 19, `motion` 12.34 (already installed), Tailwind v4, TypeScript 5.6, Bun test runner.
 
@@ -20,7 +20,7 @@
 - **Every coordinate is a multiple of `UNIT = 8`.** Off-grid coordinates are a review failure. (§4.1)
 - **Three greys + one accent.** `border` / `muted-foreground` / `foreground`, plus violet **only** on the active/terminal/changed element. If a diagram has no such element it renders fully greyscale. (§4.3)
 - **Motion never oscillates.** No spring, no bounce, no overshoot. Draw ~0.8s, stagger 0.06s, linear easing. (§4.5)
-- **`prefers-reduced-motion: reduce` renders the final drawn state on first paint**, checked in exactly one place (`Diagram.tsx`). (§4.6)
+- **`prefers-reduced-motion: reduce` renders the final drawn state on first paint**, enforced in exactly one place: the `[data-x4-diagram]` CSS rule in `globals.css`. Primitives carry no reduced-motion logic. (§4.6)
 - **Labels stay in HTML** except grid-registered numerals and ticks. (§4.4)
 - **Do not touch** `glow` / `glass` / `noise` / gradient utilities, the other five surfaces, or `packages/shared`. (§10)
 
@@ -47,9 +47,9 @@ This is deliberate. Do not write assertion-free "tests" against React components
 | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ---- |
 | `apps/marketing/src/components/svg/grid.ts`                | `UNIT`, stroke constants, shared stroke attrs, `snap()`, `units()`, `viewBox()`, `stationOffsets()`. Pure — no React, no JSX. | 1    |
 | `apps/marketing/src/components/svg/grid.test.ts`           | Unit tests for the above.                                                                                                     | 1    |
-| `apps/marketing/src/components/svg/Diagram.tsx`            | `<svg>` wrapper. Owns `useInView({ once: true })` and `useReducedMotion()`; publishes both via context.                       | 2    |
+| `apps/marketing/src/components/svg/Diagram.tsx`            | `<svg>` wrapper. Owns `useInView({ once: true })` and emits the `data-x4-diagram` marker the reduced-motion CSS rule selects. | 2    |
 | `apps/marketing/src/app/svg-lab/page.tsx`                  | Dev-only harness for rendering primitives before surfaces exist. `noindex`, unlinked. **Deleted in Task 8.**                  | 2    |
-| `apps/marketing/src/components/svg/DrawPath.tsx`           | Animated path. `pathLength` normalization, reduced-motion aware.                                                              | 3    |
+| `apps/marketing/src/components/svg/DrawPath.tsx`           | Animated path. `pathLength` normalization. Carries no reduced-motion logic — CSS handles it.                                  | 3    |
 | `apps/marketing/src/components/svg/marks.tsx`              | `Tick`, `Node`, `Terminal`, `Junction`. Grid-registered, square, hairline.                                                    | 4    |
 | `apps/marketing/src/components/svg/Axis.tsx`               | The station axis. `orientation`, variable station count, optional accent terminal. Both pilots and the hero are instances.    | 5    |
 | `apps/marketing/src/components/sections/KickstartFlow.tsx` | Rewritten as a plotted process axis.                                                                                          | 6    |
@@ -276,11 +276,12 @@ Wires bun test for the marketing workspace."
 
 - Create: `apps/marketing/src/components/svg/Diagram.tsx`
 - Create: `apps/marketing/src/app/svg-lab/page.tsx`
+- Modify: `apps/marketing/src/styles/globals.css` (append the reduced-motion rule only)
 
 **Interfaces:**
 
 - Consumes: `viewBox` from `./grid`.
-- Produces: `<Diagram width height fluid className children />`, and `useDiagram(): { drawn: boolean; reduced: boolean }`. Every animated primitive reads that context — this is the single reduced-motion checkpoint required by §4.6. The raw in-view flag is deliberately not exposed, so a primitive cannot gate on "scrolled into view" and animate past a visitor's reduced-motion preference.
+- Produces: `<Diagram width height fluid className children />`, `useDiagram(): { drawn: boolean }`, and the `[data-x4-diagram]` reduced-motion CSS rule. `drawn` is viewport state only — reduced motion never enters JS, so primitives carry no reduced-motion logic at all.
 
 - [ ] **Step 1: Write the Diagram primitive**
 
@@ -290,7 +291,7 @@ Create `apps/marketing/src/components/svg/Diagram.tsx`:
 'use client';
 
 import { createContext, useContext, useRef, type ReactNode } from 'react';
-import { useInView, useReducedMotion } from 'motion/react';
+import { useInView } from 'motion/react';
 import { viewBox } from './grid';
 import { cn } from '@/lib/utils';
 
@@ -298,22 +299,19 @@ interface DiagramState {
   /**
    * True when children should render their final, fully-drawn state.
    *
-   * Already folds in the reduced-motion preference, which is why the raw
-   * in-view flag is deliberately NOT exposed: a primitive that gated on
-   * "has it scrolled into view" alone would animate for a visitor who asked
-   * for no animation. There is no way to read the un-folded value, so there
-   * is no way to forget (spec section 4.6).
+   * Purely a viewport signal. Reduced motion is deliberately NOT folded in here
+   * and is not exposed at all — it is handled entirely in CSS (see the
+   * data-x4-diagram rule in globals.css). Primitives therefore carry no
+   * reduced-motion logic and cannot forget a rule they never touch.
    */
   drawn: boolean;
-  /** True when the visitor asked for reduced motion — suppress the transition. */
-  reduced: boolean;
 }
 
 /**
- * Defaults are deliberately "already drawn, no motion" so a primitive rendered
- * outside a Diagram degrades to its final state rather than staying invisible.
+ * Default is deliberately "already drawn" so a primitive rendered outside a
+ * Diagram degrades to its final state rather than staying invisible.
  */
-const DiagramContext = createContext<DiagramState>({ drawn: true, reduced: true });
+const DiagramContext = createContext<DiagramState>({ drawn: true });
 
 export function useDiagram(): DiagramState {
   return useContext(DiagramContext);
@@ -337,22 +335,27 @@ interface DiagramProps {
 }
 
 /**
- * Responsive SVG wrapper and the single place viewport state and reduced-motion
- * preference are resolved (spec section 4.6), so an individual surface cannot
- * forget to honor either.
+ * Responsive SVG wrapper and the single place viewport state is resolved.
+ *
+ * The data-x4-diagram marker is load-bearing, not a test hook: it is what the
+ * reduced-motion CSS rule in globals.css selects. Reduced motion is handled in
+ * CSS rather than JS because useReducedMotion() returns null during SSR — a
+ * JS-derived value would render an undrawn first frame for reduced-motion
+ * visitors and introduce a hydration mismatch for exactly those users. See
+ * spec section 4.6.
  *
  * aria-hidden because all meaningful labels live in HTML (spec section 4.4) —
  * the SVG carries geometry, not content a screen reader needs.
  */
 export function Diagram({ width, height, fluid = true, className, children }: DiagramProps) {
   const ref = useRef<SVGSVGElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-50px' });
-  const reduced = useReducedMotion() ?? false;
+  const drawn = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <DiagramContext.Provider value={{ drawn: reduced || inView, reduced }}>
+    <DiagramContext.Provider value={{ drawn }}>
       <svg
         ref={ref}
+        data-x4-diagram=""
         viewBox={viewBox(width, height)}
         width={fluid ? undefined : width}
         height={fluid ? undefined : height}
@@ -374,7 +377,31 @@ un-overridable. Add the import alongside the others:
 `import { cn } from '@/lib/utils';` — it already exists in the app and wraps
 `tailwind-merge`.
 
-- [ ] **Step 2: Create the SVG lab route**
+- [ ] **Step 2: Add the reduced-motion CSS rule**
+
+Append to `apps/marketing/src/styles/globals.css`. Do not modify any existing rule in that file — the `glow` / `glass` / `noise` / gradient utilities are out of scope (§10).
+
+```css
+/* Reduced motion: pin every diagram to its final drawn state.
+   
+   This lives in CSS rather than in the SVG primitives because motion's
+   useReducedMotion() returns null during SSR, so a JS-derived value renders an
+   undrawn first frame for reduced-motion visitors and creates a server/client
+   hydration mismatch for exactly those users. A media query is present in the
+   server HTML with zero JS, so the drawn state is correct on first paint.
+
+   This overrides motion's path drawing, which is applied via setAttribute() —
+   presentation attributes, the lowest tier of the cascade. !important is
+   belt-and-braces in case a future version switches to inline styles. */
+@media (prefers-reduced-motion: reduce) {
+  [data-x4-diagram] * {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}
+```
+
+- [ ] **Step 3: Create the SVG lab route**
 
 This is the harness for verifying primitives before any surface consumes them. It is unlinked and `noindex`, and Task 8 deletes it.
 
@@ -420,7 +447,7 @@ export default function SvgLabPage() {
 }
 ```
 
-- [ ] **Step 3: Start the dev server**
+- [ ] **Step 4: Start the dev server**
 
 The sandbox blocks port listening, so this needs the sandbox escape the user approved (§9). Do **not** run `bun install` — deps are already present.
 
@@ -430,18 +457,18 @@ Run in background with `dangerouslyDisableSandbox: true`:
 cd apps/marketing && ./node_modules/.bin/next dev --port 3011
 ```
 
-- [ ] **Step 4: Verify in the browser**
+- [ ] **Step 5: Verify in the browser**
 
 Navigate Playwright MCP to `http://localhost:3011/svg-lab`.
 
 Expected: a full-width hairline rule. Confirm via `browser_evaluate` that the rendered `<svg>` has `viewBox="0 0 960 80"` and that the `<line>` resolves to a **1px** stroke — not a scaled one. This is the first check that `non-scaling-stroke` behaves.
 
-- [ ] **Step 5: Verify the repo gates**
+- [ ] **Step 6: Verify the repo gates**
 
 Run: `bun turbo type-check --filter=@x4/marketing && bun turbo lint --filter=@x4/marketing`
 Expected: exit 0 for both.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
 git add apps/marketing/src/components/svg/Diagram.tsx apps/marketing/src/app/svg-lab/page.tsx
@@ -510,8 +537,7 @@ export function DrawPath({
   duration = 0.8,
   className,
 }: DrawPathProps) {
-  const { drawn, reduced } = useDiagram();
-  const final = { pathLength: 1 };
+  const { drawn } = useDiagram();
 
   return (
     <motion.path
@@ -521,18 +547,24 @@ export function DrawPath({
       strokeWidth={STROKE[weight]}
       className={className}
       {...STROKE_ATTRS}
-      initial={reduced ? final : { pathLength: 0 }}
-      animate={drawn ? final : { pathLength: 0 }}
-      transition={reduced ? { duration: 0 } : { duration, delay, ease: 'linear' }}
+      initial={{ pathLength: 0 }}
+      animate={{ pathLength: drawn ? 1 : 0 }}
+      transition={{ duration, delay, ease: 'linear' }}
     />
   );
 }
 ```
 
-`drawn` already folds in the reduced-motion preference, so this reads as "draw
-when told to." Under reduced motion `initial` and `animate` are both the final
-state, so nothing animates and nothing needs a zero-duration transition to hide
-it — the transition override is belt-and-braces.
+There is deliberately **no reduced-motion branch here.** Reduced motion is
+handled entirely by the CSS rule Task 2 added against `[data-x4-diagram]`, which
+pins `stroke-dasharray`/`stroke-dashoffset` to the drawn state. A primitive
+cannot forget a rule it never touches, and — unlike a JS check — the CSS is
+present in the server-rendered HTML, so the drawn state is correct on the very
+first paint rather than after hydration.
+
+`initial` and `animate` therefore depend only on viewport state, which is
+identical on server and client (both `false`), so this introduces no hydration
+mismatch.
 
 - [ ] **Step 2: Add a spike section to the lab**
 

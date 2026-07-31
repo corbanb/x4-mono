@@ -120,12 +120,32 @@ swallows it cannot be recolored.
 ### 4.6 Reduced motion
 
 `prefers-reduced-motion: reduce` renders the **final drawn state instantly**, no transition:
-`strokeDashoffset: 0` on first paint.
+`stroke-dashoffset: 0` on first paint.
 
-Checked in exactly one place (`Diagram.tsx`) and inherited by every primitive, so a surface
-cannot forget it. The existing site has zero reduced-motion handling — `shimmer`, `animate-pulse`,
-and the marquee `scroll` keyframes are all unconditional. Fixing those is out of scope, but the
-new layer must not add to the problem.
+**Enforced in CSS, not JavaScript.** One `@media (prefers-reduced-motion: reduce)` rule in
+`globals.css`, selecting the `[data-x4-diagram]` marker that `Diagram.tsx` emits, pins
+`stroke-dasharray`/`stroke-dashoffset` to the drawn state. Primitives carry no reduced-motion
+logic at all — they cannot forget a rule they never touch, which is a stronger guarantee than
+inheriting a flag they must remember to read.
+
+This was originally specified as a JS check inside `Diagram.tsx`. That approach was found during
+implementation to be unable to satisfy this section's own requirement, for two reasons verified
+in the installed `motion` source:
+
+- `useReducedMotion()` returns `null` during SSR (`motion.dev.js:5702`), so a JS-derived value is
+  `false` in the prerendered HTML and only corrects on the client. Reduced-motion visitors would
+  get an undrawn first frame — failing "on first paint" literally — plus a server/client
+  hydration mismatch affecting exactly the users the rule exists to protect.
+- motion applies path drawing via `element.setAttribute('stroke-dasharray'/'stroke-dashoffset')`
+  (`motion.dev.js:4466,4474`). Those are presentation attributes, the lowest tier of the cascade,
+  so an ordinary CSS rule overrides them cleanly.
+
+A media query ships in the server HTML and applies with zero JavaScript, which is the only
+mechanism that satisfies "first paint" in a prerendered app.
+
+The existing site has zero reduced-motion handling — `shimmer`, `animate-pulse`, and the marquee
+`scroll` keyframes are all unconditional. Fixing those is out of scope, but the new layer must
+not add to the problem.
 
 ## 5. Pilot surface: `KickstartFlow` (`/kickstart`)
 
