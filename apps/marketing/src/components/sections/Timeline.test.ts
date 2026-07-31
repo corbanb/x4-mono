@@ -90,19 +90,44 @@ function accentLine(tree: Emitted[]): Emitted {
   return lines[0];
 }
 
+/** A milestone list of `count` entries with the one at `inFlight` unfinished. */
+function list(count: number, inFlight: number) {
+  return Array.from({ length: count }, (_, i) => ({
+    title: `Milestone ${i}`,
+    description: `Description ${i}`,
+    status: (i === inFlight ? 'in-progress' : 'complete') as 'complete' | 'in-progress',
+  }));
+}
+
 /**
- * The same surface with one milestone still in flight — the extension point the
- * `status` union exists for, and the only way to see the hollow branch, since all
- * eight real milestones are shipped. Same length as the real list, so the
- * geometry is unchanged and only the fills differ.
+ * The extension point the `status` union exists for, and the only way to see the
+ * hollow branch, since all eight real milestones are shipped.
+ *
+ * Two shapes, because they fail differently. MIXED holds the list at eight, so
+ * the geometry is identical to the page's and only the fills move. NINE is the
+ * case §6 actually describes — a ninth milestone still in flight — and it is the
+ * one that catches a fixed axis length: the pitch has to stay 112 as the list
+ * grows, or the label blocks that only just clear each other at 375 stop
+ * clearing.
  */
-const IN_FLIGHT = 5;
-const MIXED = Array.from({ length: 8 }, (_, i) => ({
-  title: `Milestone ${i}`,
-  description: `Description ${i}`,
-  status: (i === IN_FLIGHT ? 'in-progress' : 'complete') as 'complete' | 'in-progress',
-}));
+const MIXED = list(8, 5);
 const MIXED_TREE = emitted(Timeline({ milestones: MIXED }));
+const NINE_TREE = emitted(Timeline({ milestones: list(9, 8) }));
+
+/**
+ * The drawn distance between two stations, read back off the emitted values.
+ *
+ * The label tops are fractions of the container height, so the difference between
+ * two adjacent ones, times that height, is the pitch in user-space px — recovered
+ * from what the component emitted rather than recomputed from what it was given.
+ */
+function pitchOf(tree: Emitted[]): number {
+  const tops = tree
+    .filter((n) => 'top' in styleOf(n))
+    .map((n) => parseFloat(String(styleOf(n).top)));
+  const [height] = tree.filter((n) => 'height' in styleOf(n)).map((n) => Number(styleOf(n).height));
+  return Math.round(((tops[1] - tops[0]) / 100) * height);
+}
 
 describe('Timeline labels register to the axis', () => {
   test('positions the eight labels on the stations, not on an even eight-row split', () => {
@@ -124,9 +149,26 @@ describe('Timeline labels register to the axis', () => {
   });
 
   test('gives the label column the height the axis actually authored', () => {
-    // 824, not the units(98) = 784 that was asked for: one pad in front of the
-    // first station plus four units of terminal room past the last.
+    // 8 + 7 x 112 + 32 = 824: one pad in front of the first station, seven gaps,
+    // and four units of terminal room past the last.
     expect(TREE.filter((n) => 'height' in styleOf(n)).map((n) => styleOf(n).height)).toEqual([824]);
+  });
+
+  test('holds the station pitch at 112 as milestones are added', () => {
+    // The pitch is the binding constraint on this surface: it is the same number
+    // of CSS px at every viewport, and at 375 it is what keeps two-line label
+    // blocks from touching. So the axis LENGTH has to grow with the list — with
+    // a fixed length, a ninth milestone divides the same 784 into eight gaps and
+    // the pitch drops to 96, silently.
+    //
+    // Read back off the emitted values rather than recomputed: eight stations
+    // give a canvas of 824 and tops 1/103 apart in fractions, nine give
+    // 8 + 8 x 112 + 32 = 936 and tops 112/936 apart. Both recover 112.
+    expect(pitchOf(TREE)).toBe(112);
+    expect(pitchOf(NINE_TREE)).toBe(112);
+    expect(NINE_TREE.filter((n) => 'height' in styleOf(n)).map((n) => styleOf(n).height)).toEqual([
+      936,
+    ]);
   });
 
   test('names the milestones in axis order', () => {
@@ -173,6 +215,19 @@ describe('Timeline drives the stations from status', () => {
     // in-flight station loses its serpentine and nothing else.
     expect(PATHS).toHaveLength(27);
     expect(MIXED_TREE.filter((n) => n.kind === 'DrawPath')).toHaveLength(26);
+    // Nine milestones, the last in flight: 1 + 9 + 9 + 8 + 2 = 29.
+    expect(NINE_TREE.filter((n) => n.kind === 'DrawPath')).toHaveLength(29);
+  });
+
+  test('carries a ninth, unfinished milestone with no other change', () => {
+    // The case section 6 describes, end to end: the axis takes a ninth station,
+    // the ninth label is placed on it, the station is hollow, and the count in
+    // the terminal line stays at the eight that are actually shipped.
+    const axis = NINE_TREE.filter((n) => n.kind === 'Axis')[0];
+    expect(axis.props.count).toBe(9);
+    expect(axis.props.filled).toEqual([...Array(8).fill(true), false]);
+    expect(NINE_TREE.filter((n) => 'top' in styleOf(n))).toHaveLength(9);
+    expect(textOf(accentLine(NINE_TREE))).toBe('8 shipped · you are here');
   });
 
   test('counts the shipped milestones from the same field', () => {

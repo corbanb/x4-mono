@@ -7,12 +7,18 @@ interface Milestone {
   /**
    * Shipped, or still in flight.
    *
-   * This field used to be inert: every entry was 'complete', and the markup drew
-   * the same marker either way, so it encoded a distinction the page never made.
-   * It now drives `filled` on the axis — solid station for shipped, hollow for
-   * in flight — which is the whole reason the union has two members. All eight
-   * below are accurate as 'complete'; the ninth can be added as 'in-progress'
-   * and needs no other change.
+   * The markup this replaced did branch on this field — twice, choosing between
+   * two marker colours — but the branch was statically unreachable: the type was
+   * narrowed to the literal 'complete' at every entry, so the other arm could
+   * not be reached without editing the data AND widening the type. Dead at the
+   * type level rather than absent from the markup.
+   *
+   * Two things changed. The union now has a second member, so the distinction is
+   * reachable; and it is re-encoded as FILL rather than colour — solid station
+   * for shipped, hollow for in flight — which leaves the accent free for the one
+   * element §4.3 reserves it for, the terminal. All eight below are accurate as
+   * 'complete'; the ninth can be added as 'in-progress' and needs no other
+   * change.
    */
   status: 'complete' | 'in-progress';
 }
@@ -61,17 +67,29 @@ const MILESTONES: Milestone[] = [
 ];
 
 /**
- * TARGET axis length. The Axis snaps the PITCH between stations and rebuilds the
- * span from it, so this is rarely the drawn dimension — every number below is
- * read back off `axisMetrics`, never off this constant.
+ * Distance between two stations, and the number the layout actually depends on.
  *
- * units(98) across eight stations is a pitch of 112 exactly, so nothing is
- * adjusted at all. Chosen for that, and because 112 CSS px is the smallest pitch
- * that still clears the tallest label block at 375, where a description runs to
- * three lines. A vertical axis renders at its authored size, so that pitch is the
- * same at every viewport and the narrowest one is the only place it can fail.
+ * A vertical Axis renders at its authored size, so this is 112 CSS px at every
+ * viewport, and the label blocks it has to clear are TALLEST at the narrowest
+ * one: at 375 every description wraps to two lines, giving a 76px block and 36px
+ * of clearance (measured). That is the binding constraint, so the pitch is the
+ * constant and the axis length is derived from it — the other way round, a
+ * fixed length silently shrinks the pitch as milestones are added, and the very
+ * first thing this surface advertises is that a ninth milestone can be dropped
+ * in. At a fixed units(98) that ninth entry would take the pitch to 96 and eat a
+ * third of the clearance, with nothing failing.
+ *
+ * `length` is a TARGET — the Axis snaps the pitch and rebuilds the span from it —
+ * so passing pitch x gaps is also the one input for which no adjustment happens:
+ * 112 is already a grid multiple, so `snap` returns it unchanged at any count.
+ * Every number downstream is still read back off `axisMetrics`, never off this.
  */
-const AXIS_LENGTH = units(98);
+const STATION_PITCH = units(14);
+
+/** Target length for `count` stations: the pitch, repeated across the gaps. */
+function axisLength(count: number): number {
+  return STATION_PITCH * Math.max(1, count - 1);
+}
 
 /**
  * units(8) rather than the units(6) default, matching KickstartFlow so tick
@@ -157,7 +175,8 @@ interface TimelineProps {
  * server component can reach it.
  */
 export function Timeline({ milestones = MILESTONES }: TimelineProps = {}) {
-  const metrics = axisMetrics(AXIS_LENGTH, milestones.length, true);
+  const length = axisLength(milestones.length);
+  const metrics = axisMetrics(length, milestones.length, true);
   const complete = milestones.map((m) => m.status === 'complete');
   const shipped = complete.filter(Boolean).length;
 
@@ -171,7 +190,7 @@ export function Timeline({ milestones = MILESTONES }: TimelineProps = {}) {
           <div className="shrink-0" style={{ marginLeft: -AXIS_CROSS }}>
             <Axis
               orientation="vertical"
-              length={AXIS_LENGTH}
+              length={length}
               count={milestones.length}
               filled={complete}
               terminal
@@ -201,11 +220,24 @@ export function Timeline({ milestones = MILESTONES }: TimelineProps = {}) {
         </div>
 
         {/* Where the axis ends up. The accented terminal is drawn past the last
-            station; this is the sentence it makes. In normal flow rather than
-            registered to the mark's own fraction: the mark sits units(2) past the
-            final station, which is inside the final label block, so anchoring the
-            type there would drop it on top of the milestone it follows.
-            Left edge on the label column, from the same two constants. */}
+            station; this is the sentence it makes.
+
+            In normal flow rather than registered to `metrics.terminalFraction`,
+            which is exported and would place it exactly on the mark — the mark
+            sits units(2) past the final station, which is INSIDE the final label
+            block, so registering the type there would drop it on top of the
+            milestone it follows. Left edge on the label column instead, from the
+            same two constants the column is built from.
+
+            The margin carries an assumption worth stating, because it is not
+            derived: labels are absolutely positioned, so they do not size their
+            container, and the last one overhangs the axis extent by however tall
+            it is past its own station — measured at 8px at 1440 and 28px at 375.
+            units(6) clears both. A THIRD line of description at 375 would take
+            the overhang to 48 and leave no clearance at all, at which point this
+            margin is not the fix: the label column needs a min-height, or the
+            caption needs the terminal room a `terminalOffset` prop would give
+            it. Nothing in the copy is near that today. */}
         <p
           className="mt-12 font-mono text-xs uppercase tracking-widest text-violet-glow"
           style={{ paddingLeft: AXIS_CROSS + LABEL_GAP }}
