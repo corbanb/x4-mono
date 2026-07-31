@@ -1260,15 +1260,14 @@ Replace the `<div className="relative mt-16">` block:
               over the span is off at both ends. */}
           <div className="relative flex-1" style={{ height: METRICS.extent }}>
             {MILESTONES.map((milestone, i) => (
-              <motion.div
+              <div
                 key={milestone.title}
-                initial={{ opacity: 0, x: -12 }}
-                animate={isInView ? { opacity: 1, x: 0 } : undefined}
-                transition={{ duration: 0.4, delay: i * 0.06 }}
+                className="absolute -translate-y-1/2"
+                style={{ top: `${METRICS.fractions[i] * 100}%` }}
               >
                 <h3 className="font-semibold text-foreground">{milestone.title}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{milestone.description}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -1278,7 +1277,9 @@ Replace the `<div className="relative mt-16">` block:
         </p>
 ```
 
-**Known limitation, deliberately not fixed here.** Those `motion.div` text entries sit _outside_ the `Diagram`, so the `[data-x4-diagram]` CSS rule does not cover them — reduced-motion visitors still get the opacity/x fade on the milestone text. This is the animation the component already has, carried over verbatim; §10 scopes out retrofitting the existing site's unconditional animations (`shimmer`, `animate-pulse`, the marquee), and this is the same class of gap. The SVG axis itself is fully covered. Do not expand scope to fix it in this task — it is recorded in the Follow-ups section.
+**The `motion.div` fade-ups are removed, matching Task 6.** They sat _outside_ the `Diagram`, so the `[data-x4-diagram]` CSS rule never covered them — and there is no `MotionConfig` anywhere in this app, so with motion's default `reducedMotion: "never"` they genuinely animated for reduced-motion visitors. Task 6 removed its equivalents and became a server component; Timeline does the same, so the two pilots differ only in the thing they exist to compare. A section fade competing with the axis draw is also precisely the decoration this layer replaces.
+
+Consequence: `useInView`/`useRef` and the `motion` import are no longer needed here, and the component should have no `'use client'` directive. Eleven other marketing files still carry the same pattern; those stay out of scope (§10).
 
 Add the imports: `import { Axis } from '@/components/svg/Axis';` and `import { units, axisMetrics } from '@/components/svg/grid';`, and declare the geometry once at module scope so the axis and its labels read from the same source:
 
@@ -1454,5 +1455,6 @@ unlinked route has no reason to ship."
 - **Hero port** (§7). `Axis` already supports a variable station count; the remaining requirement is an input feed at station 1. Needs its own plan once Task 8 confirms the primitives held.
 - **Token reskin** (§10). The deliberate seam between square SVG and `0.75rem` cards is the evidence for or against it. Decide after looking at the shipped pilots, not before.
 - **Reduced motion on the existing site.** `shimmer`, `animate-pulse`, and the marquee `scroll` keyframes remain unconditional. Out of scope here, but now inconsistent with the new layer.
-- **Reduced motion for HTML-level motion in the pilot surfaces.** The `[data-x4-diagram]` rule covers SVG inside a `Diagram` only. The `motion.div` text entries in `Timeline` (and the section fades in both surfaces) sit outside it and still animate for reduced-motion visitors. Carried over verbatim from the existing components rather than introduced, so it belongs with the item above — but note it is now the _only_ uncovered motion on the two pages this plan touches, which makes it cheaper to finish than it looks.
+- **Reduced motion for HTML-level motion across the rest of the site.** Both pilots removed their `motion.div` fades during implementation, so the two pages this plan touches are now fully covered and are server components. **Eleven other marketing files still carry the identical pattern** — and since there is no `MotionConfig` in the app, motion's default `reducedMotion: "never"` means all of them animate for reduced-motion visitors. A single `<MotionConfig reducedMotion="user">` at the layout would fix every one of them at once, which is a much cheaper fix than it looked when this was first recorded.
+- **`Axis` needs an alignment prop.** `cross = box / 2` centres the spine, leaving dead canvas on the far side that every consumer must pull back with a negative margin — and `cross` is deliberately not exported. Both pilots hit it and corrected it differently, correctly: the horizontal axis is fluid so its correction drifts with viewport, the vertical is non-fluid so a fixed-px correction is exact. Two locally-right, mutually non-transferable workarounds against an unexported derivation is the evidence that this is an API gap, not a consumer problem. An `align: 'center' | 'start'` prop removes both.
 - **CLAUDE.md correction.** It lists `@testing-library/react` as the component test pattern for `apps/web`. It is not installed anywhere in the monorepo.
