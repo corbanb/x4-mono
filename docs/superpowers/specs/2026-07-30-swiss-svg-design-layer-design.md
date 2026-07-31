@@ -213,7 +213,7 @@ a redesign.
 
 **Environment constraint:** this sandbox blocks port listening (EPERM). Resolved during
 brainstorming: **the dev server runs with `dangerouslyDisableSandbox`**, then Playwright MCP
-drives `localhost:3001`.
+drives `localhost:3011`.
 
 Dependencies are **already installed** in this workspace (verified 2026-07-30), per-workspace
 rather than hoisted — `apps/marketing/node_modules/.bin/next` exists. So the sandbox's `bun

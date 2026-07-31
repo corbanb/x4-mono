@@ -37,6 +37,10 @@ This is deliberate. Do not write assertion-free "tests" against React components
 
 **Dev server (§9):** dependencies are already installed per-workspace (`apps/marketing/node_modules/.bin/next` exists) — do not run `bun install`. The sandbox blocks port listening, so the dev server must be started with `dangerouslyDisableSandbox: true`. The user approved this during brainstorming.
 
+**Port 3011, not the usual 3001.** Discovered during Task 2: port 3001 — this app's normal `PORT_MARKETING` default — is held on this machine by an unrelated local project's API, which answers requests rather than refusing them. Pointing a browser check at 3001 would silently verify against the wrong server. Every task in this plan uses **3011**.
+
+**The dev server does not survive between tasks.** It is tied to the session that starts it, so each task that needs a browser starts its own and should not assume a previous task left one up. Check before starting: `curl -s -o /dev/null -w '%{http_code}' http://localhost:3011/`.
+
 ## File Structure
 
 | File                                                       | Responsibility                                                                                                                | Task |
@@ -288,6 +292,7 @@ Create `apps/marketing/src/components/svg/Diagram.tsx`:
 import { createContext, useContext, useRef, type ReactNode } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { viewBox } from './grid';
+import { cn } from '@/lib/utils';
 
 interface DiagramState {
   /** True once the diagram has scrolled into view. Latches — never returns to false. */
@@ -414,12 +419,12 @@ The sandbox blocks port listening, so this needs the sandbox escape the user app
 Run in background with `dangerouslyDisableSandbox: true`:
 
 ```bash
-cd apps/marketing && ./node_modules/.bin/next dev --port 3001
+cd apps/marketing && ./node_modules/.bin/next dev --port 3011
 ```
 
 - [ ] **Step 4: Verify in the browser**
 
-Navigate Playwright MCP to `http://localhost:3001/svg-lab`.
+Navigate Playwright MCP to `http://localhost:3011/svg-lab`.
 
 Expected: a full-width hairline rule. Confirm via `browser_evaluate` that the rendered `<svg>` has `viewBox="0 0 960 80"` and that the `<line>` resolves to a **1px** stroke — not a scaled one. This is the first check that `non-scaling-stroke` behaves.
 
@@ -542,7 +547,7 @@ Add to `apps/marketing/src/app/svg-lab/page.tsx`, inside `<main>` after the exis
 
 - [ ] **Step 3: Verify the draw animation**
 
-With the dev server running, navigate Playwright MCP to `http://localhost:3001/svg-lab`.
+With the dev server running, navigate Playwright MCP to `http://localhost:3011/svg-lab`.
 
 Expected: the baseline draws left to right over ~0.8s; each tick fires as the draw front reaches it. Ticks must fire **in spatial order**, and the last tick must land as the baseline completes. If ticks fire together, the delay is not being applied.
 
@@ -556,7 +561,7 @@ Expected: identical stroke weights and identical dash behavior. Specifically con
 
 - [ ] **Step 5: Verify reduced motion**
 
-Via Playwright MCP `browser_run_code_unsafe`, apply `emulateMedia({ reducedMotion: 'reduce' })`, then reload `http://localhost:3001/svg-lab`.
+Via Playwright MCP `browser_run_code_unsafe`, apply `emulateMedia({ reducedMotion: 'reduce' })`, then reload `http://localhost:3011/svg-lab`.
 
 Expected: every path renders **fully drawn on first paint**, with no animation. Screenshot to confirm.
 
@@ -729,7 +734,7 @@ Add to `apps/marketing/src/app/svg-lab/page.tsx`, and import: `import { Junction
 
 - [ ] **Step 3: Verify in the browser**
 
-Navigate Playwright MCP to `http://localhost:3001/svg-lab` and screenshot.
+Navigate Playwright MCP to `http://localhost:3011/svg-lab` and screenshot.
 
 Expected: hollow square, filled square, cross, and a violet filled square. **Every corner is square** — if anything renders rounded, a `rx`/`ry` or a `linecap` leaked in. Confirm the `Terminal` is the only colored element.
 
@@ -899,7 +904,7 @@ Add to `apps/marketing/src/app/svg-lab/page.tsx`, and import: `import { Axis } f
 
 - [ ] **Step 3: Verify both orientations**
 
-Navigate Playwright MCP to `http://localhost:3001/svg-lab` and screenshot.
+Navigate Playwright MCP to `http://localhost:3011/svg-lab` and screenshot.
 
 Expected: the horizontal axis draws left to right with six evenly spaced stations and a violet terminal square at the end; the vertical axis draws top to bottom with eight filled stations and a violet terminal at the bottom. In both, the terminal is the **only** colored element.
 
@@ -1048,7 +1053,7 @@ Replace the `rounded-2xl` card classes in the `PLANNING_MODES.map` with hairline
 
 - [ ] **Step 5: Verify at both breakpoints**
 
-With the dev server running, navigate Playwright MCP to `http://localhost:3001/kickstart`.
+With the dev server running, navigate Playwright MCP to `http://localhost:3011/kickstart`.
 
 - Screenshot at **1440**: horizontal axis, six stations, labels aligned under their stations, violet terminal.
 - Resize to **375** and screenshot: axis is **vertical**, labels to its right, and **no horizontal scrollbar**. Confirm via `browser_evaluate` that `document.documentElement.scrollWidth <= window.innerWidth`.
@@ -1155,7 +1160,7 @@ The `cn` import may now be unused — if so, remove it, since lint will flag it.
 
 - [ ] **Step 3: Verify at both breakpoints**
 
-Navigate Playwright MCP to `http://localhost:3001/about`.
+Navigate Playwright MCP to `http://localhost:3011/about`.
 
 - Screenshot at **1440**: hairline vertical axis, 8 filled nodes, type flush-left off each, violet terminal at the bottom with the "shipped · you are here" line.
 - Resize to **375**, screenshot, and confirm the axis and text do not collide and nothing overflows horizontally.
