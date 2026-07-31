@@ -1069,8 +1069,10 @@ Define the geometry once, at module scope, so the axis and its labels read from 
 
 ```tsx
 const AXIS_LENGTH = units(120);
-/** Shared by the axis and its label row — see the Global Constraints note on fractions. */
+const AXIS_LENGTH_MOBILE = units(70);
+/** Shared by each axis and its label row — see the Global Constraints note on fractions. */
 const METRICS = axisMetrics(AXIS_LENGTH, FLOW_STEPS.length, true);
+const METRICS_MOBILE = axisMetrics(AXIS_LENGTH_MOBILE, FLOW_STEPS.length, true);
 ```
 
 ```tsx
@@ -1109,20 +1111,23 @@ const METRICS = axisMetrics(AXIS_LENGTH, FLOW_STEPS.length, true);
       <div className="flex gap-6 md:hidden">
         <Axis
           orientation="vertical"
-          length={units(70)}
+          length={AXIS_LENGTH_MOBILE}
           count={FLOW_STEPS.length}
           terminal
           thickness={units(6)}
           className="shrink-0 text-border"
         />
-        {/* Height pinned to the axis length so labels line up with stations
-            rather than with the taller canvas the terminal adds. */}
-        <div
-          className="flex flex-1 flex-col justify-between"
-          style={{ height: units(70) }}
-        >
-          {FLOW_STEPS.map((step) => (
-            <div key={step.number}>
+        {/* Positioned from fractions over METRICS_MOBILE.extent — NOT
+            justify-between over the span. Stations start one pad in and the
+            canvas grows for the terminal, so distributing label boxes evenly
+            over the span is off at both ends. */}
+        <div className="relative flex-1" style={{ height: METRICS_MOBILE.extent }}>
+          {FLOW_STEPS.map((step, i) => (
+            <div
+              key={step.number}
+              className="absolute -translate-y-1/2"
+              style={{ top: `${METRICS_MOBILE.fractions[i] * 100}%` }}
+            >
               <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
                 {String(step.number).padStart(2, '0')}
               </p>
@@ -1241,7 +1246,7 @@ Replace the `<div className="relative mt-16">` block:
         <div className="mt-16 flex gap-8">
           <Axis
             orientation="vertical"
-            length={units(98)}
+            length={AXIS_LENGTH}
             count={MILESTONES.length}
             filled={MILESTONES.map((m) => m.status === 'complete')}
             terminal
@@ -1249,12 +1254,11 @@ Replace the `<div className="relative mt-16">` block:
             className="shrink-0 text-border"
           />
 
-          {/* Height pinned to the axis length so milestones line up with
-              nodes rather than with the taller canvas the terminal adds. */}
-          <div
-            className="flex flex-1 flex-col justify-between"
-            style={{ height: units(98) }}
-          >
+          {/* Positioned from fractions over METRICS.extent — NOT
+              justify-between over the span. Stations start one pad in and the
+              canvas grows for the terminal, so distributing label boxes evenly
+              over the span is off at both ends. */}
+          <div className="relative flex-1" style={{ height: METRICS.extent }}>
             {MILESTONES.map((milestone, i) => (
               <motion.div
                 key={milestone.title}
@@ -1276,7 +1280,12 @@ Replace the `<div className="relative mt-16">` block:
 
 **Known limitation, deliberately not fixed here.** Those `motion.div` text entries sit _outside_ the `Diagram`, so the `[data-x4-diagram]` CSS rule does not cover them — reduced-motion visitors still get the opacity/x fade on the milestone text. This is the animation the component already has, carried over verbatim; §10 scopes out retrofitting the existing site's unconditional animations (`shimmer`, `animate-pulse`, the marquee), and this is the same class of gap. The SVG axis itself is fully covered. Do not expand scope to fix it in this task — it is recorded in the Follow-ups section.
 
-Add the imports: `import { Axis } from '@/components/svg/Axis';` and `import { units } from '@/components/svg/grid';`
+Add the imports: `import { Axis } from '@/components/svg/Axis';` and `import { units, axisMetrics } from '@/components/svg/grid';`, and declare the geometry once at module scope so the axis and its labels read from the same source:
+
+```tsx
+const AXIS_LENGTH = units(98);
+const METRICS = axisMetrics(AXIS_LENGTH, MILESTONES.length, true);
+```
 
 The `cn` import may now be unused — if so, remove it, since lint will flag it.
 
