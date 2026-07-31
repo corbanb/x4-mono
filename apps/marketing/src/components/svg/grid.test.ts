@@ -83,9 +83,39 @@ describe('axisMetrics', () => {
     const m = axisMetrics(units(120), 6);
     // 960 across six stations is 192, starting one unit in.
     expect(m.start).toBe(8);
+    expect(m.pitch).toBe(192);
     expect(m.span).toBe(960);
     expect(m.stations).toEqual([8, 200, 392, 584, 776, 968]);
     expect(m.extent).toBe(976);
+  });
+
+  test('snaps the PITCH, so spacing is uniform and every station is on the grid', () => {
+    // The two geometries the pilot surfaces asked for, both of which staggered
+    // when the SPAN was snapped instead: 576/6 gave 112/120/112/120/112 and
+    // 768/8 gave 112/104/112/112/112/104/112.
+    const six = axisMetrics(units(72), 6);
+    expect(six.pitch).toBe(112);
+    expect(six.stations).toEqual([8, 120, 232, 344, 456, 568]);
+
+    const eight = axisMetrics(units(96), 8);
+    expect(eight.pitch).toBe(112);
+    expect(eight.stations).toEqual([8, 120, 232, 344, 456, 568, 680, 792]);
+
+    for (const m of [six, eight]) {
+      const gaps = m.stations.slice(1).map((s, i) => s - m.stations[i]);
+      expect(new Set(gaps).size).toBe(1);
+      for (const s of m.stations) expect(s % UNIT).toBe(0);
+    }
+  });
+
+  test('the adjusted span drifts from the requested length in either direction', () => {
+    // Shrinks: 576 / 5 = 115.2, snapped to 112, so the span is 560.
+    expect(axisMetrics(units(72), 6).span).toBe(560);
+    // Grows: 768 / 7 = 109.7, snapped UP to 112, so the span is 784.
+    expect(axisMetrics(units(96), 8).span).toBe(784);
+    // And a length that already divides onto the grid is untouched.
+    expect(axisMetrics(units(120), 6).span).toBe(960);
+    expect(axisMetrics(units(56), 8).span).toBe(448);
   });
 
   test('a terminal lengthens the canvas without moving a single station', () => {
@@ -116,13 +146,14 @@ describe('axisMetrics', () => {
     plain.fractions.forEach((f, i) => expect(f).not.toBe(withTerminal.fractions[i]));
   });
 
-  test('snaps an off-grid length onto the grid', () => {
+  test('brings an off-grid length onto the grid', () => {
     const m = axisMetrics(100, 3);
-    // 100 snaps to 104 (12.5 units rounds up), so the stations are 8, 64, 112
-    // and the canvas is 8 + 104 + 8.
-    expect(m.span).toBe(104);
-    expect(m.stations).toEqual([8, 64, 112]);
-    expect(m.extent).toBe(120);
+    // 100 across three stations is a pitch of 50, snapped to 48, so the span is
+    // 96, the stations are 8, 56, 104 and the canvas is 8 + 96 + 8.
+    expect(m.pitch).toBe(48);
+    expect(m.span).toBe(96);
+    expect(m.stations).toEqual([8, 56, 104]);
+    expect(m.extent).toBe(112);
   });
 
   test('the last station always lands on the far end of the span', () => {
@@ -132,11 +163,27 @@ describe('axisMetrics', () => {
     }
   });
 
+  test('every station is grid-aligned and evenly spaced, whatever the length', () => {
+    for (let length = 40; length <= 1200; length += 7) {
+      for (const count of [2, 3, 5, 6, 8, 11]) {
+        const m = axisMetrics(length, count);
+        const gaps = m.stations.slice(1).map((s, i) => s - m.stations[i]);
+        expect(new Set(gaps).size).toBe(1);
+        for (const s of m.stations) expect(s % UNIT).toBe(0);
+      }
+    }
+  });
+
   test('handles a degenerate station count without inventing geometry', () => {
     expect(axisMetrics(units(120), 0).stations).toEqual([]);
     expect(axisMetrics(units(120), 1).stations).toEqual([8]);
-    // The canvas is still the full length: a one-station axis is still an axis.
+    // Below two stations there is no pitch to snap, so the length is snapped
+    // directly and the canvas is still the full length: a one-station axis is
+    // still an axis.
+    expect(axisMetrics(units(120), 1).pitch).toBe(0);
+    expect(axisMetrics(units(120), 1).span).toBe(960);
     expect(axisMetrics(units(120), 1).extent).toBe(976);
+    expect(axisMetrics(100, 0).span).toBe(104);
   });
 });
 

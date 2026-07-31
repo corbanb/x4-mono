@@ -9,14 +9,25 @@ import { axisMetrics, axisThickness, stationOffsets, units } from './grid';
 interface AxisProps {
   orientation: Orientation;
   /**
-   * Axis length in user-space px, measured first station to last.
+   * TARGET axis length in user-space px, measured first station to last.
    *
-   * Snapped to the grid on the way in, so an off-grid length is corrected rather
-   * than propagated. Note that snapping rescues the COORDINATES, not the rhythm:
-   * a length where `length / (count - 1)` is itself off-grid still gives uneven
-   * spacing, because each station rounds independently. 480 across 8 stations
-   * becomes 72/64/72/64/72/72/64 — every coordinate legal, the eye still sees
-   * it. 448 across 8 gives 64 flat. Pick a length that divides.
+   * Not an exact dimension. The component snaps the PITCH between stations to
+   * the grid and repeats it, so every station lands on the grid AND the spacing
+   * is exactly uniform — which snapping the length itself does not achieve,
+   * since each station would then round independently and the rhythm would
+   * stagger (576 across six stations gives 112/120/112/120/112).
+   *
+   * The consequence is that the axis is rarely exactly `length` wide, and it can
+   * come out WIDER than requested as well as narrower:
+   *
+   *   length 576, count 6 -> pitch 112, span 560  (16 narrower)
+   *   length 768, count 8 -> pitch 112, span 784  (16 WIDER)
+   *
+   * The deviation is at most half a pitch and is invisible to a viewer, who has
+   * no reference to compare against; uneven spacing is not. A caller that needs
+   * the real dimension — to size a sibling element, say — reads `span` or
+   * `extent` from `axisMetrics(length, count, terminal)` in grid.ts, which is
+   * the same function this component uses and reports the adjusted values.
    */
   length: number;
   /** Number of stations, evenly spaced end to end. */

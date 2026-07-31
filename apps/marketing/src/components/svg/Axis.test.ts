@@ -169,12 +169,32 @@ describe('Axis stations', () => {
     expect((last?.[0] ?? 0) + 4).toBeLessThan(976);
   });
 
-  test('snaps interior stations onto the grid when the spacing is not a grid multiple', () => {
-    // 480 across 8 stations is 68.571 — off-grid at every interior station.
+  test('brings an off-grid spacing onto the grid AND keeps it even', () => {
+    // 480 across 8 stations is a pitch of 68.571, snapped to 72 — so the axis
+    // comes out 504 long rather than 480, and every gap is 72. Snapping the
+    // length instead would have given 8/80/144/216/280/352/416/488: on the grid,
+    // but a 72/64/72/64/72/72/64 stagger.
     const { paths } = render({ orientation: 'vertical', length: units(60), count: 8 });
     const ys = paths.filter(isSquare).map((p) => squareCentre(p)[1]);
-    expect(ys).toEqual([8, 80, 144, 216, 280, 352, 416, 488]);
+    expect(ys).toEqual([8, 80, 152, 224, 296, 368, 440, 512]);
     for (const y of ys) expect(y % 8).toBe(0);
+    expect(new Set(ys.slice(1).map((y, i) => y - ys[i])).size).toBe(1);
+  });
+
+  test('renders the two pilot geometries with perfectly even spacing', () => {
+    // Both of these staggered under length-snapping, which is what this exists
+    // to prevent regressing.
+    const six = render({ orientation: 'horizontal', length: units(72), count: 6 });
+    expect(six.paths.filter(isSquare).map((p) => squareCentre(p)[0])).toEqual([
+      8, 120, 232, 344, 456, 568,
+    ]);
+    expect(six.diagram.width).toBe(576);
+
+    const eight = render({ orientation: 'vertical', length: units(96), count: 8 });
+    expect(eight.paths.filter(isSquare).map((p) => squareCentre(p)[1])).toEqual([
+      8, 120, 232, 344, 456, 568, 680, 792,
+    ]);
+    expect(eight.diagram.height).toBe(800);
   });
 
   test('fills exactly the stations named, and reads an omitted entry as hollow', () => {
@@ -441,14 +461,15 @@ describe('Axis input normalization', () => {
     }
   });
 
-  test('an off-grid length is snapped, and the spine still ends on the last station', () => {
-    // 100 snaps to 104, so the axis runs 8 -> 112 and the three stations land at
-    // 8, 64 and 112. Untreated, the spine ended at 108 while the last station
-    // snapped to 112 — a terminal station four pixels off the end of its line.
+  test('an off-grid length is adjusted, and the spine still ends on the last station', () => {
+    // A pitch of 50 snaps to 48, so the axis runs 8 -> 104 and the three
+    // stations land at 8, 56 and 104. Untreated, the spine ended at 108 while
+    // the last station snapped to 112 — a terminal station four pixels off the
+    // end of the line it terminates.
     const { diagram, paths } = render({ orientation: 'horizontal', length: 100, count: 3 });
-    expect(paths[0].d).toBe('M 8 24 L 112 24');
-    expect(paths.filter(isSquare).map((p) => squareCentre(p)[0])).toEqual([8, 64, 112]);
-    expect(diagram.width).toBe(120);
+    expect(paths[0].d).toBe('M 8 24 L 104 24');
+    expect(paths.filter(isSquare).map((p) => squareCentre(p)[0])).toEqual([8, 56, 104]);
+    expect(diagram.width).toBe(112);
   });
 
   test('the spine always ends exactly on the last station', () => {

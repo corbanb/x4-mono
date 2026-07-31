@@ -97,8 +97,16 @@ export interface AxisMetrics {
    * first station does not sit on the canvas edge. Also the spine's near end.
    */
   start: number;
-  /** Snapped station span: the distance from the first station to the last. */
+  /**
+   * ADJUSTED station span: the distance from the first station to the last.
+   *
+   * Derived from a grid-snapped PITCH, so it is rarely the `length` that was
+   * asked for — see the note on `axisMetrics`. Read this, never the `length` you
+   * passed in, whenever the real dimension matters.
+   */
   span: number;
+  /** Grid-snapped distance between two adjacent stations. 0 below two stations. */
+  pitch: number;
   /** Total canvas along the axis — the long dimension of the Axis's viewBox. */
   extent: number;
   /** Station coordinates along the axis, in user-space px. */
@@ -106,6 +114,19 @@ export interface AxisMetrics {
   /**
    * Station positions as a fraction of `extent`, which is the number an HTML
    * label needs — `left: ${fraction * 100}%` with a -50% translate.
+   *
+   * Valid for BOTH orientations, but for two different reasons, which is
+   * load-bearing and not obvious:
+   *
+   * - Fluid horizontal: the SVG stretches to its container and the viewBox
+   *   aspect matches the element box, so `x / extent` IS the container fraction.
+   * - Non-fluid vertical: the SVG is authored at exactly `extent` px along the
+   *   axis, so `y / extent` is again the container fraction — user space is 1:1
+   *   with CSS px.
+   *
+   * A third rendering mode (letterboxed, cropped, or a preserveAspectRatio other
+   * than the current one) would break that equivalence, and whoever adds one has
+   * to revisit this field rather than assume it still holds.
    */
   fractions: number[];
   /** Terminal coordinate along the axis, or null when there is no terminal. */
@@ -133,17 +154,39 @@ export interface AxisMetrics {
  * labels laid out with `justify-between` gets both cases wrong, and gets them
  * wrong differently depending on a prop that reads as purely decorative.
  *
+ * `length` is a TARGET, not an exact dimension. What is snapped is the PITCH —
+ * the gap between adjacent stations — and the span is then that pitch repeated,
+ * so every station lands on the grid by construction and the spacing is exactly
+ * uniform. Snapping the span instead (the obvious reading of "grid-snapped
+ * length") leaves each station to round independently, which keeps them on the
+ * grid but makes the RHYTHM uneven: 576 across six stations gives spacings of
+ * 112/120/112/120/112, which reads as sloppy rendering in a design system whose
+ * whole premise is a strict grid.
+ *
+ * The span therefore drifts from `length`, by up to half a pitch, in EITHER
+ * direction:
+ *
+ *   axisMetrics(576, 6) -> pitch 112, span 560  (shrinks by 16)
+ *   axisMetrics(768, 8) -> pitch 112, span 784  (GROWS by 16)
+ *
+ * This is a deliberate trade: the deviation is invisible to a viewer, who has no
+ * reference to compare the axis against, while uneven spacing is not. A caller
+ * who needs the real dimension reads `span` or `extent` from this result rather
+ * than assuming the `length` it passed in.
+ *
  * Axis derives its own geometry from this function, so the two cannot drift.
  */
 export function axisMetrics(length: number, count: number, terminal = false): AxisMetrics {
-  const span = snap(length);
+  const pitch = count > 1 ? snap(length / (count - 1)) : 0;
+  const span = count > 1 ? pitch * (count - 1) : snap(length);
   const extent = AXIS_PAD + span + (terminal ? AXIS_TERMINAL_ROOM : AXIS_PAD);
-  const stations = stationOffsets(count).map((t) => snap(AXIS_PAD + span * t));
+  const stations = stationOffsets(count).map((_, i) => AXIS_PAD + pitch * i);
   const terminalAt = terminal ? AXIS_PAD + span + AXIS_TERMINAL_OFFSET : null;
 
   return {
     start: AXIS_PAD,
     span,
+    pitch,
     extent,
     stations,
     fractions: stations.map((s) => s / extent),
