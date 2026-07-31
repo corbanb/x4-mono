@@ -68,9 +68,14 @@ New directory: `apps/marketing/src/components/svg/`. Marketing-only — nothing 
 
 - **Exactly two weights:** `1` (hairline — structure, rules, axes) and `1.5` (primary path), authored
   in user space. With `non-scaling-stroke` retracted (below), rendered CSS-pixel width varies with
-  viewport, so the enforceable rule is two authored values in a fixed `1 : 1.5` ratio, with rendered
-  weight monotonic in viewport width — never lighter as the viewport grows. Within any single
-  viewport the reader still sees exactly two weights, which is what the rule was always for.
+  viewport, so the enforceable rule is two authored values in a fixed `1 : 1.5` ratio. Within any
+  single viewport the reader still sees exactly two weights, which is what the rule was always for.
+  **Rendered weight is not monotonic in viewport width and cannot be made so by retuning
+  constants** — rendered width is `authored x scale(v) x multiplier(v)`, and `scale` is continuous
+  across a breakpoint while the multiplier steps down, so the product always falls there. An earlier
+  revision of this section demanded monotonicity; that was an error, corrected here. What is
+  required instead: no breakpoint range may exceed the desktop maximum, so strokes never render
+  heavier on a small screen than a large one.
 - ~~`vector-effect="non-scaling-stroke"` on every stroked element~~ — **retracted during
   implementation.** The Task 3 spike found it incompatible with the `stroke-dasharray` path
   drawing this design depends on: both Chromium and WebKit take the dash magnitude from user

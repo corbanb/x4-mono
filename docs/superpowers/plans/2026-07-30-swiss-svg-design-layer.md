@@ -208,14 +208,18 @@ export type StrokeWeight = keyof typeof STROKE;
  *
  * Butt caps and miter joins are the tell that separates Swiss line art from
  * generic friendly-startup illustration — centralized here so no call site can
- * quietly opt out. non-scaling-stroke keeps hairlines hairline as the viewBox
- * scales.
+ * quietly opt out.
+ *
+ * NOTE: this listing originally carried vector-effect: non-scaling-stroke. The
+ * Task 3 spike proved it incompatible with stroke-dasharray path drawing in both
+ * Chromium and WebKit, so it was removed. This block is left as the historical
+ * Task 1 record; grid.ts at HEAD does not have it, and grid.test.ts asserts the
+ * exact key set so it cannot come back silently.
  */
 export const STROKE_ATTRS = {
   fill: 'none',
   strokeLinecap: 'butt',
   strokeLinejoin: 'miter',
-  vectorEffect: 'non-scaling-stroke',
 } as const;
 
 /** Round a coordinate to the nearest grid unit. */
@@ -467,7 +471,7 @@ cd apps/marketing && ./node_modules/.bin/next dev --port 3011
 
 Navigate Playwright MCP to `http://localhost:3011/svg-lab`.
 
-Expected: a full-width hairline rule. Confirm via `browser_evaluate` that the rendered `<svg>` has `viewBox="0 0 960 80"` and that the `<line>` resolves to a **1px** stroke — not a scaled one. This is the first check that `non-scaling-stroke` behaves.
+Expected: a full-width hairline rule. Confirm via `browser_evaluate` that the rendered `<svg>` has `viewBox="0 0 960 80"`. (This step originally also asserted a 1px stroke on the assumption `non-scaling-stroke` would hold it constant. Task 3 retracted that attribute, so rendered width now scales with the viewBox and the assertion no longer applies.)
 
 - [ ] **Step 6: Verify the repo gates**
 
