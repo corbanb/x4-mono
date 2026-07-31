@@ -842,6 +842,15 @@ rather than a gap to pre-fill.
 
 This is the primitive §7 requires for the hero: variable station count, either orientation, optional accent terminal.
 
+**This task is the first real non-fluid consumer, and it owns a deferred decision about `--x4-stroke-scale`.** Task 3 introduced that per-breakpoint multiplier to keep strokes legible once `non-scaling-stroke` was retracted. Two facts constrain what you may do with it, both established by review rather than assumed:
+
+- **Lowering any multiplier below `1` bands the serpentine fill.** Task 4's solid marks sit _exactly_ at their coverage floor (2.0x at `md+`, where the multiplier is 1). Coverage is `2 x --x4-stroke-scale`, so anything under 1 gaps the fill and solid nodes visibly stripe. **Deleting the mechanism entirely is safe** — the `var(--x4-stroke-scale, 1)` fallback holds the floor.
+- **The fluid/non-fluid mismatch is real but currently latent.** At 390px a fluid diagram renders primary 0.855 / hairline 0.570 while a non-fluid one renders 1.500 / 1.000, so a non-fluid diagram's _hairline_ is heavier than a fluid diagram's _primary_ — the weight hierarchy inverts between two diagrams on one screen. In the pilots as planned they are never on screen together (`KickstartFlow` is fluid-horizontal at `md+` and non-fluid-vertical below; `Timeline` is non-fluid throughout), so nothing is visibly broken today. It becomes visible the moment one page shows both.
+
+The mismatch is **not** closable by retuning the base multiplier: closing it needs base ≈ 2.8, which renders 2.59 at 639px — 70% above the desktop max, a worse inversion than the one Task 3 just removed. Two other knobs exist and neither has been evaluated: compensating the _non-fluid_ side downward, or **deleting the compensation entirely** on the grounds that the design already rotates to a vertical axis below `md`, so a 960-unit diagram never needs to render at 390px — constrain fluid usage to `md+` and scale stays roughly 0.75–1.33, never sub-pixel.
+
+Evaluate with real artwork in the browser now that you have both orientations rendering. Decide, implement, and state which you chose and why. If you delete the compensation, delete its tripwire tests with it and say so.
+
 - [ ] **Step 1: Write the Axis**
 
 Create `apps/marketing/src/components/svg/Axis.tsx`:
