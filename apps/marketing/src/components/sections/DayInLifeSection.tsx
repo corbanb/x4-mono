@@ -75,7 +75,7 @@ export function DayInLifeSection() {
   const isInView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <section ref={ref} className="py-20 px-4">
+    <section id="how-it-works" ref={ref} className="scroll-mt-20 py-20 px-4">
       <div className="mx-auto max-w-5xl">
         {/* Header */}
         <motion.div

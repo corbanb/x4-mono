@@ -1,12 +1,16 @@
 import Link from 'next/link';
 import { Github, Twitter } from 'lucide-react';
 
+const PLUGINS_URL = 'https://github.com/studiox4/x4-agent-plugins';
+
 const FOOTER_SECTIONS = {
   Product: [
-    { href: '/features', label: 'Features' },
-    { href: '/stack', label: 'Stack' },
-    { href: '/plugins', label: 'Plugins' },
-    { href: '/ai', label: 'AI' },
+    { href: '/kickstart', label: 'Kickstart' },
+    { href: '/discovery', label: 'Discovery' },
+    { href: '/commands', label: 'Commands' },
+    { href: '/collaboration', label: 'Live Collaboration' },
+    { href: '/teams', label: 'For Teams' },
+    { href: PLUGINS_URL, label: 'Plugins', external: true },
   ],
   Company: [
     { href: '/about', label: 'About' },
