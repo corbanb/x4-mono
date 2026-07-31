@@ -134,13 +134,13 @@ deliberate visual seam, which is the evidence for or against the follow-up token
 
 ### 4.5 Files
 
-| File           | Responsibility                                                                                                                                                 | Depends on               |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| `grid.ts`      | `UNIT`, stroke-width constants, `snap()`, viewBox helpers. Pure — no React, no JSX.                                                                            | nothing                  |
+| File           | Responsibility                                                                                                                                                                                                                  | Depends on               |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| `grid.ts`      | `UNIT`, stroke-width constants, `snap()`, viewBox helpers. Pure — no React, no JSX.                                                                                                                                             | nothing                  |
 | `Diagram.tsx`  | Responsive `<svg>` wrapper. Owns the `useInView({ once: true })` trigger and emits the `data-x4-diagram` marker the reduced-motion CSS rule selects. Publishes viewport state only — reduced motion never enters JS (see §4.6). | `grid.ts`                |
-| `DrawPath.tsx` | Animated path primitive. `pathLength="1"` normalization so dasharray math is scale-independent; animates `strokeDashoffset` 1 → 0. Consumes `Diagram` context. | `grid.ts`, `Diagram.tsx` |
-| `marks.tsx`    | Node vocabulary: `Node`, `Junction`, `Terminal`, `Tick`. Grid-registered, square, hairline.                                                                    | `grid.ts`                |
-| `Axis.tsx`     | The station axis. `orientation: 'horizontal' \| 'vertical'`, a station array, and an optional accent terminal. Both pilots and the hero are instances of this. | all of the above         |
+| `DrawPath.tsx` | Animated path primitive. `pathLength="1"` normalization so dasharray math is scale-independent; animates `strokeDashoffset` 1 → 0. Consumes `Diagram` context.                                                                  | `grid.ts`, `Diagram.tsx` |
+| `marks.tsx`    | Node vocabulary: `Node`, `Junction`, `Terminal`, `Tick`. Grid-registered, square, hairline.                                                                                                                                     | `grid.ts`                |
+| `Axis.tsx`     | The station axis. `orientation: 'horizontal' \| 'vertical'`, a station array, and an optional accent terminal. Both pilots and the hero are instances of this.                                                                  | all of the above         |
 
 `Axis.tsx` is the reason step 1 in §8 is serial. Both pilot surfaces are axes and so is the
 hero: if the axis is not a step-1 primitive, Agent A builds a horizontal one inside
