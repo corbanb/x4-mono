@@ -280,7 +280,7 @@ Wires bun test for the marketing workspace."
 **Interfaces:**
 
 - Consumes: `viewBox` from `./grid`.
-- Produces: `<Diagram width height className children />`, and `useDiagram(): { active: boolean; reduced: boolean }`. Every animated primitive reads that context — this is the single reduced-motion checkpoint required by §4.6.
+- Produces: `<Diagram width height fluid className children />`, and `useDiagram(): { drawn: boolean; reduced: boolean }`. Every animated primitive reads that context — this is the single reduced-motion checkpoint required by §4.6. The raw in-view flag is deliberately not exposed, so a primitive cannot gate on "scrolled into view" and animate past a visitor's reduced-motion preference.
 
 - [ ] **Step 1: Write the Diagram primitive**
 
@@ -295,9 +295,17 @@ import { viewBox } from './grid';
 import { cn } from '@/lib/utils';
 
 interface DiagramState {
-  /** True once the diagram has scrolled into view. Latches — never returns to false. */
-  active: boolean;
-  /** True when the visitor asked for reduced motion. */
+  /**
+   * True when children should render their final, fully-drawn state.
+   *
+   * Already folds in the reduced-motion preference, which is why the raw
+   * in-view flag is deliberately NOT exposed: a primitive that gated on
+   * "has it scrolled into view" alone would animate for a visitor who asked
+   * for no animation. There is no way to read the un-folded value, so there
+   * is no way to forget (spec section 4.6).
+   */
+  drawn: boolean;
+  /** True when the visitor asked for reduced motion — suppress the transition. */
   reduced: boolean;
 }
 
@@ -305,7 +313,7 @@ interface DiagramState {
  * Defaults are deliberately "already drawn, no motion" so a primitive rendered
  * outside a Diagram degrades to its final state rather than staying invisible.
  */
-const DiagramContext = createContext<DiagramState>({ active: true, reduced: true });
+const DiagramContext = createContext<DiagramState>({ drawn: true, reduced: true });
 
 export function useDiagram(): DiagramState {
   return useContext(DiagramContext);
@@ -338,11 +346,11 @@ interface DiagramProps {
  */
 export function Diagram({ width, height, fluid = true, className, children }: DiagramProps) {
   const ref = useRef<SVGSVGElement>(null);
-  const active = useInView(ref, { once: true, margin: '-50px' });
+  const inView = useInView(ref, { once: true, margin: '-50px' });
   const reduced = useReducedMotion() ?? false;
 
   return (
-    <DiagramContext.Provider value={{ active, reduced }}>
+    <DiagramContext.Provider value={{ drawn: reduced || inView, reduced }}>
       <svg
         ref={ref}
         viewBox={viewBox(width, height)}
@@ -502,8 +510,8 @@ export function DrawPath({
   duration = 0.8,
   className,
 }: DrawPathProps) {
-  const { active, reduced } = useDiagram();
-  const drawn = { pathLength: 1 };
+  const { drawn, reduced } = useDiagram();
+  const final = { pathLength: 1 };
 
   return (
     <motion.path
@@ -513,13 +521,18 @@ export function DrawPath({
       strokeWidth={STROKE[weight]}
       className={className}
       {...STROKE_ATTRS}
-      initial={reduced ? drawn : { pathLength: 0 }}
-      animate={reduced || active ? drawn : { pathLength: 0 }}
+      initial={reduced ? final : { pathLength: 0 }}
+      animate={drawn ? final : { pathLength: 0 }}
       transition={reduced ? { duration: 0 } : { duration, delay, ease: 'linear' }}
     />
   );
 }
 ```
+
+`drawn` already folds in the reduced-motion preference, so this reads as "draw
+when told to." Under reduced motion `initial` and `animate` are both the final
+state, so nothing animates and nothing needs a zero-duration transition to hide
+it — the transition override is belt-and-braces.
 
 - [ ] **Step 2: Add a spike section to the lab**
 
