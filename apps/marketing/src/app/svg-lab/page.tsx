@@ -1,7 +1,9 @@
+import { Fragment } from 'react';
 import type { Metadata } from 'next';
 import { Diagram } from '@/components/svg/Diagram';
 import { DrawPath } from '@/components/svg/DrawPath';
-import { STROKE, STROKE_ATTRS, units } from '@/components/svg/grid';
+import { STROKE, STROKE_ATTRS, stationOffsets, units } from '@/components/svg/grid';
+import { Junction, Node, Terminal, Tick } from '@/components/svg/marks';
 
 export const metadata: Metadata = {
   title: 'SVG Lab',
@@ -49,6 +51,38 @@ export default function SvgLabPage() {
               delay={0.8 * t}
             />
           ))}
+        </Diagram>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Marks</h2>
+        <Diagram width={units(120)} height={units(10)} className="text-muted-foreground">
+          <Tick x={units(10)} y={units(5)} orientation="horizontal" />
+          <Node x={units(30)} y={units(5)} />
+          <Node x={units(50)} y={units(5)} filled />
+          <Junction x={units(70)} y={units(5)} />
+          <Terminal x={units(90)} y={units(5)} className="text-violet-glow" />
+        </Diagram>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+          Marks — staggered by normalized position
+        </h2>
+        <Diagram width={units(120)} height={units(10)} className="text-muted-foreground">
+          <DrawPath d={`M ${units(4)} ${units(5)} L ${units(104)} ${units(5)}`} weight="hairline" />
+          {stationOffsets(6).map((t) => (
+            <Fragment key={t}>
+              <Tick
+                x={units(4) + units(100) * t}
+                y={units(5)}
+                orientation="horizontal"
+                delay={0.8 * t}
+              />
+              <Node x={units(4) + units(100) * t} y={units(5)} filled={t < 0.5} delay={0.8 * t} />
+            </Fragment>
+          ))}
+          <Terminal x={units(112)} y={units(5)} delay={0.8} className="text-violet-glow" />
         </Diagram>
       </section>
     </main>
