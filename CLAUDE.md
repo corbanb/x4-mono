@@ -308,6 +308,8 @@ Key environment variables (defined in `apps/api/src/lib/env.ts`):
 | `APP_VERSION`                       | App version string                                                            | No       |
 | `LIVEBLOCKS_SECRET_KEY`             | Liveblocks server key for presence auth (optional)                            | No       |
 | `NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY` | Liveblocks public key for client (optional)                                   | No       |
+| `NEXT_PUBLIC_POSTHOG_KEY`           | PostHog project API key for marketing analytics (omit to disable)             | No       |
+| `NEXT_PUBLIC_POSTHOG_HOST`          | PostHog ingestion host (default `https://us.i.posthog.com`; EU Cloud differs) | No       |
 
 ## Plugins & Developer Tooling
 
