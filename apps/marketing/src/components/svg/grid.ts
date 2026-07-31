@@ -75,3 +75,96 @@ export function stationOffsets(count: number): number[] {
   if (count === 1) return [0];
   return Array.from({ length: count }, (_, i) => i / (count - 1));
 }
+
+/**
+ * Clearance at each end of an axis, in user-space px.
+ *
+ * The first and last stations sit at t=0 and t=1 — on the canvas edges, where a
+ * mark centred on the axis would clip by half its size. One grid unit clears a
+ * default node (size UNIT, so half is 4) and keeps every coordinate on the grid.
+ */
+const AXIS_PAD = UNIT;
+
+/** Room past the last station for a terminal: the mark plus its own clearance. */
+const AXIS_TERMINAL_ROOM = UNIT * 4;
+
+/** Where a terminal sits past the last station. */
+const AXIS_TERMINAL_OFFSET = UNIT * 2;
+
+export interface AxisMetrics {
+  /**
+   * Where the axis begins along its own length — one unit of clearance, so the
+   * first station does not sit on the canvas edge. Also the spine's near end.
+   */
+  start: number;
+  /** Snapped station span: the distance from the first station to the last. */
+  span: number;
+  /** Total canvas along the axis — the long dimension of the Axis's viewBox. */
+  extent: number;
+  /** Station coordinates along the axis, in user-space px. */
+  stations: number[];
+  /**
+   * Station positions as a fraction of `extent`, which is the number an HTML
+   * label needs — `left: ${fraction * 100}%` with a -50% translate.
+   */
+  fractions: number[];
+  /** Terminal coordinate along the axis, or null when there is no terminal. */
+  terminalAt: number | null;
+  /** Terminal position as a fraction of `extent`, or null. */
+  terminalFraction: number | null;
+}
+
+/**
+ * Where an Axis puts its stations, and where a consumer must put the labels.
+ *
+ * All meaningful text lives in HTML outside the SVG (spec section 4.4), so every
+ * surface has to align labels to stations that are positioned by math private to
+ * the Axis. This is that math, exported once so a surface reads it instead of
+ * reproducing it — and it lives in grid.ts rather than in Axis.tsx because
+ * Axis.tsx is a 'use client' module, whose exports become client references that
+ * a server component cannot call.
+ *
+ * `fractions` rather than raw px is the number to reach for, and `terminal` has
+ * to be passed, because a horizontal Axis is fluid: it fills its container, so a
+ * station's container-space position is its coordinate over the whole canvas,
+ * and turning the terminal on lengthens that canvas WITHOUT moving any station.
+ * Six stations across a 960 span end at 968/976 = 99.2% without a terminal and
+ * 968/1000 = 96.8% with one — about 24px apart at a 1000px container. A row of
+ * labels laid out with `justify-between` gets both cases wrong, and gets them
+ * wrong differently depending on a prop that reads as purely decorative.
+ *
+ * Axis derives its own geometry from this function, so the two cannot drift.
+ */
+export function axisMetrics(length: number, count: number, terminal = false): AxisMetrics {
+  const span = snap(length);
+  const extent = AXIS_PAD + span + (terminal ? AXIS_TERMINAL_ROOM : AXIS_PAD);
+  const stations = stationOffsets(count).map((t) => snap(AXIS_PAD + span * t));
+  const terminalAt = terminal ? AXIS_PAD + span + AXIS_TERMINAL_OFFSET : null;
+
+  return {
+    start: AXIS_PAD,
+    span,
+    extent,
+    stations,
+    fractions: stations.map((s) => s / extent),
+    terminalAt,
+    terminalFraction: terminalAt === null ? null : terminalAt / extent,
+  };
+}
+
+/**
+ * Round a cross-axis extent to a legal one: an EVEN number of units, never below
+ * six.
+ *
+ * Even, because the axis sits at half the extent and that has to land on the
+ * grid like every other coordinate — and rounding the extent rather than snapping
+ * the halfway point is what keeps the axis CENTRED. Snapping the midpoint of
+ * units(7) gives 32 above the spine and 24 below it.
+ *
+ * Six is the floor because an Axis sizes its ticks from the room left over; below
+ * six units there is none, and the stations lose their ticks entirely.
+ */
+export function axisThickness(thickness: number): number {
+  const evenUnits = UNIT * 2 * Math.round(thickness / (UNIT * 2));
+  return Math.max(UNIT * 6, evenUnits);
+}

@@ -200,8 +200,20 @@ describe('Axis stations', () => {
   });
 });
 
+/**
+ * A note on what these can and cannot pin.
+ *
+ * `stationOffsets` is uniform, so `i / (count - 1)` and normalized position are
+ * the same number — no test can tell a position-derived delay from an index
+ * derived one, because at even spacing they are not observationally different.
+ * What these pin is the VALUES and the 0.8s scale, which is what catches a delay
+ * that is not normalized at all (the real failure mode: an index over `length`
+ * rather than over `count - 1`). The reason to prefer position in the source is
+ * that it survives a future non-uniform layout, not that it renders differently
+ * today.
+ */
 describe('Axis timing', () => {
-  test('delays follow position along the axis, not array index', () => {
+  test('scales each station delay by its normalized position over the 0.8s draw', () => {
     const { paths } = render({ ...HORIZONTAL });
     const delays = paths.filter(isSquare).map((p) => p.delay);
     // Six stations over a 0.8s draw: 0, 0.16, 0.32, 0.48, 0.64, 0.8.
@@ -222,19 +234,32 @@ describe('Axis timing', () => {
     expect(spine.duration).toBe(0.8);
     expect(spine.delay).toBe(0);
 
-    const stationDelays = paths.filter(isSquare).map((p) => p.delay);
-    for (const delay of stationDelays) expect(delay).toBeLessThanOrEqual(0.8);
-    expect(stationDelays.at(-1)).toBeCloseTo(0.8, 6);
+    // Scoped to the STATIONS: the terminal is also a square and sorts last, so
+    // an unscoped filter would assert the terminal's delay and call it the last
+    // station's.
+    const stationDelays = paths.filter((p) => isSquare(p) && p.className === undefined);
+    expect(stationDelays).toHaveLength(6);
+    for (const p of stationDelays) expect(p.delay).toBeLessThanOrEqual(0.8);
+    expect(stationDelays.at(-1)?.delay).toBeCloseTo(0.8, 6);
     // The accent lands with the completed spine rather than after a pause.
     expect(paths.filter((p) => p.className !== undefined)[0].delay).toBeCloseTo(0.8, 6);
   });
 
   test('a tick and its node share one clock', () => {
-    const { paths } = render({ ...VERTICAL });
-    const ticks = paths.filter(isTick).map((p) => p.delay);
-    const nodes = paths.filter(isSquare).map((p) => p.delay);
-    expect(ticks).toHaveLength(8);
-    expect(nodes).toEqual(ticks);
+    // Five stations over 0.8s: 0, 0.2, 0.4, 0.6, 0.8. Enumerated for BOTH marks
+    // rather than compared to each other, so two matching-but-wrong clocks fail.
+    const expected = [0, 0.2, 0.4, 0.6, 0.8];
+    for (const orientation of ['horizontal', 'vertical'] as const) {
+      const { paths } = render({ orientation, length: units(120), count: 5 });
+      const ticks = paths.filter(isTick);
+      const nodes = paths.filter(isSquare);
+      expect(ticks).toHaveLength(5);
+      expect(nodes).toHaveLength(5);
+      expected.forEach((e, i) => {
+        expect(ticks[i].delay).toBeCloseTo(e, 6);
+        expect(nodes[i].delay).toBeCloseTo(e, 6);
+      });
+    }
   });
 });
 
@@ -272,14 +297,32 @@ describe('Axis geometry by orientation', () => {
   });
 
   test('no tick ever crosses the square its station is marked with', () => {
+    // Anchor case, hand-enumerated: a default node is 8 across centred on the
+    // axis at 24, so it occupies 20..28, and the horizontal tick runs 16 -> 8.
+    const anchor = render({ ...HORIZONTAL }).paths.filter(isTick)[0];
+    expect(tickSpan(anchor)).toEqual({ axis: 'y', from: 16, to: 8 });
+
+    // General case, over both orientations AND a range of thicknesses, since the
+    // node window moves with `cross`. The whole tick segment is tested against
+    // the whole node window — sampling the two endpoints alone would let a tick
+    // that spans straight across the node pass.
     for (const props of [HORIZONTAL, VERTICAL]) {
-      const { paths } = render({ ...props });
-      // Default node is 8 across, centred on the axis at 24: it occupies 20..28.
-      for (const tick of paths.filter(isTick)) {
-        const { from, to } = tickSpan(tick);
-        for (const point of [from, to]) {
-          expect(point < 20 || point > 28).toBe(true);
-        }
+      for (const thickness of [units(6), units(8), units(10), units(16)]) {
+        const { paths } = render({ ...props, thickness });
+        const ticks = paths.filter(isTick);
+        const nodes = paths.filter(isSquare);
+        expect(ticks.length).toBe(nodes.length);
+
+        ticks.forEach((tick, i) => {
+          // Node window read off the square it actually emitted, on the cross
+          // axis the tick travels along.
+          const [nx1, ny1] = nodes[i].cmds[0].args;
+          const [nx2, ny2] = [nodes[i].cmds[1].args[0], nodes[i].cmds[2].args[0]];
+          const { axis, from, to } = tickSpan(tick);
+          const [lo, hi] = axis === 'y' ? [ny1, ny2] : [nx1, nx2];
+          const overlaps = Math.max(lo, Math.min(from, to)) <= Math.min(hi, Math.max(from, to));
+          expect(overlaps).toBe(false);
+        });
       }
     }
   });
@@ -322,7 +365,11 @@ describe('Axis terminal', () => {
     expect(on.paths).toHaveLength(15);
     expect(without.diagram.width).toBe(976);
     expect(on.diagram.width).toBe(1000);
-    // The station span is identical either way, so consumer labels stay aligned.
+    // Identical in USER space — and NOT in container space, because a horizontal
+    // axis is fluid, so the canvas that grew is the thing the container maps
+    // onto. The last station is 968/976 here and 968/1000 with a terminal. A
+    // consumer aligning labels must go through axisMetrics().fractions, which is
+    // why that helper takes `terminal`.
     expect(without.paths[0].d).toBe(on.paths[0].d);
   });
 
@@ -342,6 +389,78 @@ describe('Axis terminal', () => {
     const { paths } = render({ ...VERTICAL, terminal: true });
     const accented = paths.filter((p) => p.className !== undefined);
     expect(squareCentre(accented[0])).toEqual([24, 472]);
+  });
+});
+
+/**
+ * Both size inputs are normalized rather than documented, because documenting
+ * them failed: the first two call sites written against this component broke
+ * both rules, and one of them asked for a thickness that renders stations with
+ * no ticks at all. These pin that out-of-range input is CORRECTED — not merely
+ * tolerated — and that legal input is untouched.
+ */
+describe('Axis input normalization', () => {
+  test('an odd thickness rounds to an even unit count, keeping the axis centred', () => {
+    // units(7) is 56. Half of it is 28, off the 8-grid. Rounding the box up to
+    // units(8) = 64 puts the axis at 32, which is on it, with 32 either side —
+    // whereas snapping 28 to 24 or 32 would leave the spine off-centre.
+    const { diagram, paths } = render({ ...HORIZONTAL, thickness: units(7) });
+    expect(diagram.height).toBe(64);
+    expect(paths[0].d).toBe('M 8 32 L 968 32');
+  });
+
+  test('rounds to the nearest even unit count, in either direction', () => {
+    // The even unit counts are 48, 64, 80, 96 ... 50 is nearest 48, 60 is
+    // nearest 64. An odd unit count is always an exact half, so it rounds up:
+    // units(9) = 72 sits between 64 and 80 and lands on 80.
+    expect(render({ ...HORIZONTAL, thickness: 50 }).diagram.height).toBe(48);
+    expect(render({ ...HORIZONTAL, thickness: 60 }).diagram.height).toBe(64);
+    expect(render({ ...HORIZONTAL, thickness: units(9) }).diagram.height).toBe(80);
+    // An already-legal value is untouched.
+    expect(render({ ...HORIZONTAL, thickness: units(12) }).diagram.height).toBe(96);
+  });
+
+  test('a thickness below the minimum is raised, so stations keep their ticks', () => {
+    // units(4) = 32 gives cross 16, and a tick sized from the room left over is
+    // then ZERO long — stations with no marks. Raised to units(6).
+    for (const thickness of [units(0), units(2), units(4), units(5)]) {
+      const { diagram, paths } = render({ ...HORIZONTAL, thickness });
+      expect(diagram.height).toBe(48);
+      expect(paths.filter(isTick)[0].d).toBe('M 8 16 V 8');
+    }
+  });
+
+  test('every tick is at least one unit long at any thickness', () => {
+    for (const thickness of [-100, 0, 1, units(3), units(6), units(20)]) {
+      const ticks = render({ ...HORIZONTAL, thickness }).paths.filter(isTick);
+      expect(ticks).toHaveLength(6);
+      for (const tick of ticks) {
+        const { from, to } = tickSpan(tick);
+        expect(Math.abs(from - to)).toBeGreaterThanOrEqual(8);
+      }
+    }
+  });
+
+  test('an off-grid length is snapped, and the spine still ends on the last station', () => {
+    // 100 snaps to 104, so the axis runs 8 -> 112 and the three stations land at
+    // 8, 64 and 112. Untreated, the spine ended at 108 while the last station
+    // snapped to 112 — a terminal station four pixels off the end of its line.
+    const { diagram, paths } = render({ orientation: 'horizontal', length: 100, count: 3 });
+    expect(paths[0].d).toBe('M 8 24 L 112 24');
+    expect(paths.filter(isSquare).map((p) => squareCentre(p)[0])).toEqual([8, 64, 112]);
+    expect(diagram.width).toBe(120);
+  });
+
+  test('the spine always ends exactly on the last station', () => {
+    for (const length of [100, 101, 107, units(56), units(120)]) {
+      for (const orientation of ['horizontal', 'vertical'] as const) {
+        const { paths } = render({ orientation, length, count: 4 });
+        const end = paths[0].cmds[1].args;
+        const last = paths.filter(isSquare).at(-1);
+        expect(last).toBeDefined();
+        if (last) expect(end).toEqual(squareCentre(last));
+      }
+    }
   });
 });
 

@@ -4,17 +4,19 @@ import { Fragment } from 'react';
 import { Diagram } from './Diagram';
 import { DrawPath } from './DrawPath';
 import { Node, Terminal, Tick, type Orientation } from './marks';
-import { snap, stationOffsets, units } from './grid';
+import { axisMetrics, axisThickness, stationOffsets, units } from './grid';
 
 interface AxisProps {
   orientation: Orientation;
   /**
-   * Axis length in user-space px. Must be grid-snapped.
+   * Axis length in user-space px, measured first station to last.
    *
-   * Prefer a length where `length / (count - 1)` is itself a multiple of UNIT.
-   * Station coordinates are snapped, so a spacing that is not on the grid does
-   * not drift off it — it jitters instead: 480 across 8 stations snaps to a
-   * 72/64/72/64 rhythm, a visible 12.5% unevenness. 448 across 8 gives 64 flat.
+   * Snapped to the grid on the way in, so an off-grid length is corrected rather
+   * than propagated. Note that snapping rescues the COORDINATES, not the rhythm:
+   * a length where `length / (count - 1)` is itself off-grid still gives uneven
+   * spacing, because each station rounds independently. 480 across 8 stations
+   * becomes 72/64/72/64/72/72/64 — every coordinate legal, the eye still sees
+   * it. 448 across 8 gives 64 flat. Pick a length that divides.
    */
   length: number;
   /** Number of stations, evenly spaced end to end. */
@@ -26,12 +28,14 @@ interface AxisProps {
   /**
    * Cross-axis extent in user-space px — the room ticks and marks occupy.
    *
-   * Must be an EVEN number of units: the axis sits at `thickness / 2`, and that
-   * has to land on the 8-grid like every other station coordinate.
+   * Normalized to an even number of units, never below units(6), because the
+   * axis sits at half of it and that has to land on the grid, and because the
+   * ticks are sized from what is left over. units(7) becomes units(8); units(4)
+   * becomes units(6). Out-of-range values are corrected, not honoured — an axis
+   * cannot be asked into a state where its stations have no ticks or its spine
+   * sits off the grid.
    *
-   * This is also the knob that sizes the ticks — they grow to fill the room it
-   * gives them (see below) — so units(6) is the practical minimum. units(4)
-   * leaves a tick of length zero.
+   * Within the legal range it is a real knob: raise it and the ticks grow.
    */
   thickness?: number;
   className?: string;
@@ -60,8 +64,9 @@ const ACCENT_CLASS = 'text-violet-glow';
  * horizontal axis carrying dead canvas below its spine. Deriving it instead
  * makes `thickness` a real knob — raise it and the ticks grow with it — and
  * makes clipping impossible by construction rather than by a checked invariant.
- * It stays on the grid because `cross` is a grid multiple whenever `thickness`
- * is an even number of units, and subtracting two units keeps it one.
+ * It stays on the grid, and stays at least one unit long, because `thickness` is
+ * normalized to an even unit count of six or more before `cross` is taken from
+ * it — subtracting two units from a grid multiple leaves a grid multiple.
  */
 const TICK_GAP = units(1);
 const TICK_MARGIN = units(1);
@@ -75,6 +80,16 @@ const TICK_MARGIN = units(1);
  * desync the animation, and the same math holds when the axis rotates for
  * mobile — which raw coordinates would not, since a vertical axis gives every
  * station the same x.
+ *
+ * Along-axis geometry comes from `axisMetrics` in grid.ts rather than being
+ * computed here, because a consumer has to position HTML labels against these
+ * same stations and would otherwise be reproducing private math. Cross-axis
+ * geometry stays local: nothing outside the diagram needs it.
+ *
+ * Both size inputs are NORMALIZED rather than trusted. Documenting a range and
+ * hoping is what the first cut of this component did, and both downstream call
+ * sites violated both rules immediately — one asking for a thickness that
+ * produced zero-length ticks, i.e. stations with no marks at all.
  */
 export function Axis({
   orientation,
@@ -87,46 +102,41 @@ export function Axis({
 }: AxisProps) {
   const horizontal = orientation === 'horizontal';
   const offsets = stationOffsets(count);
-  const cross = thickness / 2;
-  const tickLength = cross - TICK_GAP - TICK_MARGIN;
 
   /**
    * Stations span the full `length`; the terminal sits beyond it and the canvas
    * grows to fit. Shrinking the station span to make room instead would leave a
    * consumer's evenly distributed labels no longer lining up with the stations
    * they name.
-   *
-   * PAD exists because the first and last stations sit at t=0 and t=1, i.e. on
-   * the canvas edges, where a node centred on the axis would clip by half its
-   * size. One grid unit clears a default node (size units(1), so half is 4) and
-   * keeps every coordinate on the 8-grid.
    */
-  const PAD = units(1);
-  const terminalAt = PAD + length + units(2);
-  const extent = PAD + length + (terminal ? units(4) : PAD);
+  const { start, span, extent, stations, terminalAt } = axisMetrics(length, count, terminal);
+
+  const box = axisThickness(thickness);
+  const cross = box / 2;
+  const tickLength = cross - TICK_GAP - TICK_MARGIN;
 
   /**
-   * Snapped here rather than trusted from the caller: this is the authoring site
-   * Tasks 6 and 7 inherit, and `length * t` is only on the grid when the caller
-   * happened to pick a length divisible by count - 1. Endpoints are exact either
-   * way, since PAD and length are both grid values.
+   * Drawn from the normalized `span`, not the raw `length`, so the far end lands
+   * exactly on the last station. Trusting `length` here while snapping the
+   * stations was an inconsistency that showed: at length 100 the spine stopped
+   * at 108 while the final station snapped to 112, leaving the station that
+   * terminates the axis four pixels past the line it terminates.
    */
-  const along = (t: number) => snap(PAD + length * t);
   const spine = horizontal
-    ? `M ${PAD} ${cross} L ${PAD + length} ${cross}`
-    : `M ${cross} ${PAD} L ${cross} ${PAD + length}`;
+    ? `M ${start} ${cross} L ${start + span} ${cross}`
+    : `M ${cross} ${start} L ${cross} ${start + span}`;
 
   return (
     <Diagram
-      width={horizontal ? extent : thickness}
-      height={horizontal ? thickness : extent}
+      width={horizontal ? extent : box}
+      height={horizontal ? box : extent}
       fluid={horizontal}
       className={className}
     >
       <DrawPath d={spine} weight="hairline" duration={DRAW_DURATION} />
 
       {offsets.map((t, i) => {
-        const at = along(t);
+        const at = stations[i];
         // Timing follows geometry: each station fires as the draw front reaches it.
         const delay = DRAW_DURATION * t;
         return (
@@ -148,7 +158,7 @@ export function Axis({
         );
       })}
 
-      {terminal && (
+      {terminalAt !== null && (
         <Terminal
           x={horizontal ? terminalAt : cross}
           y={horizontal ? cross : terminalAt}
