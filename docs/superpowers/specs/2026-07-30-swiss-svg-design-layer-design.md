@@ -96,8 +96,21 @@ deliberate visual seam, which is the evidence for or against the follow-up token
 
 - All strokes and fills are `currentColor`, driven by Tailwind text utilities. No hex literals
   in SVG markup — ever. The six hardcoded hexes in `KickstartFlow` are deleted.
-- Three greys, by role: `border` (structure), `muted-foreground` (labels),
+- Three greys, by role: ~~`border` (structure)~~, `muted-foreground` (labels),
   `foreground` (emphasis).
+
+  **`border` was the wrong token for structure — corrected during implementation.**
+  `--border` is `oklch(1 0 0 / 8%)` against a `--background` of `oklch(0.07 0.005 285)`, i.e.
+  8% white on near-black. It reads as a card edge under a fill, but it cannot carry a
+  hairline in open space. Both pilots hit this independently and both resolved it the same
+  way, to `muted-foreground` — convergent evidence rather than one implementer's taste.
+
+  **Consequence worth stating plainly:** structure and labels now share one value, so the
+  three-grey scale is effectively two on these surfaces (`muted-foreground` for spine, marks
+  and labels; `foreground` for titles). That loses a tonal level this section intended. It is
+  the honest state, not a hidden compromise — the fix is a dedicated structure token
+  somewhere between `border` and `muted-foreground`, which is a token-layer change and
+  therefore belongs with the follow-up reskin (§10), not here.
 - One accent (violet, existing `--color-violet-glow` token) applied **only** to the active,
   terminal, or changed element. If a diagram has no such element, it renders fully greyscale.
 
