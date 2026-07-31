@@ -209,6 +209,24 @@ describe('Timeline offsets are keyed to the axis box', () => {
     expect(styleOf(wrappers[0]).marginLeft).toBe(-32);
   });
 
+  test('lifts every label by half the line box its title leads with', () => {
+    // `top` puts the label's box edge on the station; the first line of type is
+    // what has to sit there. The title is set at a 32px line box (leading-8)
+    // precisely so half of it is a whole number of units — at the type scale's
+    // 24px the exact pull would be 12, which is off the grid.
+    const lifts = LABELS.map((n) => styleOf(n).marginTop);
+    expect(new Set(lifts).size).toBe(1);
+    expect(lifts[0]).toBe(-16);
+    expect(Math.abs(Number(lifts[0])) % UNIT).toBe(0);
+
+    // The pull and the line box are one relation: Tailwind's leading step is 4px,
+    // so the title's box is 32 and the lift is half of it.
+    for (const title of TREE.filter((n) => n.kind === 'h3')) {
+      expect(classOf(title).split(' ')).toContain(`leading-${(-Number(lifts[0]) * 2) / 4}`);
+      expect(classOf(title).split(' ')).toContain('leading-8');
+    }
+  });
+
   test('sets the terminal line on the same rail as the labels', () => {
     // The label column starts one gap past the axis box, and the box extends
     // `cross` past the spine: 32 + 8. The terminal line is in normal flow rather

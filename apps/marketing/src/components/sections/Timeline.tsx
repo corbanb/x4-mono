@@ -112,11 +112,17 @@ const LABEL_GAP = units(1);
 const AXIS_COLOR = 'text-muted-foreground';
 
 /**
- * Half a line box, the one optical correction here: `top` places a label's box
- * edge on its station, and what should sit on the station is the first line of
- * type. units(1) is the only grid-legal pull in range.
+ * Half a title's line box: the one optical correction here.
+ *
+ * `top` places a label's box EDGE on its station, and what has to sit on the
+ * station is the first line of type — so the block is pulled up by half the line
+ * it leads with. That only lands exactly if the line box is an even number of
+ * units, which is why the title carries `leading-8` rather than the 24px the
+ * type scale would give it: half of 24 is 12, off the grid, and rounding to 8
+ * leaves every title sitting four pixels below the tick it is registered to.
+ * A 32px line box makes the correction units(2) and the registration exact.
  */
-const LABEL_LIFT = units(1);
+const LABEL_LIFT = units(2);
 
 /**
  * A 0..1 fraction as a CSS percentage, at fixed precision — binary floating point
@@ -187,7 +193,7 @@ export function Timeline({ milestones = MILESTONES }: TimelineProps = {}) {
                 className="absolute"
                 style={{ top: percent(metrics.fractions[i]), marginTop: -LABEL_LIFT }}
               >
-                <h3 className="font-semibold text-foreground">{milestone.title}</h3>
+                <h3 className="font-semibold leading-8 text-foreground">{milestone.title}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{milestone.description}</p>
               </div>
             ))}
