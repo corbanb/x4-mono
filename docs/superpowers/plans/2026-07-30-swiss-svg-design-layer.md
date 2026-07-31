@@ -243,7 +243,7 @@ export function stationOffsets(count: number): number[] {
 - [ ] **Step 5: Run the tests to verify they pass**
 
 Run: `cd apps/marketing && bun test src/components/svg/grid.test.ts`
-Expected: PASS, 13 tests.
+Expected: PASS, 14 tests.
 
 - [ ] **Step 6: Verify the repo gates**
 
@@ -1222,7 +1222,68 @@ git diff main --stat -- apps/marketing/package.json bun.lock
 
 Expected: the only `package.json` change is the `"test"` script from Task 1; **`bun.lock` must be untouched**. Any lockfile change means a dependency was added, violating the global constraint.
 
-- [ ] **Step 4: Delete the lab route**
+- [ ] **Step 4: Wire the marketing tests into CI**
+
+Found during Task 1's review. `.github/workflows/ci.yml` does not run `bun turbo test` — it enumerates one test job per workspace (`test-shared`, `test-database`, `test-auth`, `test-api`, `test-create-x4`) and `ci-passed` gates on exactly that list. Marketing is in none of them. `type-check` and `lint` do cover marketing, so types and lint are gated; **tests are not.**
+
+That matters more here than it normally would: the plan deliberately forgoes React component tests, which concentrates every automated check for the entire SVG layer into `grid.test.ts`. Task 1 made that suite runnable and thereby created the appearance of a gate that does not exist. A later change to `STROKE_ATTRS` or `snap()` would break four downstream consumers, fail locally, and merge green.
+
+Add a `test-marketing` job. Place it after the `test-create-x4` block, mirroring `test-shared` (no database, so no `neon-branch` dependency):
+
+```yaml
+# ─── Test: apps/marketing ──────────────────────────────────────────
+test-marketing:
+  name: 'Test: marketing'
+  runs-on: ubuntu-latest
+  needs: changes
+  if: needs.changes.outputs.marketing == 'true'
+  steps:
+    - uses: actions/checkout@v6
+
+    - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: '1.3.8'
+
+    - uses: actions/cache@v5
+      with:
+        path: ~/.bun/install/cache
+        key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+        restore-keys: bun-${{ runner.os }}-
+
+    - name: Install dependencies
+      run: bun install --frozen-lockfile
+
+    - name: Run marketing tests
+      run: bun test --cwd apps/marketing
+```
+
+`changes.outputs.marketing` already exists — no new paths-filter entry is needed.
+
+Then add the job to the `ci-passed` gate, in **both** places it must appear. The `needs` list:
+
+```yaml
+needs:
+  [
+    quality,
+    migration-check,
+    test-shared,
+    test-database,
+    test-auth,
+    test-api,
+    test-create-x4,
+    test-marketing,
+  ]
+```
+
+And the failure check body, alongside the existing lines:
+
+```bash
+                "${{ needs.test-marketing.result }}" == "failure" || \
+```
+
+Adding it to `needs` without the check body is the silent-failure mode: the gate would wait on the job and then ignore its result.
+
+- [ ] **Step 5: Delete the lab route**
 
 ```bash
 rm apps/marketing/src/app/svg-lab/page.tsx
@@ -1230,16 +1291,16 @@ rm apps/marketing/src/app/svg-lab/page.tsx
 
 It existed to verify primitives before surfaces consumed them. Both surfaces now do that job, and an unlinked route that ships to production is dead weight.
 
-- [ ] **Step 5: Full-repo gates**
+- [ ] **Step 6: Full-repo gates**
 
 Run: `bun turbo type-check && bun turbo lint && bun turbo test`
 Expected: exit 0 for all three. `bun turbo test` must show the marketing `grid.test.ts` suite passing rather than the old `echo` placeholder.
 
-- [ ] **Step 6: Final visual pass**
+- [ ] **Step 7: Final visual pass**
 
 With the dev server running, screenshot `/kickstart` and `/about` at **1440** and **375**, plus one reduced-motion pass each. Confirm `/svg-lab` now 404s.
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 git add -A apps/marketing
