@@ -1,0 +1,23 @@
+# Conductor "Files to copy" — gitignored files pulled from the main checkout
+# into every new workspace. Gitignore pattern syntax.
+#
+# This file takes precedence over settings `file_include_globs` AND over
+# Conductor's built-in `.env*` default, so `.env*` must be listed explicitly
+# below — dropping that line would stop `.env.local` reaching new workspaces.
+
+# Local environment — DATABASE_URL, auth secrets, ANTHROPIC_API_KEY.
+# Without these the API server will not boot.
+.env*
+
+# Claude Code local permissions/settings for this repo.
+.claude/settings.local.json
+
+# AI reference docs (~10MB) fetched by `bun run setup:ai-docs`.
+# Copying beats re-downloading in every workspace.
+.claude/docs/
+
+# Deliberately NOT copied:
+#   .superpowers/  — per-session scratch servers and logs
+#   .vercel/       — stale, deploys moved to Railway
+#   .worktrees/    — nested checkouts
+#   node_modules/  — installed by the setup script instead
