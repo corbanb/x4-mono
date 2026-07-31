@@ -37,6 +37,9 @@ Thumbs.db
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
 
+# Conductor — shared .conductor/settings.toml is tracked, local overrides are not
+.conductor/settings.local.toml
+
 # Superpowers
 .superpowers/
 

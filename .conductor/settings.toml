@@ -1,0 +1,60 @@
+"$schema" = "https://conductor.build/schemas/settings.repo.schema.json"
+
+# Shared Conductor config for x4-mono (Bun workspaces + Turborepo).
+#
+# Committed so every new workspace picks it up automatically. The Mac app reads
+# this file from the default branch on the remote, so changes only take effect
+# after they land on main. Per-machine overrides belong in
+# .conductor/settings.local.toml (gitignored, wins over this file).
+#
+# Port map, relative to $CONDUCTOR_PORT (Conductor allocates 10 per workspace):
+#   +0 web   +1 marketing   +2 api   +3 docs   +4 storybook
+# Keep these offsets identical in every run script — scripts/dev.ts bumps to the
+# next free port on conflict, and a mismatched offset cascades into wrong URLs.
+#
+# Database: .env.local carries a single shared Neon DATABASE_URL into every
+# workspace. Do NOT add db:push / db:seed / db:studio here — concurrent
+# workspaces would clobber each other's schema and data.
+
+[scripts]
+setup = "bun install && { [ -f .env.local ] || cp .env.example .env.local; }"
+run_mode = "concurrent"
+archive = "rm -rf .turbo"
+
+# All services (web + marketing + api + docs + storybook) via scripts/dev.ts.
+[scripts.run.dev]
+command = 'PORT_WEB=$CONDUCTOR_PORT PORT_MARKETING=$((CONDUCTOR_PORT+1)) PORT_API=$((CONDUCTOR_PORT+2)) PORT_DOCS=$((CONDUCTOR_PORT+3)) PORT_STORYBOOK=$((CONDUCTOR_PORT+4)) PORT=$((CONDUCTOR_PORT+2)) API_URL=http://localhost:$((CONDUCTOR_PORT+2)) NEXT_PUBLIC_API_URL=http://localhost:$((CONDUCTOR_PORT+2)) WEB_URL=http://localhost:$CONDUCTOR_PORT MARKETING_URL=http://localhost:$((CONDUCTOR_PORT+1)) bun dev'
+default = true
+icon = "play"
+available_in = [ "local" ]
+
+# Web app only. API_URL must be set or the tRPC/auth proxies fall back to :3002.
+[scripts.run.web]
+command = 'PORT_WEB=$CONDUCTOR_PORT API_URL=http://localhost:$((CONDUCTOR_PORT+2)) NEXT_PUBLIC_API_URL=http://localhost:$((CONDUCTOR_PORT+2)) bun run -F @x4/web dev'
+icon = "globe"
+available_in = [ "local" ]
+
+# API server only.
+[scripts.run.api]
+command = 'PORT=$((CONDUCTOR_PORT+2)) PORT_API=$((CONDUCTOR_PORT+2)) WEB_URL=http://localhost:$CONDUCTOR_PORT MARKETING_URL=http://localhost:$((CONDUCTOR_PORT+1)) bun run -F @x4/api dev'
+icon = "server"
+available_in = [ "local" ]
+
+# Marketing site only.
+[scripts.run.marketing]
+command = 'PORT_MARKETING=$((CONDUCTOR_PORT+1)) bun run -F @x4/marketing dev'
+icon = "megaphone"
+available_in = [ "local" ]
+
+# Component catalog.
+[scripts.run.storybook]
+command = 'PORT_STORYBOOK=$((CONDUCTOR_PORT+4)) bun run storybook'
+icon = "book-open"
+available_in = [ "local" ]
+
+# Full quality gate — no ports, safe in cloud workspaces.
+# Routes through the root scripts (turbo type-check / lint / test), not bare
+# `bun test`, so every workspace package's own test command is respected.
+[scripts.run.checks]
+command = "bun run type-check && bun run lint && bun run test"
+icon = "circle-check"
