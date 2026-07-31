@@ -22,9 +22,10 @@
 - **Motion never oscillates.** No spring, no bounce, no overshoot. Draw ~0.8s, stagger 0.06s, linear easing. (§4.5)
 - **`prefers-reduced-motion: reduce` renders the final drawn state on first paint**, enforced in exactly one place: the `[data-x4-diagram]` CSS rule in `globals.css`. Primitives carry no reduced-motion logic. (§4.6)
 - **Never hand-roll an `<svg>` element.** Always go through `<Diagram>`. The reduced-motion guarantee keys off the `data-x4-diagram` marker `Diagram` emits, so a bare `<svg>` silently opts out of it.
-- **`<Axis>` call-site arithmetic (frozen at Task 5, no runtime guard).** Two rules, both silent-failure if broken:
-  - **`length / (count - 1)` must be a multiple of `UNIT`.** Stations are snapped individually, so an off-grid spacing does not drift — it _jitters_, alternating spacing (e.g. 72/64/72/64) in a way that reads as sloppy rendering rather than as a bug. Check the arithmetic before writing the call.
-  - **`thickness` must be an even number of units and at least `units(6)`.** Odd puts the axis centreline off the 8-grid; `units(4)` yields a **zero-length tick**, i.e. no visible station marks at all. Note `thickness` also sizes the ticks, so a longer leader means a wider diagram.
+- **`<Axis>` normalizes its own inputs — do not hand-compute its geometry.** Task 5 originally froze two call-site rules as documentation; both were violated on 2/2 downstream call sites in the very next commit, so they were moved into code and are now unrepresentable:
+  - `thickness` is rounded to an even number of units and floored at `units(6)`, via `axisThickness()`. This keeps the centreline on the grid, keeps the spine centred, and makes a zero-length tick impossible.
+  - **`length` is a _target_, not an exact dimension.** The pitch is snapped and the span recomputed as `pitch x (count - 1)`, so stations land on the grid by construction and the rhythm never jitters. The axis may therefore end up slightly **wider or narrower** than asked — `units(96)` across 8 stations becomes 784, not 768. Read `axisMetrics().span` / `.extent` for the adjusted values.
+- **Align HTML labels with `axisMetrics().fractions` — never with `justify-between` or an even grid.** Stations are inset by a pad and the canvas grows when `terminal` is on, so station positions are **not** evenly distributed across the container: turning `terminal` on moves the last station from 99.18% to 96.8% of the container, about 24px at 1000px wide. `axisMetrics(length, count, terminal)` lives in `grid.ts` (not `Axis.tsx`, which is `'use client'` and whose exports a server component cannot call) and returns container-space `fractions` valid for both orientations.
 - **All motion inside a Diagram is path-draw motion** — animate `pathLength` via `DrawPath`, nothing else. The CSS rule pins `stroke-dasharray`/`stroke-dashoffset` only, so an opacity or transform animation inside a Diagram would run for reduced-motion visitors and nothing would catch it. A primitive that needs non-draw motion **stops and reports** so the rule can be extended deliberately.
 - **Labels stay in HTML** except grid-registered numerals and ticks. (§4.4)
 - **Do not touch** `glow` / `glass` / `noise` / gradient utilities, the other five surfaces, or `packages/shared`. (§10)
@@ -1064,19 +1065,35 @@ In `apps/marketing/src/components/sections/KickstartFlow.tsx`, remove the `color
 
 Replace the `md:overflow-x-auto` block (the outer `<div>` wrapping the `FLOW_STEPS.map`) with an axis plus an HTML label row. The axis is horizontal at `md` and up, vertical below — §5 rejects the horizontal-scroll fallback the current code uses.
 
+Define the geometry once, at module scope, so the axis and its labels read from the same source and cannot drift:
+
+```tsx
+const AXIS_LENGTH = units(120);
+/** Shared by the axis and its label row — see the Global Constraints note on fractions. */
+const METRICS = axisMetrics(AXIS_LENGTH, FLOW_STEPS.length, true);
+```
+
 ```tsx
       {/* Horizontal at md+, rotated vertical on small screens (spec section 5) */}
       <div className="hidden md:block">
         <Axis
           orientation="horizontal"
-          length={units(120)}
+          length={AXIS_LENGTH}
           count={FLOW_STEPS.length}
           terminal
           className="text-border"
         />
-        <div className="mt-4 grid grid-cols-6 gap-4">
-          {FLOW_STEPS.map((step) => (
-            <div key={step.number}>
+        {/* Labels are positioned from axisMetrics().fractions, NOT distributed
+            evenly. Stations are inset by a pad and the canvas grows for the
+            terminal, so an even grid drifts — and drifts differently depending
+            on whether `terminal` is set. */}
+        <div className="relative mt-4 h-24">
+          {FLOW_STEPS.map((step, i) => (
+            <div
+              key={step.number}
+              className="absolute w-32 -translate-x-1/2"
+              style={{ left: `${METRICS.fractions[i] * 100}%` }}
+            >
               <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
                 {String(step.number).padStart(2, '0')}
               </p>
@@ -1116,7 +1133,7 @@ Replace the `md:overflow-x-auto` block (the outer `<div>` wrapping the `FLOW_STE
       </div>
 ```
 
-Add the imports: `import { Axis } from '@/components/svg/Axis';` and `import { units } from '@/components/svg/grid';`
+Add the imports: `import { Axis } from '@/components/svg/Axis';` and `import { units, axisMetrics } from '@/components/svg/grid';`
 
 - [ ] **Step 3: Make the accent point at `/x4:work`**
 
