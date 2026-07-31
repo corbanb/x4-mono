@@ -22,6 +22,9 @@
 - **Motion never oscillates.** No spring, no bounce, no overshoot. Draw ~0.8s, stagger 0.06s, linear easing. (§4.5)
 - **`prefers-reduced-motion: reduce` renders the final drawn state on first paint**, enforced in exactly one place: the `[data-x4-diagram]` CSS rule in `globals.css`. Primitives carry no reduced-motion logic. (§4.6)
 - **Never hand-roll an `<svg>` element.** Always go through `<Diagram>`. The reduced-motion guarantee keys off the `data-x4-diagram` marker `Diagram` emits, so a bare `<svg>` silently opts out of it.
+- **`<Axis>` call-site arithmetic (frozen at Task 5, no runtime guard).** Two rules, both silent-failure if broken:
+  - **`length / (count - 1)` must be a multiple of `UNIT`.** Stations are snapped individually, so an off-grid spacing does not drift — it _jitters_, alternating spacing (e.g. 72/64/72/64) in a way that reads as sloppy rendering rather than as a bug. Check the arithmetic before writing the call.
+  - **`thickness` must be an even number of units and at least `units(6)`.** Odd puts the axis centreline off the 8-grid; `units(4)` yields a **zero-length tick**, i.e. no visible station marks at all. Note `thickness` also sizes the ticks, so a longer leader means a wider diagram.
 - **All motion inside a Diagram is path-draw motion** — animate `pathLength` via `DrawPath`, nothing else. The CSS rule pins `stroke-dasharray`/`stroke-dashoffset` only, so an opacity or transform animation inside a Diagram would run for reduced-motion visitors and nothing would catch it. A primitive that needs non-draw motion **stops and reports** so the rule can be extended deliberately.
 - **Labels stay in HTML** except grid-registered numerals and ticks. (§4.4)
 - **Do not touch** `glow` / `glass` / `noise` / gradient utilities, the other five surfaces, or `packages/shared`. (§10)
@@ -1089,17 +1092,17 @@ Replace the `md:overflow-x-auto` block (the outer `<div>` wrapping the `FLOW_STE
       <div className="flex gap-6 md:hidden">
         <Axis
           orientation="vertical"
-          length={units(72)}
+          length={units(70)}
           count={FLOW_STEPS.length}
           terminal
-          thickness={units(4)}
+          thickness={units(6)}
           className="shrink-0 text-border"
         />
         {/* Height pinned to the axis length so labels line up with stations
             rather than with the taller canvas the terminal adds. */}
         <div
           className="flex flex-1 flex-col justify-between"
-          style={{ height: units(72) }}
+          style={{ height: units(70) }}
         >
           {FLOW_STEPS.map((step) => (
             <div key={step.number}>
@@ -1221,11 +1224,11 @@ Replace the `<div className="relative mt-16">` block:
         <div className="mt-16 flex gap-8">
           <Axis
             orientation="vertical"
-            length={units(96)}
+            length={units(98)}
             count={MILESTONES.length}
             filled={MILESTONES.map((m) => m.status === 'complete')}
             terminal
-            thickness={units(4)}
+            thickness={units(6)}
             className="shrink-0 text-border"
           />
 
@@ -1233,7 +1236,7 @@ Replace the `<div className="relative mt-16">` block:
               nodes rather than with the taller canvas the terminal adds. */}
           <div
             className="flex flex-1 flex-col justify-between"
-            style={{ height: units(96) }}
+            style={{ height: units(98) }}
           >
             {MILESTONES.map((milestone, i) => (
               <motion.div
