@@ -199,3 +199,81 @@
     transform: translateX(-50%);
   }
 }
+
+/* Stroke weight compensation for scaled diagrams.
+
+   STROKE_ATTRS cannot carry vector-effect: non-scaling-stroke — it breaks the
+   stroke-dasharray path drawing DrawPath depends on, identically in Chromium and
+   WebKit (see the comment on STROKE_ATTRS in components/svg/grid.ts). Without
+   it, stroke width scales with the viewBox, so a 960-unit diagram at a 390px
+   viewport draws its 1.5 primary at 0.53 CSS px.
+
+   The correction is deliberately PARTIAL, not 1/scale. Full compensation would
+   restore 1.5 device px onto artwork drawn at 36% size — a stroke 2.8x heavier
+   relative to its own geometry, which is precisely the over-inked look Swiss
+   line art is not.
+
+   WHAT THIS BUYS IS LEGIBILITY, NOT CONSISTENCY. Read that before tuning the
+   values. The multiplier is constant across a breakpoint range while the viewBox
+   scale keeps moving, so it can only translate the weight band, never narrow it:
+   uncompensated, the base range sweeps 0.43 -> 0.92 CSS px (2.17x); compensated
+   at 1.6 it sweeps 0.68 -> 1.48 (2.17x). Identical ratio. What changes is that
+   the bottom of the range is lifted out of sub-pixel territory, where a 0.43px
+   stroke renders as pale grey rather than as a line. Narrowing the spread would
+   require a multiplier proportional to 1/scale, which is the exact correction
+   rejected above — no choice of constants can achieve it.
+
+   Measured primary weight in CSS px, across each range, content-column diagram:
+
+     base (<640)   x1.6   0.68 at 320  ->  1.48 at 639
+     sm  (>=640)   x1.3   1.20 at 640  ->  1.46 at 767
+     md  (>=768)   x1     1.13 at 768  ->  1.52 at 1024+
+     fluid={false} x1     1.50 flat (scale is 1 by construction)
+
+   Base is capped below the 1.52 desktop maximum on purpose: at 1.8 it reached
+   1.66, so strokes were HEAVIER on mobile than on desktop and got lighter as the
+   window widened past 640, which reads as a rendering bug. Do not raise it back
+   above ~1.63; grid.test.ts pins that bound.
+
+   Weight is still not monotonic in viewport width — it steps down 19% at the 640
+   boundary (1.48 -> 1.20) and 23% at 768 (1.46 -> 1.13). That is unavoidable
+   rather than untuned: scale is continuous across a boundary while the
+   multiplier drops, so the product always falls there. Any set of per-breakpoint
+   constants that decrease has this property. The 1 : 1.5 hairline-to-primary
+   ratio is exact everywhere regardless.
+
+   Applied to the [data-x4-diagram] subtree by stroke-width value rather than by
+   a per-element opt-in, so the lab's raw <line>, DrawPath, and every future
+   primitive inherit it without any call site referencing it. The two selectors
+   correspond exactly to the two weights in STROKE; adding a third weight is a
+   spec change, not a styling one.
+
+   The default lives in the var() fallback rather than a [data-x4-diagram] rule:
+   an attribute selector ties with a utility class on specificity and this file
+   loads after Tailwind, so a rule here would silently beat the breakpoint
+   utilities Diagram sets and pin every diagram to 1. */
+[data-x4-diagram] [stroke-width='1'] {
+  stroke-width: calc(1px * var(--x4-stroke-scale, 1));
+}
+
+[data-x4-diagram] [stroke-width='1.5'] {
+  stroke-width: calc(1.5px * var(--x4-stroke-scale, 1));
+}
+
+/* Reduced motion: pin every diagram to its final drawn state.
+
+   This lives in CSS rather than in the SVG primitives because motion's
+   useReducedMotion() returns null during SSR, so a JS-derived value renders an
+   undrawn first frame for reduced-motion visitors and creates a server/client
+   hydration mismatch for exactly those users. A media query is present in the
+   server HTML with zero JS, so the drawn state is correct on first paint.
+
+   This overrides motion's path drawing, which is applied via setAttribute() —
+   presentation attributes, the lowest tier of the cascade. !important is
+   belt-and-braces in case a future version switches to inline styles. */
+@media (prefers-reduced-motion: reduce) {
+  [data-x4-diagram] * {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}
