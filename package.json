@@ -22,7 +22,7 @@
     "setup:ai-docs": "bun scripts/download-ai-docs.ts"
   },
   "devDependencies": {
-    "@playwright/test": "1.58.2",
+    "@playwright/test": "1.59.1",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
